@@ -71,13 +71,16 @@ pub fn (srv mut Server) serve(port int) {
 		res.path = path
 		req.params = params
 
-		query_arr := path.all_after('?').split('&')
+		// querystring := path.all_after('?')
+		// if querystring.len != 0 {
+		// 	query_arr := querystring.split('&')
 
-		for q in query_arr {
-			q_arr := q.split('=')
+		// 	for q in query_arr {
+		// 		q_arr := q.split('=')
 
-			req.query[q_arr[0]] = q_arr[1]
-		}
+		// 		req.query[q_arr[0]] = q_arr[1]
+		// 	}
+		// }
 
 		if s == '' || vals.len < 2 {
 			res.send('<h1>500 Internal Server Error</h1>', 500)
