@@ -13,7 +13,7 @@ pub mut:
 }
 
 // create server
-pub fn server() Server {
+pub fn new() Server {
 	return Server{ routes: []Route }
 }
 

@@ -6,7 +6,7 @@ Web framework written on V inspired by [Express](https://expressjs.com/) and [Si
 ```v
 module main
 
-import vex
+import vex.server as vex
 import json
 import os
 
@@ -24,7 +24,7 @@ fn print_json(req server.Request, res mut server.Response) {
 }
 
 fn main() {
-    mut s := vex.server()
+    mut s := vex.new()
     s.serve_static('public')
     s.get('/', show_root)
     s.get('/hey/:name/:doing', print_json)
