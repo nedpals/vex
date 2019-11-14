@@ -10,11 +10,12 @@ struct Server {
 pub mut:
 	port int
 	routes []Route
+	middlewares []Middleware
 }
 
 // create server
 pub fn new() Server {
-	return Server{ routes: []Route }
+	return Server{ routes: []Route, middlewares: []Middleware }
 }
 
 fn write_body(res Response, conn net.Socket) {
@@ -87,6 +88,15 @@ pub fn (srv mut Server) serve(port int) {
 			write_body(res, conn) 
 			conn.close() or { return }
 			return
+		}
+
+		if srv.middlewares.len != 0 {
+			for mw in srv.middlewares {
+				if mw.paths[0] == '*' || path in mw.paths {
+					mw_func := mw.func
+					mw_func(req, mut res)
+				}
+			}
 		}
 
 		if rte.method == 'POST' {
