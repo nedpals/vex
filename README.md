@@ -23,11 +23,16 @@ fn print_json(req server.Request, res mut server.Response) {
     res.send_json(json.encode(Person{ name: req.params['name'], doing: req.params['doing'] }), 200)
 }
 
+fn log_server(req server.Request, res server.Response) {
+    println('${req.path}')
+}
+
 fn main() {
     mut s := vex.new()
     s.serve_static('public')
     s.get('/', show_root)
     s.get('/hey/:name/:doing', print_json)
+    s.connect(log_server, ['*']) // middleware
 
     s.serve(6789)
 }
@@ -43,6 +48,8 @@ Vex uses [v-mime](https://github.com/nedpals/v-mime) to identify MIME types when
 - [x] HTTP Router (wildcards not yet supported)
 - [x] Static file server
 - [x] Params and query parsing
+- [x] Body parsing (supports raw text for now)
+- [x] Middleware support
 - [ ] Cookie parsing
 - [ ] Formdata parsing
 
