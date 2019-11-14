@@ -61,7 +61,7 @@ pub fn (srv mut Server) serve(port int) {
 		vals := first_line.split(' ')
 
 		path := if vals[1].starts_with('//') { vals[1].all_after('/') } else { vals[1] }
-		params, matched_rte := srv.find(vals[0], path)
+		params, matched_rte := srv.find(vals[0], path.all_before('?'))
 		mut rte := if matched_rte.name.len != 0 { matched_rte } else { Route{ ctx: Context{ req: Request{}, res: Response{}}} }
 
 		mut req := rte.ctx.req
@@ -72,16 +72,16 @@ pub fn (srv mut Server) serve(port int) {
 		res.path = path
 		req.params = params
 
-		// querystring := path.all_after('?')
-		// if querystring.len != 0 {
-		// 	query_arr := querystring.split('&')
+		if path.index('?') != -1 {
+			querystring := path.all_after('?')
+			query_arr := querystring.split('&')
 
-		// 	for q in query_arr {
-		// 		q_arr := q.split('=')
+			for q in query_arr {
+				q_arr := q.split('=')
 
-		// 		req.query[q_arr[0]] = q_arr[1]
-		// 	}
-		// }
+				req.query[q_arr[0]] = q_arr[1]
+			}
+		}
 
 		if s == '' || vals.len < 2 {
 			res.send('<h1>500 Internal Server Error</h1>', 500)
