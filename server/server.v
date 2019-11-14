@@ -100,7 +100,8 @@ pub fn (srv mut Server) serve(port int) {
 		}
 
 		if rte.method == 'POST' {
-			req.body = s
+			body_arr := s.split('\r\n')
+			req.body = body_arr[body_arr.len-1]
 		}
 
 		if matched_rte.name.len != 0 {
