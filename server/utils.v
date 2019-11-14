@@ -7,9 +7,6 @@ const (
     separator = '\r\n'
 )
 
-// fn build_cookie()
-
-
 // https://github.com/for-GET/know-your-http-well/blob/master/json/status-codes.json
 fn status_code_msg(code int) string {
 	// partial
