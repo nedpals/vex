@@ -98,6 +98,10 @@ fn (routes []Route) index(method string, path string) int {
 }
 
 fn (srv mut Server) create_route(method string, r_path string, cb fn(req Request, res mut Response)) {
+	if !r_path.starts_with('/') {
+		panic('route paths must start with a forward slash (/)')
+	}
+
 	mut route_paths := r_path.split('/')
 	
 	if route_paths.len == 0 {
