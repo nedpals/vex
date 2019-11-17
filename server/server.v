@@ -2,9 +2,7 @@
 
 module server
 
-import net
-import http
-import os
+	net.urllib
 
 const (
     separator = '\r\n'
@@ -62,32 +60,34 @@ pub fn (srv mut Server) serve(port int) {
 		conn := listener.accept() or {panic("conn accept() failed.")}
 		s := conn.read_line()
 		first_line := s.all_before('\n')
-		vals := first_line.split(' ')
+		data := first_line.split(' ')
 
-		path := if vals[1].starts_with('//') { vals[1].all_after('/') } else { vals[1] }
-		params, matched_rte := srv.find(vals[0], path.all_before('?'))
+		req_path := urllib.parse(data[1]) or { return }
+		params, matched_rte := srv.find(data[0], req_path.path)
 		mut rte := if matched_rte.name.len != 0 { matched_rte } else { Route{ ctx: Context{ req: Request{}, res: Response{}}} }
 
 		mut req := rte.ctx.req
 		mut res := rte.ctx.res
 		req.headers = http.parse_headers(s.split_into_lines())
-		req.method = vals[0]
-		req.path = path
-		res.path = path
+		req.method = data[0]
+		req.path = req_path.path
+		res.path = req_path.path
 		req.params = params
 
-		if path.index('?') != -1 {
-			querystring := path.all_after('?')
-			query_arr := querystring.split('&')
+		if req_path.raw_query.len != 0 {
+			query_map := req_path.query().data
 
-			for q in query_arr {
-				q_arr := q.split('=')
+			for q in query_map.keys() {
+				req.query[q] = query_map[q].data[0]
+			}
+		}
+
 
 				req.query[q_arr[0]] = q_arr[1]
 			}
 		}
 
-		if s == '' || vals.len < 2 {
+		if s == '' || data.len < 2 {
 			res.send('<h1>500 Internal Server Error</h1>', 500)
 			write_body(res, conn) 
 			conn.close() or { return }
