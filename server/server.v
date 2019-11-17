@@ -118,7 +118,7 @@ pub fn (srv mut Server) serve(port int) {
 		}
 
 		if rte.method == 'POST' {
-			body_arr := s.split('\r\n')
+			body_arr := s.split(separator)
 			req.body = body_arr[body_arr.len-1]
 		}
 
