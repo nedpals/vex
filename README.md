@@ -63,8 +63,9 @@ Vex uses [v-mime](https://github.com/nedpals/v-mime) to identify MIME types when
 4. Push to the branch (`git push origin my-new-feature`)
 5. Create a new Pull Request
 
-<!-- ## License
-[MIT](LICENSE) -->
+## Examples
+Examples can be found at the [`/examples`](/examples) directory.
+
 
 ## Contributors
 
