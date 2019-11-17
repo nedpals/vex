@@ -32,7 +32,7 @@ fn main() {
     s.serve_static('public')
     s.get('/', show_root)
     s.get('/hey/:name/:doing', print_json)
-    s.connect(log_server, ['*']) // middleware
+    s.connect(log_server, ['*', '!/hey']) // middleware
 
     s.serve(6789)
 }
@@ -66,6 +66,8 @@ Vex uses [v-mime](https://github.com/nedpals/v-mime) to identify MIME types when
 ## Examples
 Examples can be found at the [`/examples`](/examples) directory.
 
+## License
+[MIT](LICENSE)
 
 ## Contributors
 
