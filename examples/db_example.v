@@ -1,7 +1,6 @@
 module main
 
 import vex.server as vex
-import json
 import sqlite
 
 const (
