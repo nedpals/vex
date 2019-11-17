@@ -6,6 +6,10 @@ import net
 import http
 import os
 
+const (
+    separator = '\r\n'
+)
+
 struct Server {
 pub mut:
 	port int
