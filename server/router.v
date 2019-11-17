@@ -189,3 +189,7 @@ pub fn (srv mut Server) delete(r_path string, cb fn(req Request, res mut Respons
 pub fn (srv mut Server) put(r_path string, cb fn(req Request, res mut Response)) {
 	srv.create_route('PUT', r_path, cb)
 }
+
+pub fn (srv mut Server) options(r_path string, cb fn(req Request, res mut Response)) {
+	srv.create_route('OPTIONS', r_path, cb)
+}
