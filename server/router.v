@@ -8,7 +8,7 @@ pub mut:
 	ctx Context
 	is_param bool
 	is_wildcard bool
-	func fn (req Request, res mut Response)
+	handler fn (req Request, res mut Response)
 }
 
 // empty callback
@@ -127,10 +127,10 @@ fn (srv mut Server) create_route(method string, r_path string, cb fn(req Request
 
 	if route_children.len >= 1 {
 		combined := route_children.join('/')
-		srv.routes[root_route_idx].func = empty_cb
+		srv.routes[root_route_idx].handler = empty_cb
 		srv.routes[root_route_idx].add_child_route(method, combined, cb)
 	} else {
-		srv.routes[root_route_idx].func = cb
+		srv.routes[root_route_idx].handler = cb
 	}
 }
 
@@ -160,9 +160,9 @@ fn (rt mut Route) add_child_route(method string, path string, cb fn(req Request,
 	if route_children.len >= 1 {
 		combined := route_children.join('/')
 		rt.children[child_route_idx].add_child_route(method, combined, cb)
-		rt.children[child_route_idx].func = empty_cb
+		rt.children[child_route_idx].handler = empty_cb
 	} else {
-		rt.children[child_route_idx].func = cb
+		rt.children[child_route_idx].handler = cb
 	}
 }
 

@@ -96,9 +96,8 @@ pub fn (srv mut Server) serve(port int) {
 
 		if srv.middlewares.len != 0 {
 			for mw in srv.middlewares {
-				if mw.paths[0] == '*' || path in mw.paths {
-					mw_func := mw.func
-					mw_func(req, mut res)
+					mw_handler := mw.handler
+					mw_handler(req, mut res)
 				}
 			}
 		}
@@ -109,7 +108,7 @@ pub fn (srv mut Server) serve(port int) {
 		}
 
 		if matched_rte.name.len != 0 {
-			handler := rte.func
+			handler := rte.handler
 			handler(req, mut res)
 		} else {
 			res.set_header('Content-Type', 'text/html')
