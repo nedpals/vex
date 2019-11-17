@@ -17,7 +17,7 @@ fn hello_world(req vex.Request, res mut vex.Response) {
 }
 
 fn log_server(req vex.Request, res vex.Response) {
-    decoded_cookie := req.cookies['em_cdn_uid']
+    prinln('${req.method} ${req.path}')
 }
 
 fn main() {
@@ -25,8 +25,6 @@ fn main() {
 	
     // putting '!' before the path excludes the server from running a middleware on that path.
     s.connect(log_server, ['/', '!/hello'])
-
-    s.serve_static('public')
     s.get('/', print_json)
 	s.get('/hello', hello_world)
 
