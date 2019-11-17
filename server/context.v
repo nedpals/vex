@@ -30,6 +30,22 @@ pub mut:
     headers map[string]string
 }
 
+// Request
+pub fn (req Request) parse_form_body() map[string]string {
+    mut form_data_map := map[string]string{}
+
+    if 'Content-Type' in req.headers && req.headers['Content-Type'] == 'application/x-www-form-urlencoded' {
+        form_arr := req.body.split('&')
+        for form_data in form_arr {
+            form_data_arr := form_data.split('=')
+
+            form_data_map[form_data_arr[0]] = form_data_arr[1]
+        }
+    }
+
+    return form_data_map
+}
+
 // response
 pub fn (res mut Response) send(body string, status_code int) {
     res.body = body
