@@ -19,7 +19,7 @@ pub mut:
 
 // create server
 pub fn new() Server {
-	return Server{ routes: []Route, middlewares: []Middleware }
+	return Server{ routes: [], middlewares: [] }
 }
 
 fn write_body(res Response, conn net.Socket) {

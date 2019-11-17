@@ -115,7 +115,7 @@ fn (srv mut Server) create_route(method string, r_path string, cb fn(req Request
 			srv.routes << Route{ 
 				method: method, 
 				name: root_route_name, 
-				children: []Route, 
+				children: [], 
 				ctx: Context{ req: Request{}, res: Response{} },
 				is_param: if root_route_name.starts_with('/:') { true } else { false },
 				is_wildcard: if root_route_name.starts_with('/*') { true } else { false }
@@ -147,7 +147,7 @@ fn (rt mut Route) add_child_route(method string, path string, cb fn(req Request,
 			rt.children << Route{ 
 				method: method, 
 				name: child_route_name, 
-				children: []Route, 
+				children: [], 
 				ctx: Context{ req: Request{}, res: Response{} },
 				is_param: if child_route_name.starts_with('/:') { true } else { false },
 				is_wildcard: if child_route_name.starts_with('/*') { true } else { false }
