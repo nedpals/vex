@@ -82,8 +82,18 @@ pub fn (srv mut Server) serve(port int) {
 			}
 		}
 
+		if 'Cookie' in req.headers {
+			cookies_arr := req.headers['Cookie'].split('; ')
 
-				req.query[q_arr[0]] = q_arr[1]
+			for cookie_data in cookies_arr {
+				ck := cookie_data.split('=')
+				ck_val := urllib.query_unescape(ck[1]) or { 
+					res.send('<h1>500 Internal Server Error</h1>', 500)
+					write_body(res, conn) 
+					conn.close() or { return }
+					return
+				}
+				req.cookies[ck[0]] = ck_val
 			}
 		}
 
