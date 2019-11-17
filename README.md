@@ -45,13 +45,16 @@ Vex is committed to bring some of its features and optimizations to the vweb fra
 Vex uses [v-mime](https://github.com/nedpals/v-mime) to identify MIME types when serving files.
 
 ## Roadmap
+- [X] Support for `GET`, `POST`, `PUT`, `PATCH`, `DELETE`, and `OPTION` HTTP methods.
 - [x] HTTP Router (wildcards not yet supported)
 - [x] Static file server
 - [x] Params and query parsing
 - [x] Body parsing (supports raw text for now)
 - [x] Middleware support
-- [ ] Cookie parsing
-- [ ] Formdata parsing
+- [x] Cookie parsing (basic support)
+- [ ] Form data parsing
+  - [x] `application/x-www-form-urlencoded` support
+  - [ ] `multipart/form-data` support
 
 ## Contributing
 1. Fork it (<https://github.com/nedpals/vex/fork>)
