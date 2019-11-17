@@ -2,7 +2,12 @@
 
 module server
 
+import (
+	net
+	http
 	net.urllib
+	os
+)
 
 const (
     separator = '\r\n'
