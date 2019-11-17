@@ -58,19 +58,34 @@ pub fn (srv mut Server) serve_static(root_folder string) {
 	}
 }
 
+fn con500(conn mut net.Socket){
+	mut eres := Response{}
+	eres.send('<h1>500 Internal Server Error</h1>', 500)
+	write_body(eres, conn) 
+	conn.close() or { 0 }
+}
+
 pub fn (srv mut Server) serve(port int) {
 	srv.port = port
 	listener := net.listen(srv.port) or {panic("Failed to listen to port $port")}
 	for {
 		conn := listener.accept() or {panic("conn accept() failed.")}
 		s := conn.read_line()
+		if s.len < 4 {
+			con500(mut conn)
+			continue
+		}
+		
 		first_line := s.all_before('\n')
 		data := first_line.split(' ')
-
-		req_path := urllib.parse(data[1]) or { return }
+		
+		req_path := urllib.parse(data[1]) or {
+			con500(mut conn)
+			continue
+		}
 		params, matched_rte := srv.find(data[0], req_path.path)
 		mut rte := if matched_rte.name.len != 0 { matched_rte } else { Route{ ctx: Context{ req: Request{}, res: Response{}}} }
-
+		
 		mut req := rte.ctx.req
 		mut res := rte.ctx.res
 		req.headers = http.parse_headers(s.split_into_lines())
@@ -78,37 +93,33 @@ pub fn (srv mut Server) serve(port int) {
 		req.path = req_path.path
 		res.path = req_path.path
 		req.params = params
-
+		
 		if req_path.raw_query.len != 0 {
 			query_map := req_path.query().data
-
+			
 			for q in query_map.keys() {
 				req.query[q] = query_map[q].data[0]
 			}
 		}
-
+		
 		if 'Cookie' in req.headers {
 			cookies_arr := req.headers['Cookie'].split('; ')
-
+			
 			for cookie_data in cookies_arr {
 				ck := cookie_data.split('=')
-				ck_val := urllib.query_unescape(ck[1]) or { 
-					res.send('<h1>500 Internal Server Error</h1>', 500)
-					write_body(res, conn) 
-					conn.close() or { return }
-					return
+				ck_val := urllib.query_unescape(ck[1]) or {
+					con500(mut conn)
+					continue
 				}
 				req.cookies[ck[0]] = ck_val
 			}
 		}
-
+		
 		if s == '' || data.len < 2 {
-			res.send('<h1>500 Internal Server Error</h1>', 500)
-			write_body(res, conn) 
-			conn.close() or { return }
-			return
+			con500(mut conn)
+			continue
 		}
-
+		
 		if srv.middlewares.len != 0 {
 			for mw in srv.middlewares {
 				if '*' in mw.whitelist || (req_path.path in mw.whitelist || !(req_path.path in mw.blacklist)) {
@@ -122,7 +133,7 @@ pub fn (srv mut Server) serve(port int) {
 			body_arr := s.split(separator)
 			req.body = body_arr[body_arr.len-1]
 		}
-
+		
 		if matched_rte.name.len != 0 {
 			handler := rte.handler
 			handler(req, mut res)
@@ -134,8 +145,8 @@ pub fn (srv mut Server) serve(port int) {
 		if !('Content-Type' in res.headers) {
 			res.set_header('Content-Type', 'text/plain')
 		}
-
+    
 		write_body(res, conn) 
-		conn.close() or { return }
+		conn.close() or { 0 }
 	}
 }

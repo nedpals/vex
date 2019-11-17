@@ -7,7 +7,7 @@ fn hello(req vex.Request, res mut vex.Response) {
 }
 
 fn main() {
-	s := vex.new()
+	mut s := vex.new()
 	s.get('/', hello)
 
 	s.serve(8000)
