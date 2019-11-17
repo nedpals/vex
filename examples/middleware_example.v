@@ -22,6 +22,8 @@ fn log_server(req vex.Request, res vex.Response) {
 
 fn main() {
     mut s := vex.new()
+	
+    // putting '!' before the path excludes the server from running a middleware on that path.
     s.connect(log_server, ['/', '!/hello'])
 
     s.serve_static('public')
