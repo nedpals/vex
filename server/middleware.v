@@ -1,11 +1,23 @@
 module server
 
 pub struct Middleware{
-pub mut:
-	func fn(req Request, res mut Response)
-	paths []string
+pub:
+	handler fn(req Request, res mut Response)
+mut:
+	whitelist []string
+	blacklist []string
 }
 
 pub fn (srv mut Server) connect(handler fn(req Request, res mut Response), paths []string) {
-	srv.middlewares << Middleware{ func: handler, paths: paths }
+	mut mw_strct := Middleware{ handler: handler, whitelist: [], blacklist: [] }
+
+	for path in paths {
+		if path.starts_with('!') || path != '*' {
+			mw_strct.blacklist << path.all_after('!')
+		} else {
+			mw_strct.whitelist << path
+		}
+	}
+
+	srv.middlewares << mw_strct
 }

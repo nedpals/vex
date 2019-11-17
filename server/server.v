@@ -111,6 +111,7 @@ pub fn (srv mut Server) serve(port int) {
 
 		if srv.middlewares.len != 0 {
 			for mw in srv.middlewares {
+				if '*' in mw.whitelist || (req_path.path in mw.whitelist || !(req_path.path in mw.blacklist)) {
 					mw_handler := mw.handler
 					mw_handler(req, mut res)
 				}
