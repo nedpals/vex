@@ -17,7 +17,7 @@ fn hello_world(req vex.Request, res mut vex.Response) {
 }
 
 fn log_server(req vex.Request, res vex.Response) {
-    prinln('${req.method} ${req.path}')
+    println('${req.method} ${req.path}')
 }
 
 fn main() {
