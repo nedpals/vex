@@ -51,8 +51,8 @@ pub fn (res mut Response) send(body string, status_code int) {
     res.body = body
     res.status_code = status_code
 
+    res.set_header('Server', 'Vex')
     res.set_header('X-Powered-By', 'Vex')
-    res.set_header('Content-Length', body.len.str())
 }
 
 pub fn (res mut Response) send_file(filename string, status_code int) {
