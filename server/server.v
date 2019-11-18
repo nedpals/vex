@@ -62,7 +62,7 @@ fn write_body(res &Response, conn &net.Socket) {
 	conn.close() or {}
 }
 
-fn get_static_file_content(req &Request, res mut Response) {
+fn get_static_file_content(req Request, res mut Response) {
 	res.send_file(req.path, 200)
 }
 
@@ -91,7 +91,7 @@ fn (srv mut Server) handle_http_connection(conn &net.Socket){
 	}
 	
 	params, matched_rte := srv.find(data[0], req_path.path)
-	mut rte := if matched_rte.name.len != 0 { matched_rte } else { Route{} }
+	mut rte := if matched_rte.name.len != 0 { matched_rte } else { Route{ctx: Context{ req: Request{}, res: Response{}}} }
 	
 	mut req := rte.ctx.req
 	mut res := rte.ctx.res
