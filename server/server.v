@@ -28,16 +28,16 @@ pub fn new() Server {
 fn write_body(res Response, conn net.Socket) {
 	statuscode_msg := status_code_msg(res.status_code)
 
-	conn.write('HTTP/1.1 ${res.status_code} ${statuscode_msg}\r')
+	conn.write('HTTP/1.1 ${res.status_code} ${statuscode_msg}\r') or {}
 
 	header_keys := res.headers.keys()	
 	for header_name in header_keys {
 		header_val := res.headers[header_name]
-		conn.write(header_name + ': ' + header_val)
+		conn.write(header_name + ': ' + header_val) or {}
 	}
 
-	conn.write('')
-	conn.write(res.body)
+	conn.write('') or {}
+	conn.write(res.body) or {}
 }
 
 fn get_static_file_content(req Request, res mut Response) {
