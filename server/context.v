@@ -32,7 +32,7 @@ pub mut:
 
 // Request
 pub fn (req Request) parse_form_body() map[string]string {
-    mut form_data_map := map[string]string{}
+    mut form_data_map := map[string]string
 
     if 'Content-Type' in req.headers && req.headers['Content-Type'] == 'application/x-www-form-urlencoded' {
         form_arr := req.body.split('&')
@@ -51,8 +51,8 @@ pub fn (res mut Response) send(body string, status_code int) {
     res.body = body
     res.status_code = status_code
 
+    res.set_header('Server', 'Vex')
     res.set_header('X-Powered-By', 'Vex')
-    res.set_header('Content-Length', body.len.str())
 }
 
 pub fn (res mut Response) send_file(filename string, status_code int) {
