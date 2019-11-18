@@ -15,15 +15,15 @@ struct Person {
     doing string
 }
 
-fn show_root(req server.Request, res mut server.Response) {
+fn show_root(req vex.Request, res mut vex.Response) {
     res.send_file('index.html', 200)  
 }
 
-fn print_json(req server.Request, res mut server.Response) {
+fn print_json(req vex.Request, res mut vex.Response) {
     res.send_json(json.encode(Person{ name: req.params['name'], doing: req.params['doing'] }), 200)
 }
 
-fn log_server(req server.Request, res server.Response) {
+fn log_server(req vex.Request, res vex.Response) {
     println('${req.path}')
 }
 
