@@ -95,18 +95,12 @@ fn (srv mut Server) handle_http_connection(conn &net.Socket){
 	
 	mut req := rte.ctx.req
 	mut res := rte.ctx.res
+	res.status_code = 200
 	req.headers = http.parse_headers(request_lines)
 	req.method = data[0]
 	req.path = req_path.path
 	res.path = req_path.path
 	req.params = params
-	
-	if req_path.raw_query.len != 0 {
-		query_map := req_path.query().data
-		for q in query_map.keys() {
-			req.query[q] = query_map[q].data[0]
-		}
-	}
 	
 	if 'Cookie' in req.headers {
 		cookies_arr := req.headers['Cookie'].split('; ')
@@ -121,20 +115,18 @@ fn (srv mut Server) handle_http_connection(conn &net.Socket){
 		}
 	}
 	
-	if srv.middlewares.len != 0 {
-		for mw in srv.middlewares {
-			if '*' in mw.whitelist || (req_path.path in mw.whitelist || !(req_path.path in mw.blacklist)) {
-				mw_handler := mw.handler
-				mw_handler(req, mut res)
-			}
+	if req_path.raw_query.len != 0 {
+		query_map := req_path.query().data
+		for q in query_map.keys() {
+			req.query[q] = query_map[q].data[0]
 		}
 	}
-	
+
 	if rte.method == 'POST' {
 		body_arr := first_line.split(separator)
 		req.body = body_arr[body_arr.len-1]
 	}
-	
+
 	if matched_rte.name.len != 0 {
 		handler := rte.handler
 		handler(req, mut res)
@@ -146,7 +138,14 @@ fn (srv mut Server) handle_http_connection(conn &net.Socket){
 	if !('Content-Type' in res.headers) {
 		res.set_header('Content-Type', 'text/plain')
 	}
-	
+
+	for mw in srv.middlewares {
+		if '*' in mw.whitelist || (req_path.path in mw.whitelist || !(req_path.path in mw.blacklist)) {
+			mw_handler := mw.handler
+			mw_handler(req, mut res)
+		}
+	}
+
 	write_body(res, conn)
 }
 
