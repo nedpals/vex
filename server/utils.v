@@ -1,7 +1,7 @@
 module server
 
 import os
-import mime
+import nedpals.mime
 
 // https://github.com/for-GET/know-your-http-well/blob/master/json/status-codes.json
 fn status_code_msg(code int) string {

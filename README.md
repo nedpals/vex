@@ -43,6 +43,7 @@ Vex is committed to bring some of its features and optimizations to the vweb fra
 
 ## Dependencies
 Vex uses [v-mime](https://github.com/nedpals/v-mime) to identify MIME types when serving files.
+You can install it with: `v install nedpals.mime`
 
 ## Roadmap
 - [X] Support for `GET`, `POST`, `PUT`, `PATCH`, `DELETE`, and `OPTION` HTTP methods.
