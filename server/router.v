@@ -40,7 +40,7 @@ fn match_route(method string, path string, routes []Route) ([]string, Route) {
 	}
 
 	route_name := '/' + path_arr[0]
-	child_routes := if path_arr.len > 1 { path_arr.slice(1, path_arr.len) } else { []string } 
+	child_routes := if path_arr.len > 1 { path_arr[1..path_arr.len] } else { []string } 
 
 	for route in routes {
 		if route.method == method {
@@ -109,7 +109,7 @@ fn (srv mut Server) create_route(method string, r_path string, cb HandlerFunc) {
 	}
 
 	root_route_name := '/' + route_paths[0]
-	route_children := if route_paths.len > 1 { route_paths.slice(1, route_paths.len) } else { []string }
+	route_children := if route_paths.len > 1 { route_paths[1..route_paths.len] } else { []string }
 	mut root_route_idx := srv.routes.index(method, root_route_name)
 	
 	if root_route_idx == -1 {
