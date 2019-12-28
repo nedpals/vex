@@ -36,10 +36,10 @@ fn main() {
 	db.exec('create table users (id integer primary key, name text default "");')
     
     s.serve_static('public')
-    s.get('/', fetch_homepage)
+    s.get('/', HandleFunc(fetch_homepage))
 
-    s.post('/users/new/:name', add_user)
-    s.get('/users', get_users)
+    s.post('/users/new/:name', HandleFunc(add_user))
+    s.get('/users', HandleFunc(get_users))
 
     s.serve(8000)
 }
