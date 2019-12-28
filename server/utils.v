@@ -1,6 +1,5 @@
 module server
 
-import os
 import nedpals.mime
 
 // https://github.com/for-GET/know-your-http-well/blob/master/json/status-codes.json
@@ -34,7 +33,6 @@ fn status_code_msg(code int) string {
 }
 
 fn mimetype(filename string) string {
-	ext := os.ext(filename)
 	mime_db := mime.load()
 	mut mt := mime_db.lookup(filename)
 

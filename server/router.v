@@ -131,7 +131,7 @@ fn (srv mut Server) create_route(method string, r_path string, cb HandlerFunc) {
 
 	if route_children.len >= 1 {
 		combined := route_children.join('/')
-		srv.routes[root_route_idx].handler = empty_cb
+		srv.routes[root_route_idx].handler = HandlerFunc(empty_cb)
 		srv.routes[root_route_idx].add_child_route(method, combined, cb)
 	} else {
 		srv.routes[root_route_idx].handler = cb
@@ -164,7 +164,7 @@ fn (rt mut Route) add_child_route(method string, path string, cb HandlerFunc) {
 	if route_children.len >= 1 {
 		combined := route_children.join('/')
 		rt.children[child_route_idx].add_child_route(method, combined, cb)
-		rt.children[child_route_idx].handler = empty_cb
+		rt.children[child_route_idx].handler = HandlerFunc(empty_cb)
 	} else {
 		rt.children[child_route_idx].handler = cb
 	}

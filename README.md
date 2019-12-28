@@ -6,35 +6,34 @@ Web framework written on V.
 ```v
 module main
 
-import vex.server as vex
+import nedpals.vex.server as vex
 import json
-import os
 
 struct Person {
-    name string
-    doing string
+	name string
+	doing string
 }
 
-fn show_root(req vex.Request, res mut vex.Response) {
-    res.send_file('index.html', 200)  
+fn show_root(req &vex.Request, res mut vex.Response) {
+	res.send_file('index.html', 200)
 }
 
-fn print_json(req vex.Request, res mut vex.Response) {
-    res.send_json(json.encode(Person{ name: req.params['name'], doing: req.params['doing'] }), 200)
+fn print_json(req &vex.Request, res mut vex.Response) {
+	res.send_json(json.encode(Person{ name: req.params['name'], doing: req.params['doing'] }), 200)
 }
 
-fn log_server(req vex.Request, res vex.Response) {
-    println('${req.path}')
+fn log_server(req &vex.Request, res vex.Response) {
+	println('${req.path}')
 }
 
 fn main() {
-    mut s := vex.new()
-    s.serve_static('public')
-    s.get('/', show_root)
-    s.get('/hey/:name/:doing', print_json)
-    s.connect(log_server, ['*', '!/hey']) // middleware
+	mut s := vex.new()
+	s.serve_static('public')
+	s.get('/', HandlerFunc(show_root))
+	s.get('/hey/:name/:doing', HandlerFunc(print_json))
+	s.connect(HandlerFunc(log_server), ['*', '!/hey']) // middleware
 
-    s.serve(6789)
+	s.serve(6789)
 }
 ```
 

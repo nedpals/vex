@@ -1,6 +1,6 @@
 module main
 
-import vex.server as vex
+import nedpals.vex.server as vex
 import json
 
 struct Person {
@@ -23,8 +23,8 @@ fn log_server(req vex.Request, res &vex.Response) {
 fn main() {
 	mut s := vex.new()
 	// putting '!' before the path excludes the server from running a middleware on that path.
-	s.connect(HandleFunc(log_server), ['/', '!/hello'])
-	s.get('/', HandleFunc(print_json))
-	s.get('/hello', HandleFunc(hello_world))
+	s.connect(HandlerFunc(log_server), ['/', '!/hello'])
+	s.get('/', HandlerFunc(print_json))
+	s.get('/hello', HandlerFunc(hello_world))
 	s.serve(8000)
 }

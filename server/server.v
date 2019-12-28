@@ -21,6 +21,7 @@ pub mut:
 	port int
 	routes []Route
 	middlewares []Middleware
+	connections u64
 }
 
 // create server
@@ -40,10 +41,10 @@ pub fn (srv mut Server) serve(port int) {
 
 pub fn (srv mut Server) serve_static(root_folder string) {
 	location := os.getwd() + '/' + root_folder
-	if !os.dir_exists(location) { return }
+	if !os.is_dir(location) { return }
 	files := os.ls(location) or { return }
 	for file in files {
-		srv.get('/${root_folder}/${file}', get_static_file_content)
+		srv.get('/${root_folder}/${file}', HandlerFunc(get_static_file_content))
 	}
 }
 
@@ -62,7 +63,7 @@ fn write_body(res &Response, conn &net.Socket) {
 	conn.close() or {}
 }
 
-fn get_static_file_content(req Request, res mut Response) {
+fn get_static_file_content(req &Request, res mut Response) {
 	res.send_file(req.path, 200)
 }
 
@@ -72,7 +73,8 @@ fn con500(conn &net.Socket){
 	write_body(eres, conn)
 }
 
-fn (srv mut Server) handle_http_connection(conn &net.Socket){	
+fn (srv mut Server) handle_http_connection(conn &net.Socket){
+	srv.connections++
 	request_lines := read_http_request_lines( conn )
 	if request_lines.len < 1 {
 		con500(conn)
@@ -91,7 +93,7 @@ fn (srv mut Server) handle_http_connection(conn &net.Socket){
 	}
 	
 	params, matched_rte := srv.find(data[0], req_path.path)
-	mut rte := if matched_rte.name.len != 0 { matched_rte } else { Route{ctx: Context{ req: Request{}, res: Response{}}} }
+	rte := if matched_rte.name.len != 0 { matched_rte } else { Route{ctx: Context{ req: Request{}, res: Response{}}} }
 	
 	mut req := rte.ctx.req
 	mut res := rte.ctx.res
@@ -157,7 +159,7 @@ fn read_http_request_lines(sock &net.Socket) []string {
 		mut res := '' // The buffered line, including the ending \n.
 		mut line := '' // The current line segment. Can be a partial without \n in it.
 		for {
-			n := int(C.recv(sock.sockfd, buf, HTTP_REQUEST_TYPICAL_SIZE-1, net.MSG_PEEK))
+			n := C.recv(sock.sockfd, buf, HTTP_REQUEST_TYPICAL_SIZE-1, net.MSG_PEEK)
 			//println('>> recv: ${n:4d} bytes .')
 			if n == -1 { return lines }
 			if n == 0 {	return lines }
@@ -196,4 +198,3 @@ fn read_http_request_lines(sock &net.Socket) []string {
 
 	return lines
 }
-
