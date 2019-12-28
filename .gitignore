@@ -1,7 +1,6 @@
 modules/
 test
-test.vexamples/db_example
-
+test.v
 examples/middleware_example
 examples/simple_example
 examples/db_example
