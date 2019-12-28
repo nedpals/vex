@@ -12,7 +12,7 @@ pub mut:
 }
 
 // empty callback
-fn empty_cb (req Request, res mut Response) {
+fn empty_cb (req &Request, res mut Response) {
 	res.set_header('Content-Type', 'text/html')
 	res.send('<h1>404 Not Found</h1>', 404)
 }
