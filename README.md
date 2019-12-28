@@ -1,5 +1,5 @@
 # Vex
-Web framework written on V inspired by [Express](https://expressjs.com/) and [Sinatra](https://sinatrarb.com).
+Web framework written on V.
 
 > Vex is still in its early stages and some of the parts were not implemented yet.
 
