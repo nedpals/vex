@@ -1,0 +1,12 @@
+{
+    "name": "vex",
+    "version": "0.0.1",
+    "author": ["Ned Palacios <npdoesmc@gmail.com>"],
+    "repo": "https://github.com/nedpals/vex",
+    "sources": [
+        "https://vpkg-project.github.io/registry/"
+    ],
+    "dependencies": [
+        "https://github.com/nedpals/v-mime"
+    ]
+}
