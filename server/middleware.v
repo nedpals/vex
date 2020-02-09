@@ -1,16 +1,16 @@
 module server
 
-type HandlerFunc fn(req mut Request, res mut Response)
+// type server__HandlerFunc fn(req mut Request, res mut Response)
 
 pub struct Middleware{
 pub:
-	handler HandlerFunc
+	handler fn(req mut Request, res mut Response)
 mut:
 	whitelist []string
 	blacklist []string
 }
 
-pub fn (srv mut Server) connect(handler HandlerFunc, paths []string) {
+pub fn (srv mut Server) connect(handler fn(req mut Request, res mut Response), paths []string) {
 	mut mw_strct := Middleware{ handler: handler, whitelist: [], blacklist: [] }
 
 	for path in paths {

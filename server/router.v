@@ -8,7 +8,7 @@ pub mut:
 	ctx Context
 	is_param bool
 	is_wildcard bool
-	handler HandlerFunc
+	handler fn(req mut Request, res mut Response)
 }
 
 // empty callback
@@ -97,7 +97,7 @@ fn (routes []Route) index(method string, path string) int {
 	return -1
 }
 
-fn (srv mut Server) create_route(method string, r_path string, cb HandlerFunc) {
+fn (srv mut Server) create_route(method string, r_path string, cb fn(req mut Request, res mut Response)) {
 	if !r_path.starts_with('/') {
 		panic('route paths must start with a forward slash (/)')
 	}
@@ -138,7 +138,7 @@ fn (srv mut Server) create_route(method string, r_path string, cb HandlerFunc) {
 	}
 }
 
-fn (rt mut Route) add_child_route(method string, path string, cb HandlerFunc) {
+fn (rt mut Route) add_child_route(method string, path string, cb fn(req mut Request, res mut Response)) {
 	path_arr := path.split('/')
 	child_route_name := '/' + path_arr[0]
 	route_children := if path_arr.len > 1 { path_arr[1..path_arr.len] } else { []string }
@@ -170,26 +170,26 @@ fn (rt mut Route) add_child_route(method string, path string, cb HandlerFunc) {
 	}
 }
 
-pub fn (srv mut Server) get(r_path string, cb HandlerFunc) {
+pub fn (srv mut Server) get(r_path string, cb fn(req mut Request, res mut Response)) {
 	srv.create_route('GET', r_path, cb)
 }
 
-pub fn (srv mut Server) post(r_path string, cb HandlerFunc) {
+pub fn (srv mut Server) post(r_path string, cb fn(req mut Request, res mut Response)) {
 	srv.create_route('POST', r_path, cb)
 }
 
-pub fn (srv mut Server) patch(r_path string, cb HandlerFunc) {
+pub fn (srv mut Server) patch(r_path string, cb fn(req mut Request, res mut Response)) {
 	srv.create_route('PATCH', r_path, cb)
 }
 
-pub fn (srv mut Server) delete(r_path string, cb HandlerFunc) {
+pub fn (srv mut Server) delete(r_path string, cb fn(req mut Request, res mut Response)) {
 	srv.create_route('DELETE', r_path, cb)
 }
 
-pub fn (srv mut Server) put(r_path string, cb HandlerFunc) {
+pub fn (srv mut Server) put(r_path string, cb fn(req mut Request, res mut Response)) {
 	srv.create_route('PUT', r_path, cb)
 }
 
-pub fn (srv mut Server) options(r_path string, cb HandlerFunc) {
+pub fn (srv mut Server) options(r_path string, cb fn(req mut Request, res mut Response)) {
 	srv.create_route('OPTIONS', r_path, cb)
 }

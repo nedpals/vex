@@ -5,7 +5,7 @@ module server
 
 import (
 	net
-	http
+	net.http
 	net.urllib
 	os
 	strings
@@ -129,7 +129,7 @@ fn (srv mut Server) handle_http_connection(conn &net.Socket){
 
 	if matched_rte.name.len != 0 {
 		handler := rte.handler
-		handler(req, mut res)
+		handler(mut req, mut res)
 	} else {
 		res.set_header('Content-Type', 'text/html')
 		res.send('<h1>404 Not Found</h1>', 404)
@@ -142,7 +142,7 @@ fn (srv mut Server) handle_http_connection(conn &net.Socket){
 	for mw in srv.middlewares {
 		if '*' in mw.whitelist || (req_path.path in mw.whitelist || !(req_path.path in mw.blacklist)) {
 			mw_handler := mw.handler
-			mw_handler(req, mut res)
+			mw_handler(mut req, mut res)
 		}
 	}
 
@@ -196,4 +196,3 @@ fn read_http_request_lines(sock &net.Socket) []string {
 
 	return lines
 }
-
