@@ -1,5 +1,5 @@
 # Vex
-Web framework written on V.
+Modular, easy-to-use, web framework for V.
 
 > Vex is still in its early stages and some of the parts were not implemented yet.
 
