@@ -53,7 +53,7 @@ fn main() {
 Vex is committed to bring some of its features and optimizations to the vweb framework once it is stable. 
 
 ## Static File Server
-Vex 0.2 removes the built-in static file server support (`serve_static` function) in favor of creating custom routes for service static assets. You can use the code below to implement the similar functionality as the previous one.
+Vex 0.2 removes the built-in static file server support (`serve_static` function) in favor of creating custom routes for serving static assets. You can use the code below to implement the similar functionality as the previous one.
 
 ```v
 
@@ -69,7 +69,7 @@ fn main() {
 ```
 
 ## Simplified Middleware API
-Middlewares tend to be used for any security-related purposes as well as for logging requests. With that in mind, Vex 0.2 has removed certain features (include/exclude routes, triggering location) in favor of a more simple middleware system which is only triggered before passing it to the matched routing handlers.
+Middlewares tend to be used for any security-related purposes as well as for logging requests. With that in mind, Vex 0.2 has removed certain features (include/exclude routes, triggering location) in favor of a more simple middleware system which is triggered right before passing it to the matched routing handlers.
 
 ```v
 // old
