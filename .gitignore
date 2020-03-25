@@ -1,3 +1,6 @@
 modules/
 test
 test.v
+public/
+index.html
+test.*
