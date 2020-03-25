@@ -1,6 +1,8 @@
 # Vex
 Web framework written on V.
 
+> ## The development of the Vex framework will be paused for now until the language matures.
+
 > Vex is still in its early stages and some of the parts were not implemented yet.
 
 ```v
