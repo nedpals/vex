@@ -1,10 +1,13 @@
-module server
+module utils
 
-import os
 import mime
 
+const (
+	mime_db = mime.load()
+)
+
 // https://github.com/for-GET/know-your-http-well/blob/master/json/status-codes.json
-fn status_code_msg(code int) string {
+pub fn status_code_msg(code int) string {
 	// partial
 	status := match code {
 		100 { 'Continue' }
@@ -33,9 +36,7 @@ fn status_code_msg(code int) string {
 	return status
 }
 
-fn mimetype(filename string) string {
-	ext := os.ext(filename)
-	mime_db := mime.load()
+pub fn identify_mime(filename string) string {
 	mut mt := mime_db.lookup(filename)
 
 	if mt.len == 0 {
