@@ -1,17 +1,18 @@
 module main
 
-import vex.server as vex
+import server
+import ctx
 import sqlite
 
 const (
     db = sqlite.connect(':memory:')
 )
 
-fn fetch_homepage(req vex.Request, res mut vex.Response) {
-    res.send_file('index.html', 200)  
+fn fetch_homepage(req ctx.Request, res mut ctx.Response) {
+    res.send_file('public/index.html', 200)  
 }
 
-fn get_users(req vex.Request, res mut vex.Response) {
+fn get_users(req ctx.Request, res mut ctx.Response) {
     users_from_db := db.exec('select * from users;')
     mut users := []string    
 
@@ -23,19 +24,22 @@ fn get_users(req vex.Request, res mut vex.Response) {
     res.send(users.str(), 200)
 }
 
-fn add_user(req vex.Request, res mut vex.Response) {
+fn add_user(req ctx.Request, res mut ctx.Response) {
     name := req.params['name']
 	db.exec('insert into users (name) values ("${name}");')
 
     get_users(req, mut res)
 }
 
+fn serve_static(req ctx.Request, res mut ctx.Response) {
+    res.send_file('public/' + req.params['path'], 200)
+}
+
 fn main() {
-    mut s := vex.new()  
+    mut s := ctx.new()  
     // db.exec('drop table if exists users;')
 	db.exec('create table users (id integer primary key, name text default "");')
     
-    s.serve_static('public')
     s.get('/', fetch_homepage)
 
     s.post('/users/new/:name', add_user)
