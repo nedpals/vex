@@ -1,5 +1,5 @@
 # Vex
-Modular, easy-to-use, web framework for V.
+Easy-to-use, modular web framework for V.
 
 > Vex is still in its early stages and some of the parts were not implemented yet.
 
