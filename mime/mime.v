@@ -1,6 +1,6 @@
 module mime
 
-import filepath
+import os
 
 
 pub struct MimeType {
@@ -59,7 +59,7 @@ pub fn (mdb Db) extension(text string) string {
 }
 
 pub fn (mdb Db) lookup(path string) string {
-    path_ext := filepath.ext('x.${path}').to_lower()
+    path_ext := os.ext('x.${path}').to_lower()
     extension := path_ext[1..path_ext.len]
 
     if extension.len == 0 { return '' }

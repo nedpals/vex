@@ -1,9 +1,9 @@
 module main
 
 import server as vex
-import ctx as c
+import ctx
 
-fn hello(req c.Request, res mut c.Response) {
+fn hello(req ctx.Request, res mut ctx.Response) {
 	res.send('Hello world!', 200)
 }
 

@@ -1,5 +1,7 @@
 module server
 
+import ctx
+
 pub fn (srv mut Server) get(r_path string, cb fn (req mut ctx.Request, res mut ctx.Response)) {
 	srv.router.get(r_path, cb)
 }
