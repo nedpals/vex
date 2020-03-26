@@ -10,16 +10,22 @@
 	
 </head>
 <body>
-
-	<h1>It works!</h1>
-	
-	<p>For online documentation and support please refer to
-	<a href="https://github.com/nedpals/vex">vex</a>.<br />
-	<em>It’s a web framework based on
-	<a href="https://vlang.io/">v and vweb</a>.</em></p>
 	
 	<p><a href="/users">All users</a></p>
-	<p><a href="/users/add">Add a user</a></p>
+	
+	<h1>Add user</h1>
+	<form id="form" method="post" onsubmit="set_action('form', 'name')">
+		<input id="name" name="name" value="" />
+		<input type="submit" value="Add">
+	</form>
+	
+	<script>
+		function set_action(f, n) {
+			var form = document.getElementById(f);
+			var name = document.getElementById(n).value;
+			form.action = '/users/new/' + name;
+		}
+	</script>
 
 </body>
 </html>

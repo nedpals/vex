@@ -10,6 +10,5 @@ fn hello(req ctx.Request, res mut ctx.Response) {
 fn main() {
 	mut s := vex.new()
 	s.get('/', hello)
-
-	s.serve(8000)
+	s.serve(8080)
 }

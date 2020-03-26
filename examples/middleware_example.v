@@ -5,12 +5,15 @@ import ctx
 import json
 
 struct Person {
-    name string
-    doing string
+	name  string
+	doing string
 }
 
 fn print_json(req ctx.Request, res mut ctx.Response) {
-    res.send_json(json.encode(Person{ name: req.query['name'], doing: req.query['doing'] }), 200)
+	res.send_json(json.encode(Person{
+		name: req.query['name']
+		doing: req.query['doing']
+	}), 200)
 }
 
 fn hello_world(req ctx.Request, res mut ctx.Response) {
@@ -18,16 +21,13 @@ fn hello_world(req ctx.Request, res mut ctx.Response) {
 }
 
 fn log_server(req ctx.Request, res ctx.Response) {
-    println('${req.method} ${req.path}')
+	println('${req.method} ${req.path}')
 }
 
 fn main() {
-    mut s := vex.new()
-	
-    // putting '!' before the path excludes the server from running a middleware on that path.
-    s.use(log_server)
-    s.get('/', print_json)
+	mut s := vex.new()
+	s.use(log_server)
+	s.get('/', print_json)
 	s.get('/hello', hello_world)
-
-    s.serve(8000)
+	s.serve(8080)
 }
