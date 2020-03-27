@@ -6,8 +6,8 @@ Easy-to-use, modular web framework for V.
 ```v
 module main
 
-import nedpals.vex.server
-import nedpals.vex.ctx
+import vex.server // or nedpals.vex.server
+import vex.ctx // or nedpals.vex.ctx
 
 fn show_root(req ctx.Request, res mut ctx.Response) {
     res.send_file('index.html', 200)
@@ -45,7 +45,7 @@ fn main() {
     s.post('/multipart', multipart_test)
     
     s.use(log_server)
-    s.serve(8080)
+    s.serve(6789)
 }
 ```
 
