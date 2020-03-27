@@ -1,6 +1,15 @@
+*.bak
+*.exe
+*.log
+*.log.*
+*.sublime-project
+*.sublime-workspace
+*.vscode
+.idea/
+examples/*_example
+index.html
 modules/
+public/
 test
 test.v
-public/
-index.html
 test.*
