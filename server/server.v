@@ -84,8 +84,6 @@ fn (srv mut Server) handle_http_connection(conn &net.Socket) {
 		return
 	}
 	
-	println(request_lines.join('\n'))
-	
 	mut req := ctx.Request{
 		headers: http.parse_headers(request_lines),
 		method: data[0],
