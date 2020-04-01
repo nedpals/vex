@@ -28,23 +28,19 @@ pub fn new() Router {
 	return Router{ routes: [] }
 }
 
-pub fn (rter mut Router) listen(req mut ctx.Request, res mut ctx.Response) {
+pub fn (rter Router) listen(req mut ctx.Request, res mut ctx.Response) {
 	mut params_map := map[string]string
 	matched_routes, route := match_route(req.method, req.path, rter.routes)
 
 	for matched in matched_routes {
-		if matched.typ == .param {
-			params_map[matched.name.all_after('/:')] = matched.path
-		}
-
-		if matched.typ == .wildcard {
-			mut wildcard_name := matched.name.all_after('/*')
-
-			if wildcard_name.len == 0 {
-				wildcard_name = '*'
+		match matched.typ {
+			.param { params_map[matched.name.all_after('/:')] = matched.path }
+			.wildcard {
+				mut wildcard_name := matched.name.all_after('/*')
+				if wildcard_name.len == 0 { wildcard_name = '*' }
+				params_map[wildcard_name] = matched.path
 			}
-
-			params_map[wildcard_name] = matched.path
+			else {}
 		}
 	}
 
@@ -52,43 +48,37 @@ pub fn (rter mut Router) listen(req mut ctx.Request, res mut ctx.Response) {
 	route.handler(req, mut res)
 } 
 
-fn match_route(method string, path string, routes []Route) ([]MatchedRoute, Route) {	
-	mut matched_arr := []MatchedRoute
+fn match_route(method string, path string, routes []Route) ([]&MatchedRoute, Route) {	
+	mut matched_arr := []&MatchedRoute
 	route_name, child_routes := get_route_name_and_children(path)
+	mut selected_route := Route{}
 
 	for route in routes {
 		if route.method == method && (route.name == route_name || route.typ in [.param, .wildcard]) {
 			if route.name == route_name || route.typ == .param {
+				matched_arr << &MatchedRoute{
+					name: route.name,
+					typ: route.typ,
+					path: route_name
+				}
+
 				if child_routes.len >= 1 {
 					child_params, child_route := match_route(method, child_routes.join('/'), route.children)
-
-					matched_arr << MatchedRoute{
-						name: route.name,
-						typ: route.typ,
-						path: route_name
-					}
-
 					matched_arr << child_params
-					return matched_arr, child_route
-				} else {
-					matched_arr << MatchedRoute{
-						name: route.name,
-						typ: route.typ,
-						path: route_name
-					}
-
-					return matched_arr, route
+					selected_route = child_route
 				}
 			}
 
 			if route.typ == .wildcard {
-				matched_arr << MatchedRoute{
+				matched_arr << &MatchedRoute{
 					name: route.name,
+					typ: route.typ,
 					path: path
 				}
-				
-				return matched_arr, route
+				selected_route = route
 			}
+
+			return matched_arr, selected_route
 		}
 	}
 
