@@ -117,7 +117,7 @@ fn (srv mut Server) handle_http_connection(conn &net.Socket) {
 	}
 
 	srv.router.listen(mut req, mut res)
-	write_body(res, conn)
+	write_body(&res, conn)
 }
 
 fn read_http_request_lines(sock &net.Socket) []string {
