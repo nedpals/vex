@@ -32,7 +32,7 @@ pub fn (req mut Request) parse_cookies() {
 	}    
 }
 
-pub fn (req mut Request) process_query(parsed_path urllib.URL) {
+pub fn (req mut Request) parse_queries(parsed_path urllib.URL) {
     if parsed_path.raw_query.len != 0 {
 		query_map := parsed_path.query().data
 		for q in query_map.keys() {

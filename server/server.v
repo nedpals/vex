@@ -94,7 +94,7 @@ fn (srv mut Server) handle_http_connection(conn &net.Socket) {
 	}
 	
 	req.parse_cookies()
-	req.process_query(req_path)
+	req.parse_queries(req_path)
 
 	if req.method == 'POST' {
 		body_arr := first_line.split(separator)
