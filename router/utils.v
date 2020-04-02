@@ -12,3 +12,8 @@ fn get_route_name_and_children(path string) (string, []string) {
 
     return name, children
 }
+
+// empty callback
+fn send_404 (req ctx.Request, res mut ctx.Response) {
+	res.send_status(404)
+}

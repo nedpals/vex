@@ -14,7 +14,7 @@ pub mut:
 	name string
 	children []Route
 	typ RouteType
-	handler ctx.HandlerFunc = ctx.HandlerFunc(empty_cb)
+	handler ctx.HandlerFunc = ctx.HandlerFunc(send_404)
 }
 
 fn (routes []Route) has_wildcard() bool {
@@ -52,10 +52,7 @@ fn (routes []Route) index(method string, path string) int {
 }
 
 fn identify_route_type(route_name string) RouteType {
-	if (route_name.len <= 1) {
-		return .regular
-	}
-
+	if (route_name.len <= 1) { return .regular }
 	prefix := route_name[..2]
 
 	match prefix {

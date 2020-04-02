@@ -18,12 +18,6 @@ struct MatchedRoute {
 	path string
 }
 
-// empty callback
-fn empty_cb (req ctx.Request, res mut ctx.Response) {
-	res.set_header('Content-Type', 'text/html')
-	res.send('<h1>404 Not Found</h1>', 404)
-}
-
 pub fn new() Router {
 	return Router{ routes: [] }
 }
