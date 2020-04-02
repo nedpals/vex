@@ -61,7 +61,7 @@ fn write_body(res &ctx.Response, conn &net.Socket) {
 
 fn send_500(conn &net.Socket){
 	mut eres := ctx.Response{}
-	eres.send('<h1>500 Internal Server Error</h1>', 500)
+	eres.send_status(500)
 	write_body(eres, conn)
 }
 
