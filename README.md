@@ -3,6 +3,8 @@ Easy-to-use, modular web framework for V.
 
 > Vex is still in its early stages and some of the parts were not implemented yet.
 
+![Example written on Vex](examples/example.png)
+
 ```v
 module main
 
