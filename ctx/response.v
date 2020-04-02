@@ -1,5 +1,6 @@
 module ctx
 
+import html
 import os
 import utils
 
@@ -29,6 +30,11 @@ pub fn (res mut Response) send_status(status_code int) {
     msg := utils.status_code_msg(status_code)
     res.set_header('Content-Type', 'text/html')
     res.send('<h1>$status_code $msg</h1>', status_code)
+}
+
+pub fn (res mut Response) send_html(ht html.Tag, status_code int) {
+    res.set_header('Content-Type', 'text/html')
+    res.send(ht.html(), status_code)
 }
 
 pub fn (res mut Response) redirect(url string) {
