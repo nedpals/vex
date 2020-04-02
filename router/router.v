@@ -104,12 +104,13 @@ fn (rter mut Router) create_route(method string, r_path string, cb ctx.HandlerFu
 			children: [],
 			typ: identify_route_type(root_route_name)
 		}
+
 		root_route_idx = rter.routes.index(method, root_route_name)
 	}
 
 	if route_children.len >= 1 {
 		combined := route_children.join('/')
-		rter.routes[root_route_idx].add_child_route(method, combined, cb)
+		rter.routes[root_route_idx].add_child(method, combined, cb)
 	} else {
 		rter.routes[root_route_idx].handler = cb
 	}
