@@ -49,32 +49,25 @@ pub fn (rter Router) listen(req mut ctx.Request, res mut ctx.Response) {
 } 
 
 fn match_route(method string, path string, routes []Route) ([]&MatchedRoute, Route) {	
+	r_name, children := get_route_name_and_children(path)
 	mut matched_arr := []&MatchedRoute
-	route_name, child_routes := get_route_name_and_children(path)
-	mut selected_route := Route{}
 
 	for route in routes {
-		if route.method == method && (route.name == route_name || route.typ in [.param, .wildcard]) {
-			if route.name == route_name || route.typ == .param {
-				matched_arr << &MatchedRoute{
-					name: route.name,
-					typ: route.typ,
-					path: route_name
-				}
+		if route.method == method && (route.name == r_name || route.typ in [.param, .wildcard]) {
+			mut selected_route := route
 
-				if child_routes.len >= 1 {
-					child_params, child_route := match_route(method, child_routes.join('/'), route.children)
-					matched_arr << child_params
-					selected_route = child_route
+			if route.name == r_name || route.typ == .param {
+				matched_arr << &MatchedRoute{route.name, route.typ, r_name}
+
+				if children.len >= 1 {
+					matched_child, child := match_route(method, children.join('/'), route.children)
+					matched_arr << matched_child
+					selected_route = child
 				}
 			}
 
 			if route.typ == .wildcard {
-				matched_arr << &MatchedRoute{
-					name: route.name,
-					typ: route.typ,
-					path: path
-				}
+				matched_arr << &MatchedRoute{route.name, route.typ, path}
 				selected_route = route
 			}
 
