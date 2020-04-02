@@ -34,7 +34,7 @@ pub fn (rter Router) listen(req mut ctx.Request, res mut ctx.Response) {
 
 	for matched in matched_routes {
 		match matched.typ {
-			.param { params_map[matched.name.all_after('/:')] = matched.path }
+			.param { params_map[matched.name.all_after('/:')] = matched.path.all_after('/') }
 			.wildcard {
 				mut wildcard_name := matched.name.all_after('/*')
 				if wildcard_name.len == 0 { wildcard_name = '*' }
