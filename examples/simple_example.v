@@ -1,6 +1,6 @@
 module main
 
-import server as vex
+import server
 import ctx
 
 fn hello(req ctx.Request, res mut ctx.Response) {
@@ -8,7 +8,7 @@ fn hello(req ctx.Request, res mut ctx.Response) {
 }
 
 fn main() {
-	mut s := vex.new()
+	mut s := server.new()
 	s.get('/', hello)
 	s.serve(8080)
 }
