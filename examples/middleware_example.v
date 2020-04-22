@@ -9,25 +9,22 @@ struct Person {
 	doing string
 }
 
-fn print_json(req ctx.Request, res mut ctx.Response) {
-	res.send_json(json.encode(Person{
-		name: req.query['name']
-		doing: req.query['doing']
-	}), 200)
-}
-
-fn hello_world(req ctx.Request, res mut ctx.Response) {
-	res.send('Hello World!', 200)
-}
-
-fn log_server(req ctx.Request, res ctx.Response) {
-	println('${req.method} ${req.path}')
-}
-
 fn main() {
 	mut s := vex.new()
-	s.use(log_server)
-	s.get('/', print_json)
-	s.get('/hello', hello_world)
+	s.use(fn (req ctx.Req, res ctx.Resp) {
+		println('${req.method} ${req.path}')
+	})
+
+	s.get('/', fn (req ctx.Req, res mut ctx.Resp) {
+		res.send_json(json.encode(Person{
+			name: req.query['name']
+			doing: req.query['doing']
+		}), 200)
+	})
+	
+	s.get('/hello', fn (req ctx.Req, res mut ctx.Resp) {
+		res.send('Hello World!', 200)
+	})
+	
 	s.serve(8080)
 }
