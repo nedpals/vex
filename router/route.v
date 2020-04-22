@@ -30,8 +30,8 @@ fn (routes []Route) has_wildcard_or_param() bool {
 }
 
 fn (routes []Route) index(method string, path string) int {
-	for i, route in routes {
-		if route.method == method && route.name == path {
+	for i, r in routes {
+		if r.method == method && r.name == path {
 			return i
 		}
 	}
@@ -40,7 +40,7 @@ fn (routes []Route) index(method string, path string) int {
 }
 
 fn identify_route_type(route_name string) RouteType {
-	if (route_name.len <= 1) { return .regular }
+	if route_name.len <= 1 { return .regular }
 	prefix := route_name[..2]
 
 	match prefix {
