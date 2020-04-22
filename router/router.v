@@ -39,7 +39,8 @@ pub fn (rter Router) listen(req mut ctx.Req, res mut ctx.Resp) {
 	}
 
 	req.params = params_map
-	route.handler(req, mut res)
+	handler := route.handler
+	handler(req, mut res)
 } 
 
 fn match_route(method string, path string, routes []Route) ([]&MatchedRoute, Route) {	
