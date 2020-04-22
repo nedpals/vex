@@ -11,61 +11,45 @@ module main
 import vex.server // or nedpals.vex.server
 import vex.ctx // or nedpals.vex.ctx
 
-fn show_root(req ctx.Request, res mut ctx.Response) {
-    res.send_file('index.html', 200)
-}
-
-fn params_test(req ctx.Request, res mut ctx.Response) {
-    res.send('path: ' + req.params['name'], 200)
-}
-
-fn complex_wildcard_test(req ctx.Request, res mut ctx.Response) {
-    res.send('username: ' + req.params['name'] + '\npath: ' + req.params['path'], 200)
-}
-
-fn multipart_test(req ctx.Request, res mut ctx.Response) {
-    res.send('multipart test', 200)
-}
-
-fn assets_test(req ctx.Request, res mut ctx.Response) {
-    res.send_file('public/' + req.params['path'], 200)
-}
-
-fn log_server(req mut ctx.Request, res mut ctx.Response) {
-    println('request: ${req.time.unix}')
-    println('response: ${res.time.unix}')
-
-    println('${req.path}')
-}
-
 fn main() {
     mut s := server.new()
-    s.get('/test', show_root)
-    s.get('/public/*path', assets_test)
-    s.get('/path/:name', params_test)
-    s.get('/complex/:name/*path', complex_wildcard_test)
-    s.post('/multipart', multipart_test)
+    s.get('/', fn (req ctx.Req, res mut ctx.Resp) {
+        res.send_file('index.html', 200)
+    })
     
-    s.use(log_server)
+    s.get('/public/*path', fn (req ctx.Req, res mut ctx.Resp) {
+        res.send_file('public/' + req.params['path'], 200)
+    })
+
+    s.get('/path/:name', fn (req ctx.Req, res mut ctx.Resp) {
+        res.send('path: ' + req.params['name'], 200)
+    })
+
+    s.get('/complex/:name/*path', fn (req ctx.Req, res mut ctx.Resp) {
+        res.send('username: ' + req.params['name'] + '\npath: ' + req.params['path'], 200)
+    })
+
+    s.use(fn (req mut ctx.Req, res mut ctx.Resp) {
+        println('request: ${req.time.unix}')
+        println('response: ${res.time.unix}')
+
+        println('${req.path}')
+    })
+
     s.serve(6789)
 }
 ```
-
-## vex and `vweb`
-Vex is committed to bring some of its features and optimizations to the vweb framework once it is stable. 
 
 ## Static File Server
 Vex 0.2 removes the built-in static file server support (`serve_static` function) in favor of creating custom routes for serving static assets. You can use the code below to implement the similar functionality as the previous one.
 
 ```v
 
-fn serve_assets(req ctx.Request, res mut ctx.Response) {
-    res.send_file('public/' + req.params['path'], 200)
-}
-
 fn main() {
     // ...
-    s.get('/public/*path', serve_assets)
+    s.get('/public/*path', fn (req ctx.Req, res mut ctx.Resp) {
+        res.send_file('public/' + req.params['path'], 200)
+    })
     // ...
 }
 ```
@@ -75,12 +59,12 @@ Middlewares tend to be used for any security-related purposes as well as for log
 
 ```v
 // old
-fn log_server_old(req vex.Request, res vex.Response) {
+fn log_server_old(req vex.Req, res vex.Resp) {
     println('${req.path}')
 }
 
 // new
-fn log_server(req mut ctx.Request, res mut ctx.Response) {
+fn log_server(req mut ctx.Req, res mut ctx.Resp) {
     println('request: ${req.time.unix}')
     println('response: ${res.time.unix}')
 
@@ -116,7 +100,7 @@ Vex now stores a fork of [v-mime](https://github.com/nedpals/v-mime) to avoid er
 2. Create your feature branch (`git checkout -b my-new-feature`)
 3. Commit your changes (`git commit -am 'Add some feature'`)
 4. Push to the branch (`git push origin my-new-feature`)
-5. Create a new Pull Request
+5. Create a new Pull Req
 
 ## Examples
 Examples can be found at the [`/examples`](/examples) directory.
