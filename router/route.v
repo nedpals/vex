@@ -14,7 +14,7 @@ pub mut:
 	name string
 	children []Route
 	typ RouteType
-	handler ctx.HandlerFunc = ctx.HandlerFunc(send_404)
+	handler ctx.HandlerFunc = ctx.send_404
 }
 
 fn (routes []Route) has_type(typ RouteType) bool {
