@@ -17,28 +17,16 @@ pub mut:
 	handler ctx.HandlerFunc = ctx.HandlerFunc(send_404)
 }
 
-fn (routes []Route) has_wildcard() bool {
+fn (routes []Route) has_type(typ RouteType) bool {
 	for route in routes {
-		if route.typ == .wildcard {
-			return true
-		}
+		if route.typ == typ { return true }
 	}
-	
-	return false
-}
 
-fn (routes []Route) has_param() bool {
-	for route in routes {
-		if route.typ == .param {
-			return true
-		}
-	}
-	
 	return false
 }
 
 fn (routes []Route) has_wildcard_or_param() bool {
-	return routes.has_param() || routes.has_wildcard()
+	return routes.has_type(.param) || routes.has_type(.wildcard)
 }
 
 fn (routes []Route) index(method string, path string) int {
