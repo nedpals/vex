@@ -22,7 +22,7 @@ pub fn new() Router {
 	return Router{ routes: [] }
 }
 
-pub fn (rter Router) listen(req mut ctx.Request, res mut ctx.Response) {
+pub fn (rter Router) listen(req mut ctx.Req, res mut ctx.Resp) {
 	mut params_map := map[string]string
 	matched_routes, route := match_route(req.method, req.path, rter.routes)
 

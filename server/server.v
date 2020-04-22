@@ -44,7 +44,7 @@ pub fn (srv mut Server) serve(port int) {
 	}
 }
 
-fn write_body(res &ctx.Response, conn &net.Socket) {
+fn write_body(res &ctx.Resp, conn &net.Socket) {
 	mut response := strings.new_builder(1024)
 	statuscode_msg := utils.status_code_msg(res.status_code)
 	response.write('HTTP/1.1 ${res.status_code} ${statuscode_msg}$separator')
@@ -60,7 +60,7 @@ fn write_body(res &ctx.Response, conn &net.Socket) {
 }
 
 fn send_500(conn &net.Socket){
-	mut eres := ctx.Response{}
+	mut eres := ctx.Resp{}
 	eres.send_status(500)
 	write_body(eres, conn)
 }
@@ -84,7 +84,7 @@ fn (srv mut Server) handle_http_connection(conn &net.Socket) {
 		return
 	}
 	
-	mut req := ctx.Request{
+	mut req := ctx.Req{
 		headers: http.parse_headers(request_lines),
 		method: data[0],
 		path: req_path.path,
@@ -101,7 +101,7 @@ fn (srv mut Server) handle_http_connection(conn &net.Socket) {
 		req.body = body_arr[body_arr.len-1]
 	}
 
-	mut res := ctx.Response{
+	mut res := ctx.Resp{
 		status_code: 200,
 		path: req_path.path,
 		headers: {
@@ -113,7 +113,8 @@ fn (srv mut Server) handle_http_connection(conn &net.Socket) {
 	}
 
 	for mw in srv.middlewares {
-		mw.handler(mut req, mut res)
+		mwh := mw.handler
+		mwh(mut req, mut res)
 	}
 
 	srv.router.listen(mut req, mut res)

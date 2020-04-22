@@ -2,7 +2,7 @@ module ctx
 
 import time
 
-pub struct Request {
+pub struct Req {
 pub mut:
     body string
     method string
@@ -15,7 +15,7 @@ pub mut:
     time time.Time
 }
 
-pub struct Response {
+pub struct Resp {
 pub mut:
     body string
     status_code int
@@ -26,5 +26,5 @@ pub mut:
     time time.Time
 }
 
-pub type HandlerFunc fn (req Request, res mut Response)
-pub type MutHandlerFunc fn (req mut Request, res mut Response)
+pub type HandlerFunc fn (req Req, res mut Resp)
+pub type MutHandlerFunc fn (req mut Req, res mut Resp)

@@ -2,8 +2,8 @@ module ctx
 
 import net.urllib
 
-// Request
-pub fn (req Request) parse_form_body() map[string]string {
+// Req
+pub fn (req Req) parse_form_body() map[string]string {
     mut form_data_map := map[string]string
 
     if 'Content-Type' in req.headers && req.headers['Content-Type'] == 'application/x-www-form-urlencoded' {
@@ -18,7 +18,7 @@ pub fn (req Request) parse_form_body() map[string]string {
     return form_data_map
 }
 
-pub fn (req mut Request) parse_cookies() {
+pub fn (req mut Req) parse_cookies() {
     if 'Cookie' in req.headers {
 		cookies_arr := req.headers['Cookie'].split('; ')
 		
@@ -32,7 +32,7 @@ pub fn (req mut Request) parse_cookies() {
 	}    
 }
 
-pub fn (req mut Request) parse_queries(parsed_path urllib.URL) {
+pub fn (req mut Req) parse_queries(parsed_path urllib.URL) {
     if parsed_path.raw_query.len != 0 {
 		query_map := parsed_path.query().data
 		for q in query_map.keys() {
