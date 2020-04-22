@@ -103,26 +103,26 @@ fn (rter mut Router) create_route(method string, r_path string, cb ctx.HandlerFu
 	}
 }
 
-pub fn (rter mut Router) get(r_path string, cb fn (req mut ctx.Request, res mut ctx.Response)) {
-	rter.create_route('GET', r_path, ctx.HandlerFunc(cb))
+pub fn (rter mut Router) get(r_path string, cb ctx.HandlerFunc) {
+	rter.create_route('GET', r_path, cb)
 }
 
-pub fn (rter mut Router) post(r_path string, cb fn (req mut ctx.Request, res mut ctx.Response)) {
-	rter.create_route('POST', r_path, ctx.HandlerFunc(cb))
+pub fn (rter mut Router) post(r_path string, cb ctx.HandlerFunc) {
+	rter.create_route('POST', r_path, cb)
 }
 
-pub fn (rter mut Router) patch(r_path string, cb fn (req mut ctx.Request, res mut ctx.Response)) {
-	rter.create_route('PATCH', r_path, ctx.HandlerFunc(cb))
+pub fn (rter mut Router) patch(r_path string, cb ctx.HandlerFunc) {
+	rter.create_route('PATCH', r_path, cb)
 }
 
-pub fn (rter mut Router) delete(r_path string, cb fn (req mut ctx.Request, res mut ctx.Response)) {
-	rter.create_route('DELETE', r_path, ctx.HandlerFunc(cb))
+pub fn (rter mut Router) delete(r_path string, cb ctx.HandlerFunc) {
+	rter.create_route('DELETE', r_path, cb)
 }
 
-pub fn (rter mut Router) put(r_path string, cb fn (req mut ctx.Request, res mut ctx.Response)) {
-	rter.create_route('PUT', r_path, ctx.HandlerFunc(cb))
+pub fn (rter mut Router) put(r_path string, cb ctx.HandlerFunc) {
+	rter.create_route('PUT', r_path, cb)
 }
 
-pub fn (rter mut Router) options(r_path string, cb fn (req mut ctx.Request, res mut ctx.Response)) {
-	rter.create_route('OPTIONS', r_path, ctx.HandlerFunc(cb))
+pub fn (rter mut Router) options(r_path string, cb ctx.HandlerFunc) {
+	rter.create_route('OPTIONS', r_path, cb)
 }
