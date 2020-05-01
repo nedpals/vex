@@ -12,7 +12,6 @@ pub mut:
     resource string
     cookies map[string]string
     headers map[string]string
-    time time.Time
 }
 
 pub struct Resp {
@@ -23,7 +22,7 @@ pub mut:
     resource string
     cookies map[string]string
     headers map[string]string
-    time time.Time
+    time time.StopWatch
 }
 
 pub type HandlerFunc = fn (req Req, res mut Resp)

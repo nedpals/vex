@@ -40,6 +40,7 @@ pub fn (rter Router) listen(req mut ctx.Req, res mut ctx.Resp) {
 
 	req.params = params_map
 	handler := route.handler
+	res.time.pause()
 	handler(req, mut res)
 } 
 

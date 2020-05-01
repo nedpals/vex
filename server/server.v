@@ -66,6 +66,8 @@ fn send_500(conn &net.Socket){
 }
 
 fn (srv mut Server) handle_http_connection(conn &net.Socket) {	
+	mut stopwatch := time.new_stopwatch()
+	stopwatch.start()
 	request_lines := read_http_request_lines( conn )
 	if request_lines.len < 1 {
 		send_500(conn)
@@ -89,8 +91,7 @@ fn (srv mut Server) handle_http_connection(conn &net.Socket) {
 		method: data[0],
 		path: req_path.path,
 		cookies: map[string]string,
-		query: map[string]string,
-		time: time.now()
+		query: map[string]string
 	}
 	
 	req.parse_cookies()
@@ -109,16 +110,12 @@ fn (srv mut Server) handle_http_connection(conn &net.Socket) {
 			'Server': 'Vex',
 			'X-Powered-By': 'Vex'
 		},
-		time: time.now()
-	}
-
-	for mw in srv.middlewares {
-		mwh := mw.handler
-		mwh(mut req, mut res)
+		time: stopwatch
 	}
 
 	srv.router.listen(mut req, mut res)
 	write_body(&res, conn)
+	stopwatch.restart()
 }
 
 fn read_http_request_lines(sock &net.Socket) []string {
