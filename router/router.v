@@ -46,7 +46,7 @@ pub fn (rter Router) listen(req mut ctx.Req, res mut ctx.Resp) {
 
 fn match_route(method string, path string, routes []Route) ([]&MatchedRoute, Route) {	
 	r_name, children := get_route_name_and_children(path)
-	mut matched_arr := []&MatchedRoute
+	mut matched_arr := []&MatchedRoute{}
 
 	for route in routes {
 		if route.method == method && (route.name == r_name || route.typ in [.param, .wildcard]) {
