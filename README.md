@@ -40,48 +40,8 @@ fn main() {
 }
 ```
 
-## Static File Server
-Vex 0.2 removes the built-in static file server support (`serve_static` function) in favor of creating custom routes for serving static assets. You can use the code below to implement the similar functionality as the previous one.
-
-```v
-
-fn main() {
-    // ...
-    s.get('/public/*path', fn (req ctx.Req, res mut ctx.Resp) {
-        res.send_file('public/' + req.params['path'], 200)
-    })
-    // ...
-}
-```
-
-## Simplified Middleware API
-Middlewares tend to be used for any security-related purposes as well as for logging requests. With that in mind, Vex 0.2 has removed certain features (include/exclude routes, triggering location) in favor of a more simple middleware system which is triggered right before passing it to the matched routing handlers.
-
-```v
-// old
-fn log_server_old(req vex.Req, res vex.Resp) {
-    println('${req.path}')
-}
-
-// new
-fn log_server(req mut ctx.Req, res mut ctx.Resp) {
-    println('request: ${req.time.unix}')
-    println('response: ${res.time.unix}')
-
-    println('${req.path}')
-}
-
-fn main() {
-    // ...
-    s.connect(log_server_old, ['*']) // old
-    s.use(log_server) // new
-    // ...
-}
-```
-
-## Dependencies
-~~Vex uses v-mime to identify MIME types when serving files.~~
-Vex now stores a fork of [v-mime](https://github.com/nedpals/v-mime) to avoid errors when using it in subdirectories.
+## Installation & Getting Started
+Learn how to setup and use Vex by reading the [Wiki](https://github.com/nedpals/vex/wiki/Installation).
 
 ## Roadmap
 - [X] Support for `GET`, `POST`, `PUT`, `PATCH`, `DELETE`, and `OPTION` HTTP methods.
@@ -91,6 +51,7 @@ Vex now stores a fork of [v-mime](https://github.com/nedpals/v-mime) to avoid er
 - [x] Body parsing (supports raw text for now)
 - [x] Middleware support
 - [x] Cookie parsing (basic support)
+- [ ] Websocket Server
 - [ ] Form data parsing
   - [x] `application/x-www-form-urlencoded` support
   - [ ] `multipart/form-data` support
