@@ -26,8 +26,8 @@ pub mut:
     time time.Time
 }
 
-pub type HandlerFunc fn (req Req, res mut Resp)
-pub type MutHandlerFunc fn (req mut Req, res mut Resp)
+pub type HandlerFunc = fn (req Req, res mut Resp)
+pub type MutHandlerFunc = fn (req mut Req, res mut Resp)
 
 fn send_404(req Req, res mut Resp) {
 	res.send_status(404)
