@@ -17,11 +17,14 @@ const (
 	HTTP_REQUEST_TYPICAL_SIZE = 1024
 )
 
+pub type ServerHandlerFunc = fn (srv mut Server, req mut ctx.Req, req mut ctx.Resp)
+
 pub struct Server {
 pub mut:
 	port int
 	router router.Router
 	middlewares []Middleware
+	handler ServerHandlerFunc = handle
 }
 
 // create server
@@ -63,6 +66,15 @@ fn send_500(conn &net.Socket){
 	mut eres := ctx.Resp{}
 	eres.send_status(500)
 	write_body(eres, conn)
+}
+
+pub fn handle(srv mut Server, req mut ctx.Req, res mut ctx.Resp) {
+	for mw in srv.middlewares {
+		mwh := mw.handler
+		mwh(mut req, mut res)
+	}
+
+	srv.router.listen(mut req, mut res)
 }
 
 fn (srv mut Server) handle_http_connection(conn &net.Socket) {	
@@ -113,13 +125,14 @@ fn (srv mut Server) handle_http_connection(conn &net.Socket) {
 		time: stopwatch
 	}
 
-	srv.router.listen(mut req, mut res)
+	srv_handler := srv.handler
+	srv_handler(mut srv, mut req, mut res)
 	write_body(&res, conn)
 	stopwatch.restart()
 }
 
 fn read_http_request_lines(sock &net.Socket) []string {
-	mut lines := []string
+	mut lines := []string{}
 	mut buf := [HTTP_REQUEST_TYPICAL_SIZE]byte // where C.recv will store the network data
 
 	for {
