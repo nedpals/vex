@@ -54,8 +54,7 @@ fn write_body(res &ctx.Resp, conn &net.Socket) {
 	for header_name, header_value in res.headers {
 		response.write('$header_name: ${header_value}$separator')
 	}
-	response.write('Content-Length: ${res.body.len}$separator')
-	response.write('Connection: close$separator')
+	response.write('Content-Length: ${res.body.len}${separator}Connection: close$separator')
 	conn.write(response.str()) or {}
 	response.free()
 	conn.send(res.body.str, res.body.len) or {}
