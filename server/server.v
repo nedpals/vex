@@ -43,7 +43,7 @@ pub fn (srv mut Server) serve(port int) {
 	}
 	for {
 		conn := listener.accept() or {panic("conn accept() failed.")}
-		srv.handle_http_connection(conn)
+		srv.handle_http_connection(&conn)
 	}
 }
 
