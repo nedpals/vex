@@ -36,7 +36,7 @@ pub fn new() Server {
 }
 
 pub fn (srv mut Server) serve(port int) {
-	println('Serving at port: $port')
+	println('[vex] Vex HTTP Server has started.\n[vex] Serving on http://localhost:$port')
 	srv.port = port
 	listener := net.listen(srv.port) or {
 		panic("Failed to listen to port $port")
