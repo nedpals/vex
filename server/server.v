@@ -17,7 +17,7 @@ const (
 	HTTP_REQUEST_TYPICAL_SIZE = 1024
 )
 
-pub type ServerHandlerFunc = fn (srv mut Server, req mut ctx.Req, req mut ctx.Resp)
+pub type ServerHandlerFunc = fn (mut srv Server, mut req ctx.Req, mut res ctx.Resp)
 
 pub struct Server {
 pub mut:
@@ -35,7 +35,7 @@ pub fn new() Server {
 	}
 }
 
-pub fn (srv mut Server) serve(port int) {
+pub fn (mut srv Server) serve(port int) {
 	println('[vex] Vex HTTP Server has started.\n[vex] Serving on http://localhost:$port')
 	srv.port = port
 	listener := net.listen(srv.port) or {
@@ -43,7 +43,7 @@ pub fn (srv mut Server) serve(port int) {
 	}
 	for {
 		conn := listener.accept() or {panic("conn accept() failed.")}
-		srv.handle_http_connection(&conn)
+		handle_http_connection(mut srv, &conn)
 	}
 }
 
@@ -67,7 +67,7 @@ fn send_500(conn &net.Socket){
 	write_body(eres, conn)
 }
 
-pub fn handle(srv mut Server, req mut ctx.Req, res mut ctx.Resp) {
+pub fn handle(mut srv Server, mut req ctx.Req, mut res ctx.Resp) {
 	for mw in srv.middlewares {
 		mwh := mw.handler
 		mwh(mut req, mut res)
@@ -76,7 +76,7 @@ pub fn handle(srv mut Server, req mut ctx.Req, res mut ctx.Resp) {
 	srv.router.listen(mut req, mut res)
 }
 
-fn (srv mut Server) handle_http_connection(conn &net.Socket) {	
+fn handle_http_connection(mut srv Server, conn &net.Socket) {	
 	mut stopwatch := time.new_stopwatch()
 	stopwatch.start()
 	request_lines := read_http_request_lines( conn )
@@ -140,8 +140,7 @@ fn read_http_request_lines(sock &net.Socket) []string {
 		for {
 			n := C.recv(sock.sockfd, buf, HTTP_REQUEST_TYPICAL_SIZE-1, net.MSG_PEEK)
 			//println('>> recv: ${n:4d} bytes .')
-			if n == -1 { return lines }
-			if n == 0 {	return lines }
+			if n in [-1, 0] { return lines }
 			buf[n] = `\0`
 			mut eol_idx := -1
 			for i := 0; i < n; i++ {

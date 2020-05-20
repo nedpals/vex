@@ -50,7 +50,7 @@ fn identify_route_type(route_name string) RouteType {
 	}
 }
 
-fn (rt mut Route) add_child(method string, path string, cb ctx.HandlerFunc) {
+fn (mut rt Route) add_child(method string, path string, cb ctx.HandlerFunc) {
 	child_route_name, route_children := get_route_name_and_children(path)
 	mut child_route_idx := rt.children.index(method, child_route_name)
 	if child_route_idx == -1 {

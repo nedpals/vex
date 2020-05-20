@@ -17,9 +17,9 @@ pub:
 }
 
 fn is_mime(text string) bool {
-    _text := text.split('/')
+    txt := text.split('/')
 
-    if _text.len != 2 { return false }
+    if txt.len != 2 { return false }
 
     return true
 }
@@ -40,10 +40,10 @@ pub fn (mdb Db) content_type(text string) string {
     mime := if !is_mime(text) { mdb.lookup(text) } else { text }
 
     if mdb.db[mime].charset.len != 0 {
-        _charset := mdb.charset(mime)
+        chrst := mdb.charset(mime)
         
-        if _charset.len != 0 { 
-            return mime + '; charset=${_charset.to_lower()}'
+        if chrst.len != 0 { 
+            return mime + '; charset=${chrst.to_lower()}'
         }
     }
 
@@ -51,11 +51,11 @@ pub fn (mdb Db) content_type(text string) string {
 }
 
 pub fn (mdb Db) extension(text string) string {
-    _type := mdb.db[text.to_lower()]
+    typ := mdb.db[text.to_lower()]
 
-    if !is_mime(text) || _type.extensions.len == 0 { return '' }
+    if !is_mime(text) || typ.extensions.len == 0 { return '' }
 
-    return _type.extensions[0]
+    return typ.extensions[0]
 }
 
 pub fn (mdb Db) lookup(path string) string {

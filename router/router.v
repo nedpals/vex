@@ -74,7 +74,7 @@ fn match_route(method string, path string, routes []Route) ([]&MatchedRoute, Rou
 	return matched_arr, Route{}
 }
 
-fn (rter mut Router) create_route(method string, r_path string, cb ctx.HandlerFunc) {
+fn (mut rter Router) create_route(method string, r_path string, cb ctx.HandlerFunc) {
 	if !r_path.starts_with('/') {
 		panic('route paths must start with a forward slash (/)')
 	}
@@ -105,26 +105,26 @@ fn (rter mut Router) create_route(method string, r_path string, cb ctx.HandlerFu
 	}
 }
 
-pub fn (rter mut Router) get(r_path string, cb ctx.HandlerFunc) {
+pub fn (mut rter Router) get(r_path string, cb ctx.HandlerFunc) {
 	rter.create_route('GET', r_path, cb)
 }
 
-pub fn (rter mut Router) post(r_path string, cb ctx.HandlerFunc) {
+pub fn (mut rter Router) post(r_path string, cb ctx.HandlerFunc) {
 	rter.create_route('POST', r_path, cb)
 }
 
-pub fn (rter mut Router) patch(r_path string, cb ctx.HandlerFunc) {
+pub fn (mut rter Router) patch(r_path string, cb ctx.HandlerFunc) {
 	rter.create_route('PATCH', r_path, cb)
 }
 
-pub fn (rter mut Router) delete(r_path string, cb ctx.HandlerFunc) {
+pub fn (mut rter Router) delete(r_path string, cb ctx.HandlerFunc) {
 	rter.create_route('DELETE', r_path, cb)
 }
 
-pub fn (rter mut Router) put(r_path string, cb ctx.HandlerFunc) {
+pub fn (mut rter Router) put(r_path string, cb ctx.HandlerFunc) {
 	rter.create_route('PUT', r_path, cb)
 }
 
-pub fn (rter mut Router) options(r_path string, cb ctx.HandlerFunc) {
+pub fn (mut rter Router) options(r_path string, cb ctx.HandlerFunc) {
 	rter.create_route('OPTIONS', r_path, cb)
 }

@@ -18,7 +18,7 @@ pub fn (req Req) parse_form_body() map[string]string {
     return form_data_map
 }
 
-pub fn (req mut Req) parse_cookies() {
+pub fn (mut req Req) parse_cookies() {
     if 'Cookie' in req.headers {
 		cookies_arr := req.headers['Cookie'].split('; ')
 		
@@ -32,7 +32,7 @@ pub fn (req mut Req) parse_cookies() {
 	}    
 }
 
-pub fn (req mut Req) parse_queries(parsed_path urllib.URL) {
+pub fn (mut req Req) parse_queries(parsed_path urllib.URL) {
     if parsed_path.raw_query.len != 0 {
 		query_map := parsed_path.query().data
 		for q in query_map.keys() {
