@@ -14,7 +14,7 @@ import time
 
 const (
 	separator = '\r\n'
-	HTTP_REQUEST_TYPICAL_SIZE = 1024
+	http_request_typical_size = 1024
 )
 
 pub type ServerHandlerFunc = fn (mut srv Server, mut req ctx.Req, mut res ctx.Resp)
@@ -36,7 +36,7 @@ pub fn new() Server {
 }
 
 pub fn (mut srv Server) serve(port int) {
-	println('[vex] Vex HTTP Server has started.\n[vex] Serving on http://localhost:$port')
+	//println('[vex] Vex HTTP Server has started.\n[vex] Serving on http://localhost:$port')
 	srv.port = port
 	listener := net.listen(srv.port) or {
 		panic("Failed to listen to port $port")
@@ -77,7 +77,7 @@ pub fn handle(mut srv Server, mut req ctx.Req, mut res ctx.Resp) {
 }
 
 fn handle_http_connection(mut srv Server, conn &net.Socket) {	
-	mut stopwatch := time.new_stopwatch()
+	mut stopwatch := time.new_stopwatch({})
 	stopwatch.start()
 	request_lines := read_http_request_lines( conn )
 	if request_lines.len < 1 {
@@ -132,13 +132,13 @@ fn handle_http_connection(mut srv Server, conn &net.Socket) {
 
 fn read_http_request_lines(sock &net.Socket) []string {
 	mut lines := []string{}
-	mut buf := [HTTP_REQUEST_TYPICAL_SIZE]byte // where C.recv will store the network data
+	mut buf := [http_request_typical_size]byte{} // where C.recv will store the network data
 
 	for {
 		mut res := '' // The buffered line, including the ending \n.
 		mut line := '' // The current line segment. Can be a partial without \n in it.
 		for {
-			n := C.recv(sock.sockfd, buf, HTTP_REQUEST_TYPICAL_SIZE-1, net.MSG_PEEK)
+			n := C.recv(sock.sockfd, buf, http_request_typical_size-1, net.msg_peek)
 			//println('>> recv: ${n:4d} bytes .')
 			if n in [-1, 0] { return lines }
 			buf[n] = `\0`

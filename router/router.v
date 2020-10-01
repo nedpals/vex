@@ -8,7 +8,7 @@ const (
 
 pub struct Router {
 mut:	
-	parent_path string = ''
+	parent_path string
 	routes []Route
 }
 
@@ -22,7 +22,7 @@ pub fn new() Router {
 	return Router{ routes: [] }
 }
 
-pub fn (rter Router) listen(req mut ctx.Req, res mut ctx.Resp) {
+pub fn (rter Router) listen(mut req ctx.Req, mut res ctx.Resp) {
 	mut params_map := map[string]string
 	matched_routes, route := match_route(req.method, req.path, rter.routes)
 
