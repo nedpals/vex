@@ -7,7 +7,7 @@ mut:
   name string
   props map[string]string
   children []Tag
-  text string = ''
+  text string
 }
 
 pub fn (tag Tag) str() string {
