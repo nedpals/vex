@@ -25,9 +25,9 @@ pub mut:
     time time.StopWatch
 }
 
-pub type HandlerFunc = fn (req Req, res mut Resp)
-pub type MutHandlerFunc = fn (req mut Req, res mut Resp)
+pub type HandlerFunc = fn (req Req, mut res Resp)
+pub type MutHandlerFunc = fn (mut req Req, mut res Resp)
 
-fn send_404(req Req, res mut Resp) {
+fn send_404(req Req, mut res Resp) {
 	res.send_status(404)
 }
