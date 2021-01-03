@@ -5,7 +5,7 @@ import ctx
 
 fn main() {
 	mut s := server.new()
-	s.get('/', fn (req ctx.Req, res mut ctx.Resp) {
+	s.route(.get, '/', fn (req &ctx.Req, res mut ctx.Resp) {
 		res.send('Hello world!', 200)
 	})
 	

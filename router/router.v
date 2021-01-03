@@ -8,6 +8,7 @@ enum Kind {
 	regular
 }
 
+// List of supported HTTP methods.
 pub enum Method {
 	get
 	post
@@ -38,7 +39,9 @@ fn identify_kind(route_name string) Kind {
 	}
 }
 
-fn extract_route_path(path string) ?(string, string, string) {
+// extract_route_path returns the name, the parameter name (if present),
+// and the remaining children route paths
+pub fn extract_route_path(path string) ?(string, string, string) {
 	if !path.starts_with('/') {
 		return error('route path must start with a slash (/)')
 	}
@@ -69,6 +72,8 @@ fn extract_route_path(path string) ?(string, string, string) {
 	return name, param_name, children
 }
 
+// add creates a new route based on the given method, path, and the handlers.
+// See `router.Method` for the list of available methods.
 pub fn (mut routes map[string]Route) add(method Method, path string, handlers ...ctx.HandlerFunc) ? {
 	if '*' in routes || ':' in routes {
 		return error('only one wildcard or param route in an endpoint group is allowed.')
@@ -95,6 +100,7 @@ pub fn (mut routes map[string]Route) add(method Method, path string, handlers ..
 	routes[name].methods[method_str] = handlers
 }
 
+// find searches the matching route and returns the injected params data and the route handlers.
 pub fn (routes map[string]Route) find(method string, path string) ?(map[string]string, []ctx.HandlerFunc) {
 	mut r_name, mut param_name, children := extract_route_path(path)?
 	mut params := map[string]string{}

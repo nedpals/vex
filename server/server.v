@@ -26,10 +26,12 @@ pub fn new() Server {
 	return Server{}
 }
 
+// route creates a new route
 pub fn (mut s Server) route(method router.Method, path string, handlers ...ctx.HandlerFunc) {
 	s.router.add(method, path, handlers...) or { panic(err) }
 }
 
+// serve starts the server at the give port
 pub fn (mut srv Server) serve(port int) {
 	println('[vex] Vex HTTP Server has started.\n[vex] Serving on http://localhost:$port') 
 	listener := net.listen_tcp(port) or {
@@ -44,6 +46,7 @@ pub fn (mut srv Server) serve(port int) {
 	}
 }
 
+// write_body writes the response body into the TCP server
 fn write_body(res &ctx.Resp, mut conn net.TcpConn) {
 	mut response := strings.new_builder(1024)
 	statuscode_msg := utils.status_code_msg(res.status_code)
@@ -63,6 +66,7 @@ fn send_500(mut conn net.TcpConn){
 	write_body(&eres, mut conn)
 }
 
+// handle_http_connection processes the incoming request and returns a response.
 fn handle_http_connection(mut srv Server, mut conn net.TcpConn) {	
 	mut reader := io.new_buffered_reader(reader: io.make_reader(conn))
 	first_line := reader.read_line() or {
