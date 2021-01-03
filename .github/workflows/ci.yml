@@ -9,6 +9,30 @@ on:
     - master
 
 jobs:
+  build-docs:
+    runs-on: ubuntu-latest
+    timeout-minutes: 30
+    if: github.event_name == 'push'
+    env:
+      VFLAGS: -cc tcc
+    steps:
+      - name: Checkout V
+        uses: actions/checkout@v2
+        with:
+          repository: vlang/v
+      - uses: actions/checkout@v2
+        with:
+          path: vex
+      - name: Build local v
+        run: make -j4
+      - name: Generate docs
+        run: ./v doc -f html -m ./vex
+      - name: Deploy
+        uses: peaceiris/actions-gh-pages@v3
+        with:
+          github_token: ${{ secrets.GITHUB_TOKEN }}
+          publish_dir: ./vex/_docs
+
   ubuntu-tcc:
     runs-on: ubuntu-latest
     timeout-minutes: 30
