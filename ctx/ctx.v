@@ -7,7 +7,7 @@ import utils
 
 pub type HandlerFunc = fn (req &Req, mut res Resp)
 
-pub type MutHandlerFunc = fn (mut req Req, mut res Resp)
+pub type MiddlewareFunc = fn (mut req Req, mut res Resp)
 
 // Server request data
 pub struct Req {

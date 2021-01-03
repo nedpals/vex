@@ -10,6 +10,32 @@ enum Kind {
 	regular
 }
 
+pub struct Router {
+mut:
+	routes map[string]&Route
+	middlewares []ctx.MiddlewareFunc
+}
+
+// route is a shortcut method to `r.routes.route` method
+pub fn (mut r Router) route(method Method, path string, handlers ...ctx.HandlerFunc) {
+	r.routes.route(method, path, handlers...)
+}
+
+// group is a shortcut method to `r.routes.group` method
+pub fn (mut r Router) group(prefix string, callback GroupCallbackFn) {
+	r.routes.group(prefix, callback)
+}
+
+// find is a shortcut method to `r.routes.find` method
+pub fn (r Router) find(method string, path string) ?(map[string]string, []ctx.MiddlewareFunc, []ctx.HandlerFunc) {
+	return r.routes.find(method, path)
+}
+
+// use registers handlers as app-wide middlewares
+pub fn (mut r Router) use(handlers ...ctx.HandlerFunc) {
+	r.middlewares << handlers
+}
+
 // List of supported HTTP methods.
 pub enum Method {
 	get
@@ -22,13 +48,14 @@ pub enum Method {
 
 [ref_only]
 pub struct Route {
-	name       string
-	param_name string
-	method     Method
-	kind       Kind
+	name        string
+	param_name  string
+	method      Method
+	kind        Kind
 mut:
-	children   map[string]&Route
-	methods    map[string][]ctx.HandlerFunc
+	children    map[string]&Route
+	methods     map[string][]ctx.HandlerFunc
+	middlewares []ctx.MiddlewareFunc
 }
 
 // empty str to avoid cgen error
@@ -101,7 +128,7 @@ fn (mut routes map[string]&Route) add(method Method, path string, handlers ...ct
 }
 
 // find searches the matching route and returns the injected params data and the route handlers.
-pub fn (routes map[string]&Route) find(method string, path string) ?(map[string]string, []ctx.HandlerFunc) {
+pub fn (routes map[string]&Route) find(method string, path string) ?(map[string]string, []ctx.MiddlewareFunc, []ctx.HandlerFunc) {
 	mut r_name, mut param_name, children := extract_route_path(path) ?
 	mut params := map[string]string{}
 	param_value := r_name
@@ -120,16 +147,16 @@ pub fn (routes map[string]&Route) find(method string, path string) ?(map[string]
 	}
 	route := routes[r_name]
 	if r_name != '*' && children.len > 0 {
-		child_params, handlers := route.children.find(method, children) ?
+		child_params, child_route_middlewares, handlers := route.children.find(method, children) ?
 		for name, value in child_params {
 			params[name] = value
 		}
 		unsafe { child_params.free() }
-		return params, handlers
+		return params, child_route_middlewares, handlers
 	} else if method !in route.methods {
 		return error('method not found')
 	}
-	return params, route.methods[method]
+	return params, route.middlewares, route.methods[method]
 }
 
 // route creates a new route based on the given method, path, and the handlers.
@@ -139,7 +166,7 @@ pub fn (mut routes map[string]&Route) route(method Method, path string, handlers
 }
 
 // group adds a series of routes into the desired prefix
-pub fn (mut routes map[string]&Route) group(path string, callback GroupCallbackFn) ? {
+pub fn (mut routes map[string]&Route) group(path string, callback GroupCallbackFn, middlewares ...ctx.MiddlewareFunc) {
 	mut new_routes := map[string]&Route{}
 	mut route := &Route{}
 	mut children := path
@@ -148,14 +175,14 @@ pub fn (mut routes map[string]&Route) group(path string, callback GroupCallbackF
 	mut name := ''
 	mut cur_routes := routes
 	for children.len > 0 {
-		new_name, param_name, new_children := extract_route_path(children) ?
+		new_name, param_name, new_children := extract_route_path(children) or { panic(err) }
 		children = new_children
 		name = new_name
 
 		if ('*' in cur_routes || ':' in cur_routes) && name !in ['*', ':'] {
-			return error('only one wildcard or param route in an endpoint group is allowed.')
+			panic('only one wildcard or param route in an endpoint group is allowed.')
 		} else if name !in cur_routes {
-			cur_routes.add(.get, '/$name$param_name$children', ctx.send_404) ?
+			cur_routes.add(.get, '/$name$param_name$children', ctx.send_404) or { panic(err) }
 		}
 
 		route = unsafe { cur_routes[name] }
@@ -166,11 +193,15 @@ pub fn (mut routes map[string]&Route) group(path string, callback GroupCallbackF
 		if new_path.len == 0 {
 			for method_name, new_handlers in new_route.methods {
 				route.methods[method_name] = new_handlers
+				route.middlewares << middlewares
 			}
 			continue
 		}
 
-		unsafe { cur_routes[new_path] = new_route }
+		unsafe { 
+			cur_routes[new_path] = new_route 
+			cur_routes[new_path].middlewares << middlewares
+		}
 	}
 
 	unsafe { new_routes.free() }

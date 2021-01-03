@@ -302,11 +302,12 @@ fn test_routes_find_simple() {
 		assert false
 		return
 	}
-	params, handlers := routes.find('get', '/') or {
+	params, middlewares, handlers := routes.find('get', '/') or {
 		assert false
 		return
 	}
 	assert params.len == 0
+	assert middlewares.len == 0
 	assert handlers.len == 1
 }
 
@@ -316,11 +317,12 @@ fn test_routes_find_with_params() {
 		assert false
 		return
 	}
-	params, handlers := routes.find('get', '/user/bob') or {
+	params, middlewares, handlers := routes.find('get', '/user/bob') or {
 		assert false
 		return
 	}
 	assert params.len == 1
+	assert middlewares.len == 0
 	assert 'username' in params
 	assert params['username'] == 'bob'
 	assert handlers.len == 1
@@ -332,11 +334,12 @@ fn test_routes_find_with_wildcard() {
 		assert false
 		return
 	}
-	params, handlers := routes.find('get', '/dest/foo/bar/baz/boo') or {
+	params, middlewares, handlers := routes.find('get', '/dest/foo/bar/baz/boo') or {
 		assert false
 		return
 	}
 	assert params.len == 1
+	assert middlewares.len == 0
 	assert 'path' in params
 	assert params['path'] == 'foo/bar/baz/boo'
 	assert handlers.len == 1
@@ -359,4 +362,20 @@ fn test_routes_group_simple() {
 	assert routes['foo'].children['bar'].methods['get'].len == 2
 	assert 'post' in routes['foo'].children['bar'].methods
 	assert routes['foo'].children['bar'].methods['post'].len == 1
+}
+
+fn dummy_middleware(mut req ctx.Req, mut res ctx.Resp) {}
+
+fn test_routes_group_simple_with_middleware() {
+	mut routes := map[string]&Route{}
+	routes.group('/foo', fn (mut rt map[string]&Route) {
+		rt.route(.get, '/', dummy_handler)
+	}, dummy_middleware)
+	assert routes['foo'].middlewares.len == 1
+}
+
+fn test_router_use_simple() {
+	mut router := Router{}
+	router.use(dummy_middleware, dummy_middleware)
+	assert router.middlewares.len == 2
 }

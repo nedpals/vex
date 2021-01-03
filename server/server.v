@@ -16,23 +16,12 @@ const (
 )
 
 pub struct Server {
-mut:
-	router map[string]&router.Route
+	router.Router
 }
 
 // create server
 pub fn new() Server {
 	return Server{}
-}
-
-// route creates a new route
-pub fn (mut s Server) route(method router.Method, path string, handlers ...ctx.HandlerFunc) {
-	s.router.route(method, path, handlers...)
-}
-
-// group inserts a group of routes based on the path prefix given.
-pub fn (mut s Server) group(prefix string, callback router.GroupCallbackFn) {
-	s.router.group(prefix, callback)
 }
 
 // serve starts the server at the give port
@@ -128,17 +117,19 @@ fn handle_http_connection(mut srv Server, mut conn net.TcpConn) {
 			'Server':       'Vex'
 		}
 	}
-	// for mw in srv.middlewares {
-	// 	mwh := mw.handler
-	// 	mwh(mut req, mut res)
-	// }
-	params, handlers := srv.router.find(req.method.to_lower(), req.path) or {
+	params, route_middlewares, handlers := srv.find(req.method.to_lower(), req.path) or {
 		ctx.send_404(req, mut res)
 		return
 	}
 	req.params = params
+	for app_middleware in srv.middlewares {
+		app_middleware(mut req, mut res)
+	}
+	for route_middleware in route_middlewares {
+		route_middleware(mut req, mut res)
+	}
 	for route_handler in handlers {
-		route_handler(req, mut res)
+		route_handler(&req, mut res)
 	}
 	write_body(&res, mut conn)
 }

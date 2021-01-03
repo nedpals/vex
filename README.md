@@ -8,8 +8,18 @@ module main
 import nedpals.vex.server
 import nedpals.vex.ctx
 
+fn print_req_info(mut req ctx.Req, mut res ctx.Resp) {
+	println('${req.method} ${req.path}')
+}
+
+fn do_stuff(mut req ctx.Req, mut res ctx.Resp) {
+	println('incoming request!')
+}
+
 fn main() {
     mut s := server.new()
+    s.use(do_stuff, print_req_info)
+
     s.route(.get, '/', fn (req &ctx.Req, mut res ctx.Resp) {
         res.send_file('index.html', 200)
     })
@@ -38,9 +48,10 @@ Learn how to setup and use Vex by reading the [Wiki](https://github.com/nedpals/
 ## Roadmap
 - [X] Support for `GET`, `POST`, `PUT`, `PATCH`, `DELETE`, and `OPTION` HTTP methods.
 - [x] HTTP Router (Wildcards are now supported)
+- [x] Route groups (non-reusable for now)
 - [x] ~~Static file server~~
 - [x] Params and query parsing
-- [ ] Middleware support (removed for now)
+- [x] Middleware support
 - [x] Cookie parsing (basic support)
 - [ ] Websocket Server
 - [ ] Body parsing
