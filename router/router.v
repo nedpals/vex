@@ -2,129 +2,130 @@ module router
 
 import ctx
 
-const (
-	exceeded_paramwildcard_route_err = 'Only one wildcard or param is allowed.'
-)
-
-pub struct Router {
-mut:	
-	parent_path string
-	routes []Route
+enum Kind {
+	wildcard
+	param
+	regular
 }
 
-struct MatchedRoute {
-	name string
-	typ RouteType
-	path string
+pub enum Method {
+	get
+	post
+	patch
+	put
+	delete
+	options
 }
 
-pub fn new() Router {
-	return Router{ routes: [] }
+struct Route {
+	name          string
+	param_name    string
+	method        Method
+	kind          Kind
+mut:
+	children      map[string]Route
+	methods       map[string][]ctx.HandlerFunc
 }
 
-pub fn (rter Router) listen(mut req ctx.Req, mut res ctx.Resp) {
-	mut params_map := map[string]string
-	matched_routes, route := match_route(req.method, req.path, rter.routes)
+fn identify_kind(route_name string) Kind {
+	if route_name.len == 0 { 
+		return .regular 
+	}
+	match route_name[0] {
+		`:` { return .param }
+		`*` { return .wildcard }
+		else { return .regular }
+	}
+}
 
-	for matched in matched_routes {
-		match matched.typ {
-			.param { params_map[matched.name.all_after('/:')] = matched.path.all_after('/') }
-			.wildcard {
-				mut wildcard_name := matched.name.all_after('/*')
-				if wildcard_name.len == 0 { wildcard_name = '*' }
-				params_map[wildcard_name] = matched.path
-			}
-			else {}
-		}
+fn extract_route_path(path string) ?(string, string, string) {
+	if !path.starts_with('/') {
+		return error('route path must start with a slash (/)')
 	}
 
-	req.params = params_map
-	handler := route.handler
-	res.time.pause()
-	handler(req, mut res)
-} 
+  mut paths := path[1..].split('/')
+	mut param_name := ''
+	mut children := ''
+	mut name := paths[0]
+	mut has_wildcard := false
 
-fn match_route(method string, path string, routes []Route) ([]&MatchedRoute, Route) {	
-	r_name, children := get_route_name_and_children(path)
-	mut matched_arr := []&MatchedRoute{}
-
-	for route in routes {
-		if route.method == method && (route.name == r_name || route.typ in [.param, .wildcard]) {
-			mut selected_route := route
-
-			if route.name == r_name || route.typ == .param {
-				matched_arr << &MatchedRoute{route.name, route.typ, r_name}
-
-				if children.len >= 1 {
-					matched_child, child := match_route(method, children.join('/'), route.children)
-					matched_arr << matched_child
-					selected_route = child
-				}
-			}
-
-			if route.typ == .wildcard {
-				matched_arr << &MatchedRoute{route.name, route.typ, path}
-				selected_route = route
-			}
-
-			return matched_arr, selected_route
-		}
-	}
-
-	return matched_arr, Route{}
-}
-
-fn (mut rter Router) create_route(method string, r_path string, cb ctx.HandlerFunc) {
-	if !r_path.starts_with('/') {
-		panic('route paths must start with a forward slash (/)')
-	}
-
-	root_route_name, route_children := get_route_name_and_children(r_path)
-	mut root_route_idx := rter.routes.index(method, root_route_name)
+	if name.len >= 1 && name[0] in [`:`, `*`] {
+		has_wildcard = name[0] == `*`
+		param_name = if has_wildcard && name.len == 1 { '*' } else { name[1..] }
+		name = name[0].str()
+	} 
 	
-	if root_route_idx == -1 {
-		if rter.routes.has_wildcard_or_param() {
-			panic(exceeded_paramwildcard_route_err)
+	if paths.len > 1 { 
+		if has_wildcard {
+			return error('wildcard routes should not have children routes')
 		}
 
-		rter.routes << Route{ 
-			method: method, 
-			name: root_route_name, 
-			children: [],
-			typ: identify_route_type(root_route_name)
+		children = '/' + paths[1..].join('/')
+	}
+
+	$if debug {
+		println('name: $name | param_name: $param_name | children: $children')
+	}
+	return name, param_name, children
+}
+
+pub fn (mut routes map[string]Route) add(method Method, path string, handlers ...ctx.HandlerFunc) ? {
+	if '*' in routes || ':' in routes {
+		return error('only one wildcard or param route in an endpoint group is allowed.')
+	}
+
+	name, param_name, children := extract_route_path(path)?
+	if name !in routes {
+		routes[name] = Route{ 
+			method: method
+			param_name: param_name
+			name: name
+			kind: identify_kind(name)
 		}
-
-		root_route_idx = rter.routes.index(method, root_route_name)
 	}
 
-	if route_children.len >= 1 {
-		combined := route_children.join('/')
-		rter.routes[root_route_idx].add_child(method, combined, cb)
-	} else {
-		rter.routes[root_route_idx].handler = cb
+	if children.len > 0 {
+		routes[name].children.add(method, children, handlers...)?
+		return
+	} else if handlers.len == 0 {
+		return error('provided route handlers are empty')
 	}
+
+	method_str := method.str()
+	routes[name].methods[method_str] = handlers
 }
 
-pub fn (mut rter Router) get(r_path string, cb ctx.HandlerFunc) {
-	rter.create_route('GET', r_path, cb)
-}
+pub fn (routes map[string]Route) find(method string, path string) ?(map[string]string, []ctx.HandlerFunc) {
+	mut r_name, mut param_name, children := extract_route_path(path)?
+	mut params := map[string]string{}
+	param_value := r_name
 
-pub fn (mut rter Router) post(r_path string, cb ctx.HandlerFunc) {
-	rter.create_route('POST', r_path, cb)
-}
+	if r_name !in routes {
+		if ':' in routes || '*' in routes {
+			r_name = if '*' in routes { '*' } else { ':' }
+			param_name = routes[r_name].param_name
+		} else {
+			return error('not found')
+		}
+	}
 
-pub fn (mut rter Router) patch(r_path string, cb ctx.HandlerFunc) {
-	rter.create_route('PATCH', r_path, cb)
-}
+	match r_name {
+		':' { params[param_name] = param_value }
+		'*' { params[param_name] = param_value + children }
+		else {}
+	}
 
-pub fn (mut rter Router) delete(r_path string, cb ctx.HandlerFunc) {
-	rter.create_route('DELETE', r_path, cb)
-}
+	route := routes[r_name]
+	if r_name != '*' && children.len > 0 {
+		child_params, handlers := route.children.find(method, children)?
+		for name, value in child_params {
+			params[name] = value
+		}
+		unsafe { child_params.free() }
+		return params, handlers
+	} else if method !in route.methods {
+		return error('method not found')
+	}
 
-pub fn (mut rter Router) put(r_path string, cb ctx.HandlerFunc) {
-	rter.create_route('PUT', r_path, cb)
-}
-
-pub fn (mut rter Router) options(r_path string, cb ctx.HandlerFunc) {
-	rter.create_route('OPTIONS', r_path, cb)
+	return params, route.methods[method]
 }
