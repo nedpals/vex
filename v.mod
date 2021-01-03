@@ -1,5 +1,7 @@
 Module {
     name: 'vex',
-    version: '0.2.0',
+    description: 'Easy, modular web framework for V.'
+    version: '0.3.0',
+    repo_url: 'https://github.com/nedpals/vex'
     deps: []
 }
