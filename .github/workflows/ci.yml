@@ -26,7 +26,7 @@ jobs:
       - name: Build local v
         run: make -j4
       - name: Generate docs
-        run: ./v doc -f html -m ./vex
+        run: ./v doc -f html -m -readme ./vex
       - name: Deploy
         uses: peaceiris/actions-gh-pages@v3
         with:
