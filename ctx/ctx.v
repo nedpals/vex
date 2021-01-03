@@ -18,6 +18,48 @@ pub mut:
     headers map[string]string
 }
 
+// Req
+pub fn (req Req) parse_form_body() ?map[string]string {
+    if req.body.len == 0 {
+        return error('empty body')
+    } else if 'Content-Type' !in req.headers {
+        return error('body content-type header not present')
+    }
+
+    match req.headers['Content-Type'] {
+        'application/x-www-form-urlencoded' {
+            mut form_data_map := map[string]string{}
+            form_arr := req.body.split('&')
+            for form_data in form_arr {
+                form_data_arr := form_data.split('=')
+                form_data_map[form_data_arr[0]] = form_data_arr[1]
+            }
+            return form_data_map
+        }
+        'application/json' {
+            form_data_map := json.decode(map[string]string, req.body)?
+            return form_data_map
+        }
+        else {}
+    }
+    
+    return error('no appropriate content-type header for body found')
+}
+
+pub fn (req Req) parse_cookies() ?map[string]string {
+    if 'Cookie' !in req.headers { 
+      return error('cookies not found')
+    }
+    mut cookies := map[string]string{}
+	cookies_arr := req.headers['Cookie'].split('; ')
+	for cookie_data in cookies_arr {
+		ck := cookie_data.split('=')
+		ck_val := urllib.query_unescape(ck[1])?
+		cookies[ck[0]] = ck_val
+	}
+    return cookies
+}
+
 pub struct Resp {
 pub mut:
     body string
