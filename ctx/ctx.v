@@ -128,6 +128,6 @@ pub fn (mut res Resp) send_html(ht string, status_code int) {
 }
 
 // send_404 is a handler for sending 404s
-pub fn send_404(req Req, mut res Resp) {
+pub fn send_404(req &Req, mut res Resp) {
 	res.send_status(404)
 }

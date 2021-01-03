@@ -180,7 +180,7 @@ fn dummy_handler2(req &ctx.Req, mut res ctx.Resp) {}
 fn dummy_handler3(req &ctx.Req, mut res ctx.Resp) {}
 
 fn test_routes_add_simple() {
-	mut routes := map[string]Route{}
+	mut routes := map[string]&Route{}
 	routes.add(.get, '/hello', dummy_handler)
 	assert 'hello' in routes
 	route := routes['hello']
@@ -192,7 +192,7 @@ fn test_routes_add_simple() {
 }
 
 fn test_routes_add_with_multiple_handlers() {
-	mut routes := map[string]Route{}
+	mut routes := map[string]&Route{}
 	routes.add(.get, '/multi', dummy_handler, dummy_handler2, dummy_handler3) or {
 		assert false
 		return
@@ -207,7 +207,7 @@ fn test_routes_add_with_multiple_handlers() {
 }
 
 fn test_routes_add_with_child() {
-	mut routes := map[string]Route{}
+	mut routes := map[string]&Route{}
 	routes.add(.get, '/hello/world', dummy_handler) or {
 		assert false
 		return
@@ -226,7 +226,7 @@ fn test_routes_add_with_child() {
 }
 
 fn test_routes_add_with_param() {
-	mut routes := map[string]Route{}
+	mut routes := map[string]&Route{}
 	routes.add(.get, '/id/:id_number', dummy_handler2) or {
 		assert false
 		return
@@ -246,7 +246,7 @@ fn test_routes_add_with_param() {
 }
 
 fn test_routes_add_with_wildcard() {
-	mut routes := map[string]Route{}
+	mut routes := map[string]&Route{}
 	routes.add(.get, '/book/*path', dummy_handler2) or {
 		assert false
 		return
@@ -266,7 +266,7 @@ fn test_routes_add_with_wildcard() {
 }
 
 fn test_routes_add_invalid() {
-	mut routes := map[string]Route{}
+	mut routes := map[string]&Route{}
 	routes.add(.get, 'without_slash_at_first', dummy_handler2) or {
 		assert err == 'route path must start with a slash (/)'
 		return
@@ -275,7 +275,7 @@ fn test_routes_add_invalid() {
 }
 
 fn test_routes_add_error() {
-	mut routes := map[string]Route{}
+	mut routes := map[string]&Route{}
 	routes.add(.get, '/book/*path', dummy_handler2) or {
 		assert false
 		return
@@ -288,7 +288,7 @@ fn test_routes_add_error() {
 }
 
 fn test_routes_add_empty_handler_error() {
-	mut routes := map[string]Route{}
+	mut routes := map[string]&Route{}
 	routes.add(.get, '/no_handler') or {
 		assert err == 'provided route handlers are empty'
 		return
@@ -297,7 +297,7 @@ fn test_routes_add_empty_handler_error() {
 }
 
 fn test_routes_find_simple() {
-	mut routes := map[string]Route{}
+	mut routes := map[string]&Route{}
 	routes.add(.get, '/', dummy_handler2) or {
 		assert false
 		return
@@ -311,7 +311,7 @@ fn test_routes_find_simple() {
 }
 
 fn test_routes_find_with_params() {
-	mut routes := map[string]Route{}
+	mut routes := map[string]&Route{}
 	routes.add(.get, '/user/:username', dummy_handler3) or {
 		assert false
 		return
@@ -327,7 +327,7 @@ fn test_routes_find_with_params() {
 }
 
 fn test_routes_find_with_wildcard() {
-	mut routes := map[string]Route{}
+	mut routes := map[string]&Route{}
 	routes.add(.get, '/dest/*path', dummy_handler3) or {
 		assert false
 		return
@@ -340,4 +340,23 @@ fn test_routes_find_with_wildcard() {
 	assert 'path' in params
 	assert params['path'] == 'foo/bar/baz/boo'
 	assert handlers.len == 1
+}
+
+fn test_routes_group_simple() {
+	mut routes := map[string]&Route{}
+
+	routes.group('/foo', fn (mut rt map[string]&Route) {
+		rt.route(.get, '/bar', dummy_handler, dummy_handler2)
+		rt.route(.post, '/bar', dummy_handler)
+	})
+
+	assert routes.len == 1
+	assert 'foo' in routes
+	assert routes['foo'].children.len == 1
+	assert 'bar' in routes['foo'].children
+	assert routes['foo'].children['bar'].methods.len == 2
+	assert 'get' in routes['foo'].children['bar'].methods
+	assert routes['foo'].children['bar'].methods['get'].len == 2
+	assert 'post' in routes['foo'].children['bar'].methods
+	assert routes['foo'].children['bar'].methods['post'].len == 1
 }

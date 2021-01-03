@@ -17,7 +17,7 @@ const (
 
 pub struct Server {
 mut:
-	router map[string]router.Route
+	router map[string]&router.Route
 }
 
 // create server
@@ -27,7 +27,12 @@ pub fn new() Server {
 
 // route creates a new route
 pub fn (mut s Server) route(method router.Method, path string, handlers ...ctx.HandlerFunc) {
-	s.router.add(method, path, handlers) or { panic(err) }
+	s.router.route(method, path, handlers...)
+}
+
+// group inserts a group of routes based on the path prefix given.
+pub fn (mut s Server) group(prefix string, callback router.GroupCallbackFn) {
+	s.router.group(prefix, callback)
 }
 
 // serve starts the server at the give port

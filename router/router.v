@@ -2,6 +2,8 @@ module router
 
 import ctx
 
+pub type GroupCallbackFn =  fn (mut group map[string]&Route)
+
 enum Kind {
 	wildcard
 	param
@@ -18,14 +20,20 @@ pub enum Method {
 	options
 }
 
-struct Route {
+[ref_only]
+pub struct Route {
 	name       string
 	param_name string
 	method     Method
 	kind       Kind
 mut:
-	children   map[string]Route
+	children   map[string]&Route
 	methods    map[string][]ctx.HandlerFunc
+}
+
+// empty str to avoid cgen error
+pub fn (r &Route) str() string {
+	return ''
 }
 
 fn identify_kind(route_name string) Kind {
@@ -69,13 +77,13 @@ pub fn extract_route_path(path string) ?(string, string, string) {
 
 // add creates a new route based on the given method, path, and the handlers.
 // See `router.Method` for the list of available methods.
-pub fn (mut routes map[string]Route) add(method Method, path string, handlers ...ctx.HandlerFunc) ? {
+fn (mut routes map[string]&Route) add(method Method, path string, handlers ...ctx.HandlerFunc) ? {
 	if '*' in routes || ':' in routes {
 		return error('only one wildcard or param route in an endpoint group is allowed.')
 	}
 	name, param_name, children := extract_route_path(path) ?
 	if name !in routes {
-		routes[name] = Route{
+		routes[name] = &Route{
 			method: method
 			param_name: param_name
 			name: name
@@ -93,7 +101,7 @@ pub fn (mut routes map[string]Route) add(method Method, path string, handlers ..
 }
 
 // find searches the matching route and returns the injected params data and the route handlers.
-pub fn (routes map[string]Route) find(method string, path string) ?(map[string]string, []ctx.HandlerFunc) {
+pub fn (routes map[string]&Route) find(method string, path string) ?(map[string]string, []ctx.HandlerFunc) {
 	mut r_name, mut param_name, children := extract_route_path(path) ?
 	mut params := map[string]string{}
 	param_value := r_name
@@ -122,4 +130,48 @@ pub fn (routes map[string]Route) find(method string, path string) ?(map[string]s
 		return error('method not found')
 	}
 	return params, route.methods[method]
+}
+
+// route creates a new route based on the given method, path, and the handlers.
+// See `router.Method` for the list of available methods.
+pub fn (mut routes map[string]&Route) route(method Method, path string, handlers ...ctx.HandlerFunc) {
+	routes.add(method, path, handlers...) or { panic(err) }
+}
+
+// group adds a series of routes into the desired prefix
+pub fn (mut routes map[string]&Route) group(path string, callback GroupCallbackFn) ? {
+	mut new_routes := map[string]&Route{}
+	mut route := &Route{}
+	mut children := path
+	callback(mut new_routes)
+
+	mut name := ''
+	mut cur_routes := routes
+	for children.len > 0 {
+		new_name, param_name, new_children := extract_route_path(children) ?
+		children = new_children
+		name = new_name
+
+		if ('*' in cur_routes || ':' in cur_routes) && name !in ['*', ':'] {
+			return error('only one wildcard or param route in an endpoint group is allowed.')
+		} else if name !in cur_routes {
+			cur_routes.add(.get, '/$name$param_name$children', ctx.send_404) ?
+		}
+
+		route = unsafe { cur_routes[name] }
+		cur_routes = &route.children
+	}
+	
+	for new_path, new_route in new_routes {
+		if new_path.len == 0 {
+			for method_name, new_handlers in new_route.methods {
+				route.methods[method_name] = new_handlers
+			}
+			continue
+		}
+
+		unsafe { cur_routes[new_path] = new_route }
+	}
+
+	unsafe { new_routes.free() }
 }
