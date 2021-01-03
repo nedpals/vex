@@ -10,11 +10,6 @@ pub:
 	charset      string   [skip]
 }
 
-struct Db {
-pub:
-	db map[string]MimeType
-}
-
 fn is_mime(text string) bool {
 	txt := text.split('/')
 	if txt.len != 2 {
@@ -23,47 +18,44 @@ fn is_mime(text string) bool {
 	return true
 }
 
-pub fn load() Db {
-	return Db{load_data()}
-}
-
-pub fn (mdb Db) charset(text string) string {
-	if !is_mime(text) && mdb.db[text.to_lower()].charset.len == 0 {
+pub fn (mdb map[string]MimeType) charset(text string) string {
+	ext := text.to_lower()
+	mext := mdb[ext]
+	if !is_mime(text) && mext.charset.len == 0 {
 		return ''
 	}
-	return mdb.db[text.to_lower()].charset
+	return mext.charset
 }
 
-pub fn (mdb Db) content_type(text string) string {
+pub fn (mdb map[string]MimeType) content_type(text string) string {
 	mime := if !is_mime(text) { mdb.lookup(text) } else { text }
-	if mdb.db[mime].charset.len != 0 {
+	if mdb[mime].charset.len != 0 {
 		chrst := mdb.charset(mime)
 		if chrst.len != 0 {
-			return mime + '; charset=$chrst.to_lower()'
+			return '$mime; charset=$chrst.to_lower()'
 		}
 	}
 	return mime
 }
 
-pub fn (mdb Db) extension(text string) string {
-	typ := mdb.db[text.to_lower()]
+pub fn (mdb map[string]MimeType) extension(text string) string {
+	typ := mdb[text.to_lower()]
 	if !is_mime(text) || typ.extensions.len == 0 {
 		return ''
 	}
 	return typ.extensions[0]
 }
 
-pub fn (mdb Db) lookup(path string) string {
+pub fn (mdb map[string]MimeType) lookup(path string) string {
 	path_ext := os.file_ext('x.$path').to_lower()
 	extension := path_ext[1..path_ext.len]
 	if extension.len == 0 {
 		return ''
 	}
-	for k, v in mdb.db {
+	for k, v in mdb {
 		for x in v.extensions {
-			if x == extension {
-				return k
-			}
+			if x != extension { continue }
+			return k
 		}
 	}
 	return ''
