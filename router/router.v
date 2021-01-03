@@ -19,18 +19,18 @@ pub enum Method {
 }
 
 struct Route {
-	name          string
-	param_name    string
-	method        Method
-	kind          Kind
+	name       string
+	param_name string
+	method     Method
+	kind       Kind
 mut:
-	children      map[string]Route
-	methods       map[string][]ctx.HandlerFunc
+	children   map[string]Route
+	methods    map[string][]ctx.HandlerFunc
 }
 
 fn identify_kind(route_name string) Kind {
-	if route_name.len == 0 { 
-		return .regular 
+	if route_name.len == 0 {
+		return .regular
 	}
 	match route_name[0] {
 		`:` { return .param }
@@ -45,27 +45,22 @@ pub fn extract_route_path(path string) ?(string, string, string) {
 	if !path.starts_with('/') {
 		return error('route path must start with a slash (/)')
 	}
-
-  mut paths := path[1..].split('/')
+	mut paths := path[1..].split('/')
 	mut param_name := ''
 	mut children := ''
 	mut name := paths[0]
 	mut has_wildcard := false
-
 	if name.len >= 1 && name[0] in [`:`, `*`] {
 		has_wildcard = name[0] == `*`
 		param_name = if has_wildcard && name.len == 1 { '*' } else { name[1..] }
 		name = name[0].str()
-	} 
-	
-	if paths.len > 1 { 
+	}
+	if paths.len > 1 {
 		if has_wildcard {
 			return error('wildcard routes should not have children routes')
 		}
-
 		children = '/' + paths[1..].join('/')
 	}
-
 	$if debug {
 		println('name: $name | param_name: $param_name | children: $children')
 	}
@@ -78,34 +73,30 @@ pub fn (mut routes map[string]Route) add(method Method, path string, handlers ..
 	if '*' in routes || ':' in routes {
 		return error('only one wildcard or param route in an endpoint group is allowed.')
 	}
-
-	name, param_name, children := extract_route_path(path)?
+	name, param_name, children := extract_route_path(path) ?
 	if name !in routes {
-		routes[name] = Route{ 
+		routes[name] = Route{
 			method: method
 			param_name: param_name
 			name: name
 			kind: identify_kind(name)
 		}
 	}
-
 	if children.len > 0 {
-		routes[name].children.add(method, children, handlers...)?
+		routes[name].children.add(method, children, handlers...) ?
 		return
 	} else if handlers.len == 0 {
 		return error('provided route handlers are empty')
 	}
-
 	method_str := method.str()
 	routes[name].methods[method_str] = handlers
 }
 
 // find searches the matching route and returns the injected params data and the route handlers.
 pub fn (routes map[string]Route) find(method string, path string) ?(map[string]string, []ctx.HandlerFunc) {
-	mut r_name, mut param_name, children := extract_route_path(path)?
+	mut r_name, mut param_name, children := extract_route_path(path) ?
 	mut params := map[string]string{}
 	param_value := r_name
-
 	if r_name !in routes {
 		if ':' in routes || '*' in routes {
 			r_name = if '*' in routes { '*' } else { ':' }
@@ -114,16 +105,14 @@ pub fn (routes map[string]Route) find(method string, path string) ?(map[string]s
 			return error('not found')
 		}
 	}
-
 	match r_name {
 		':' { params[param_name] = param_value }
 		'*' { params[param_name] = param_value + children }
 		else {}
 	}
-
 	route := routes[r_name]
 	if r_name != '*' && children.len > 0 {
-		child_params, handlers := route.children.find(method, children)?
+		child_params, handlers := route.children.find(method, children) ?
 		for name, value in child_params {
 			params[name] = value
 		}
@@ -132,6 +121,5 @@ pub fn (routes map[string]Route) find(method string, path string) ?(map[string]s
 	} else if method !in route.methods {
 		return error('method not found')
 	}
-
 	return params, route.methods[method]
 }

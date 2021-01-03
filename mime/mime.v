@@ -62,7 +62,9 @@ pub fn (mdb map[string]MimeType) lookup(path string) string {
 	}
 	for k, v in mdb {
 		for x in v.extensions {
-			if x != extension { continue }
+			if x != extension {
+				continue
+			}
 			return k
 		}
 	}

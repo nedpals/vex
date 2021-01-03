@@ -29,13 +29,12 @@ fn layout(body []html.Tag) html.Tag {
 }
 
 fn main() {
-    db := sqlite.connect(':memory:')
-    mut s := server.new()
-    // db.exec('drop table if exists users;')
+	db := sqlite.connect(':memory:')
+	mut s := server.new()
+	// db.exec('drop table if exists users;')
 	db.exec('create table users (id integer primary key, name text default "");')
-    
-    s.get('/', fn (req ctx.Req, res mut ctx.Resp) {
-        page := layout([
+	s.route(.get, '/', fn (req &ctx.Req, mut res ctx.Resp) {
+		page := layout([
             html.Tag{name: 'h1', text: 'It works!'},
             html.Tag{name: 'p', children: [
                 html.Tag{name: 'text', text: 'For online documentation please refer to '},
@@ -49,30 +48,27 @@ fn main() {
         html.Tag{name: 'br'},
         html.Tag{name: 'a', props: {'href': '/users/add'}, text: 'Add a user'}
         ])
-
-        res.send_html(page, 200)
-    })
-    
-    s.get('/users', fn (req ctx.Req, res mut ctx.Resp) {
-        users_from_db, _ := db.exec('select * from users;')
-        mut users := []html.Tag   
-
-        for row in users_from_db {
-            tag := html.Tag{name: 'li', text: row.vals[1]}
-            users << tag
-        }
-
+		res.send_html(page, 200)
+	})
+	s.route(.get, '/users', fn (req &ctx.Req, mut res ctx.Resp) {
+		users_from_db, _ := db.exec('select * from users;')
+		mut users := []html.Tag{}
+		for row in users_from_db {
+			tag := html.Tag{
+				name: 'li'
+				text: row.vals[1]
+			}
+			users << tag
+		}
         page := layout([
             html.Tag{name: 'h1', text: 'Users'},
             html.Tag{name: 'ul', children: users},
         html.Tag{name: 'a', props: {'href': '/'}, text: 'Back to homepage'}
         ])
-
-        res.send_html(page, 200)
-    })
-    
-	s.get('/users/add', fn (req ctx.Req, res mut ctx.Resp) {
-        page := layout([
+		res.send_html(page, 200)
+	})
+	s.route(.get, '/users/add', fn (req &ctx.Req, mut res ctx.Resp) {
+		page := layout([
             html.Tag{name: 'a', props: { 'href': '/users' }, text: 'All users'},
             html.Tag{name: 'h1', text: 'Add user'},
             html.Tag{name: 'form', props: { 'id': 'form', 'method': 'post', 'onsubmit': 'set_action(\'form\', \'name\')'}, children: [
@@ -87,16 +83,12 @@ fn main() {
                 }
             '}
         ])
-
-        res.send_html(page, 200)
-    })
-
-    s.post('/users/new/:name', fn (req ctx.Req, res mut ctx.Resp) {
-        name := req.params['name']
-        db.exec('insert into users (name) values ("${name}");')
-
-        res.redirect('/users')
-    })
-
-    s.serve(8080)
+		res.send_html(page, 200)
+	})
+	s.route(.post, '/users/new/:name', fn (req &ctx.Req, mut res ctx.Resp) {
+		name := req.params['name']
+		db.exec('insert into users (name) values ("$name");')
+		res.redirect('/users')
+	})
+	s.serve(8080)
 }

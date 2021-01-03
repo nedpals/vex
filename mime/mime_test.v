@@ -1,4 +1,5 @@
 module mime
+
 import os
 
 fn test_lookup() {

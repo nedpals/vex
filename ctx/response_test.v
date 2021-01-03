@@ -8,10 +8,11 @@ fn test_send() {
 }
 
 // fn test_send_file() {}
-
 fn test_send_json() {
 	mut res := Resp{}
-	res.send_json({'hello': 'world'}, 201)
+	res.send_json({
+		'hello': 'world'
+	}, 201)
 	assert res.body == '{"hello":"world"}'
 	assert res.status_code == 201
 	assert res.headers['Content-Type'] == 'application/json'
