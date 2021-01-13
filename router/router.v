@@ -32,7 +32,7 @@ pub fn (r Router) find(method string, path string) ?(map[string]string, []ctx.Mi
 }
 
 // use registers handlers as app-wide middlewares
-pub fn (mut r Router) use(handlers ...ctx.HandlerFunc) {
+pub fn (mut r Router) use(handlers ...ctx.MiddlewareFunc) {
 	r.middlewares << handlers
 }
 
