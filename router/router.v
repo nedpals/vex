@@ -18,7 +18,7 @@ mut:
 
 // route is a shortcut method to `r.routes.route` method
 pub fn (mut r Router) route(method Method, path string, handlers ...ctx.HandlerFunc) {
-	r.routes.route(method, path, handlers...)
+	r.routes.route(method, path, ...handlers)
 }
 
 // group is a shortcut method to `r.routes.group` method
@@ -118,7 +118,7 @@ fn (mut routes map[string]&Route) add(method Method, path string, handlers ...ct
 		}
 	}
 	if children.len > 0 {
-		routes[name].children.add(method, children, handlers...) ?
+		routes[name].children.add(method, children, ...handlers) ?
 		return
 	} else if handlers.len == 0 {
 		return error('provided route handlers are empty')
@@ -162,7 +162,7 @@ pub fn (routes map[string]&Route) find(method string, path string) ?(map[string]
 // route creates a new route based on the given method, path, and the handlers.
 // See `router.Method` for the list of available methods.
 pub fn (mut routes map[string]&Route) route(method Method, path string, handlers ...ctx.HandlerFunc) {
-	routes.add(method, path, handlers...) or { panic(err) }
+	routes.add(method, path, ...handlers) or { panic(err) }
 }
 
 // group adds a series of routes into the desired prefix
