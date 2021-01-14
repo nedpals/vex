@@ -166,7 +166,7 @@ pub fn (mut routes map[string]&Route) route(method Method, path string, handlers
 }
 
 // group adds a series of routes into the desired prefix
-pub fn (mut routes map[string]&Route) group(path string, callback GroupCallbackFn, middlewares ...ctx.MiddlewareFunc) {
+pub fn (mut routes map[string]&Route) group(path string, callback GroupCallbackFn) {
 	mut new_routes := map[string]&Route{}
 	mut route := &Route{}
 	mut children := path
@@ -191,18 +191,27 @@ pub fn (mut routes map[string]&Route) group(path string, callback GroupCallbackF
 	
 	for new_path, new_route in new_routes {
 		if new_path.len == 0 {
+			route.middlewares << new_route.middlewares
 			for method_name, new_handlers in new_route.methods {
 				route.methods[method_name] = new_handlers
-				route.middlewares << middlewares
 			}
 			continue
 		}
 
 		unsafe { 
-			cur_routes[new_path] = new_route 
-			cur_routes[new_path].middlewares << middlewares
+			cur_routes[new_path] = new_route
 		}
 	}
 
 	unsafe { new_routes.free() }
+}
+
+pub fn (mut routes map[string]&Route) use(middlewares ...ctx.MiddlewareFunc) {
+	if routes.len == 0 {
+		panic('endpoint/route middlewares can only be added after register a new route.')
+	}
+
+	for name, _ in routes {
+		routes[name].middlewares << middlewares
+	}
 }

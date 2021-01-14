@@ -370,7 +370,8 @@ fn test_routes_group_simple_with_middleware() {
 	mut routes := map[string]&Route{}
 	routes.group('/foo', fn (mut rt map[string]&Route) {
 		rt.route(.get, '/', dummy_handler)
-	}, dummy_middleware)
+		rt.use(dummy_middleware)
+	})
 	assert routes['foo'].middlewares.len == 1
 }
 
