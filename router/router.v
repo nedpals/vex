@@ -88,7 +88,7 @@ pub fn extract_route_path(path string) ?(string, string, string) {
 	if name.len >= 1 && name[0] in [`:`, `*`] {
 		has_wildcard = name[0] == `*`
 		param_name = if has_wildcard && name.len == 1 { '*' } else { name[1..] }
-		name = name[0].str()
+		name = name[0].ascii_str()
 	}
 	if paths.len > 1 {
 		if has_wildcard {
