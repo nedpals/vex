@@ -381,6 +381,6 @@ fn test_router_use_simple() {
 
 fn test_respond_error() {
 	mut router := Router{}
-	body := router.respond_error(200)
+	body := router.respond_error(404)
 	assert body == '<h1>404 Not Found</h1>'
 }

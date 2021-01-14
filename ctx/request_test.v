@@ -1,13 +1,13 @@
 module ctx
 
-fn test_parse_form_body_urlencoded() {
+fn test_parse_body_urlencoded() {
 	req := Req{
-		body: 'foo=bar&lol=edgy'
+		body: 'foo=bar&lol=edgy'.bytes()
 		headers: {
 			'Content-Type': 'application/x-www-form-urlencoded'
 		}
 	}
-	body := req.parse_form_body() or {
+	body := req.parse_body() or {
 		assert false
 		return
 	}
@@ -16,14 +16,14 @@ fn test_parse_form_body_urlencoded() {
 	assert body['lol'] == 'edgy'
 }
 
-fn test_parse_form_body_json() {
+fn test_parse_body_json() {
 	req := Req{
-		body: '{"bar":"baz"}'
+		body: '{"bar":"baz"}'.bytes()
 		headers: {
 			'Content-Type': 'application/json'
 		}
 	}
-	body := req.parse_form_body() or {
+	body := req.parse_body() or {
 		assert false
 		return
 	}
@@ -31,34 +31,34 @@ fn test_parse_form_body_json() {
 	assert body['bar'] == 'baz'
 }
 
-fn test_parse_form_body_content_type_not_present() {
+fn test_parse_body_content_type_not_present() {
 	req := Req{
-		body: '{"test":"123"}'
+		body: '{"test":"123"}'.bytes()
 	}
-	_ := req.parse_form_body() or {
+	_ := req.parse_body() or {
 		assert err == 'body content-type header not present'
 		return
 	}
 	assert false
 }
 
-fn test_parse_form_body_invalid() {
+fn test_parse_body_invalid() {
 	req := Req{
-		body: 'text content'
+		body: 'text content'.bytes()
 		headers: {
 			'Content-Type': 'text/plain'
 		}
 	}
-	_ := req.parse_form_body() or {
+	_ := req.parse_body() or {
 		assert err == 'no appropriate content-type header for body found'
 		return
 	}
 	assert false
 }
 
-fn test_parse_form_body_empty() {
+fn test_parse_body_empty() {
 	req := Req{}
-	_ := req.parse_form_body() or {
+	_ := req.parse_body() or {
 		assert err == 'empty body'
 		return
 	}
@@ -82,7 +82,7 @@ fn test_parse_cookies() {
 
 fn test_parse_cookies_empty() {
 	req := Req{}
-	cookies := req.parse_cookies() or {
+	_ := req.parse_cookies() or {
 		assert err == 'cookies not found'
 		return
 	}

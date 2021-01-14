@@ -29,6 +29,13 @@ fn test_send_status() {
 fn test_redirect() {
 	mut res := Resp{}
 	res.redirect('/foo')
+	assert res.status_code == 302
+	assert res.headers['Location'] == '/foo'
+}
+
+fn test_permanent_redirect() {
+	mut res := Resp{}
+	res.permanent_redirect('/foo')
 	assert res.status_code == 301
 	assert res.headers['Location'] == '/foo'
 }
