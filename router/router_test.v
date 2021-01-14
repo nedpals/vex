@@ -347,12 +347,10 @@ fn test_routes_find_with_wildcard() {
 
 fn test_routes_group_simple() {
 	mut routes := map[string]&Route{}
-
 	routes.group('/foo', fn (mut rt map[string]&Route) {
 		rt.route(.get, '/bar', dummy_handler, dummy_handler2)
 		rt.route(.post, '/bar', dummy_handler)
 	})
-
 	assert routes.len == 1
 	assert 'foo' in routes
 	assert routes['foo'].children.len == 1

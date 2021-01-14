@@ -5,7 +5,7 @@ import io
 import net.http
 import net.urllib
 
-pub type GroupCallbackFn =  fn (mut group map[string]&Route)
+pub type GroupCallbackFn = fn (mut group map[string]&Route)
 
 enum Kind {
 	wildcard
@@ -15,10 +15,10 @@ enum Kind {
 
 pub struct Router {
 mut:
-	routes map[string]&Route
+	routes      map[string]&Route
 	middlewares []ctx.MiddlewareFunc
-	on_error ctx.HandlerFunc = ctx.error_route
-	ctx voidptr
+	on_error    ctx.HandlerFunc = ctx.error_route
+	ctx         voidptr
 }
 
 pub fn new() Router {
@@ -30,7 +30,6 @@ pub fn (r Router) receive(method string, path string, raw_headers []string, mut 
 		internal_err_body := r.respond_error(500)
 		return 500, raw_headers.join('\r\n'), internal_err_body
 	}
-
 	mut req := ctx.Req{
 		headers: http.parse_headers(raw_headers)
 		method: method
@@ -38,39 +37,35 @@ pub fn (r Router) receive(method string, path string, raw_headers []string, mut 
 		raw_query: req_path.raw_query
 		ctx: r.ctx
 	}
-
-	if method == 'POST' && 'Content-Length' in req.headers && req.headers['Content-Length'].int() > 0 {
+	if method == 'POST' &&
+		'Content-Length' in req.headers && req.headers['Content-Length'].int() > 0 {
 		body := io.read_all(reader: reader) or { []byte{} }
 		req.body = body
 	}
-
 	mut res := ctx.Resp{
 		path: req_path.path
 	}
-
 	params, route_middlewares, handlers := r.routes.find(req.method.to_lower(), req.path) or {
 		not_found_body := r.respond_error(404)
 		return 404, raw_headers.join('\r\n'), not_found_body
 	}
-
 	req.params = params
 	for app_middleware in r.middlewares {
 		app_middleware(mut req, mut res)
 	}
-
 	for route_middleware in route_middlewares {
 		route_middleware(mut req, mut res)
 	}
-
 	for route_handler in handlers {
 		route_handler(&req, mut res)
 	}
-
 	return res.status_code, res.headers.keys().map(it + ': ' + res.headers[it]).join('\r\n'), res.body
 }
 
 pub fn (r Router) respond_error(code int) string {
-	req := ctx.Req{ctx: code}
+	req := ctx.Req{
+		ctx: code
+	}
 	mut resp := ctx.Resp{}
 	err_route := r.on_error
 	err_route(&req, mut resp)
@@ -108,10 +103,10 @@ pub enum Method {
 
 [ref_only]
 pub struct Route {
-	name        string
-	param_name  string
-	method      Method
-	kind        Kind
+	name       string
+	param_name string
+	method     Method
+	kind       Kind
 mut:
 	children    map[string]&Route
 	methods     map[string][]ctx.HandlerFunc
@@ -207,7 +202,8 @@ pub fn (routes map[string]&Route) find(method string, path string) ?(map[string]
 	}
 	route := routes[r_name]
 	if r_name != '*' && children.len > 0 {
-		child_params, child_route_middlewares, handlers := route.children.find(method, children) ?
+		child_params, child_route_middlewares, handlers := route.children.find(method,
+			children) ?
 		for name, value in child_params {
 			params[name] = value
 		}
@@ -231,24 +227,20 @@ pub fn (mut routes map[string]&Route) group(path string, callback GroupCallbackF
 	mut route := &Route{}
 	mut children := path
 	callback(mut new_routes)
-
 	mut name := ''
 	mut cur_routes := routes
 	for children.len > 0 {
 		new_name, param_name, new_children := extract_route_path(children) or { panic(err) }
 		children = new_children
 		name = new_name
-
 		if ('*' in cur_routes || ':' in cur_routes) && name !in ['*', ':'] {
 			panic('only one wildcard or param route in an endpoint group is allowed.')
 		} else if name !in cur_routes {
 			cur_routes.add(.get, '/$name$param_name$children', ctx.error_route) or { panic(err) }
 		}
-
 		route = unsafe { cur_routes[name] }
 		cur_routes = &route.children
 	}
-	
 	for new_path, new_route in new_routes {
 		if new_path.len == 0 {
 			route.middlewares << new_route.middlewares
@@ -257,12 +249,10 @@ pub fn (mut routes map[string]&Route) group(path string, callback GroupCallbackF
 			}
 			continue
 		}
-
-		unsafe { 
+		unsafe {
 			cur_routes[new_path] = new_route
 		}
 	}
-
 	unsafe { new_routes.free() }
 }
 
@@ -270,7 +260,6 @@ pub fn (mut routes map[string]&Route) use(middlewares ...ctx.MiddlewareFunc) {
 	if routes.len == 0 {
 		panic('endpoint/route middlewares can only be added after register a new route.')
 	}
-
 	for name, _ in routes {
 		routes[name].middlewares << middlewares
 	}

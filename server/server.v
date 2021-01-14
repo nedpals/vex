@@ -34,7 +34,11 @@ pub fn serve(router Router, port int) {
 fn write_body(code int, headers string, body string, mut conn net.TcpConn) {
 	mut response := strings.new_builder(1024)
 	response.write('HTTP/1.1 $code ' + utils.status_code_msg(code))
-	response.write(if headers.len > 0 { sep + headers } else { headers })
+	response.write(if headers.len > 0 {
+		sep + headers
+	} else {
+		headers
+	})
 	response.write('${sep}Content-Length: $body.len')
 	response.write('${sep}Connection: close')
 	response.write(sep.repeat(2) + body)
@@ -44,8 +48,9 @@ fn write_body(code int, headers string, body string, mut conn net.TcpConn) {
 
 fn handle_http_connection(router Router, mut conn net.TcpConn) {
 	conn.set_read_timeout(1 * time.second)
-	defer {	conn.close() or { } }
-
+	defer {
+		conn.close() or { }
+	}
 	mut reader := io.new_buffered_reader(reader: io.make_reader(conn))
 	first_line := reader.read_line() or {
 		bad_req_body := router.respond_error(400)
@@ -66,10 +71,13 @@ fn handle_http_connection(router Router, mut conn net.TcpConn) {
 			write_body(500, '', internal_err_body, mut conn)
 			return
 		}
-		if header_line.len == 0 { break }
+		if header_line.len == 0 {
+			break
+		}
 		raw_headers << header_line
 	}
-	status_code, enc_header, body := router.receive(data[0], data[1], raw_headers, mut reader)
+	status_code, enc_header, body := router.receive(data[0], data[1], raw_headers, mut
+		reader)
 	write_body(status_code, enc_header, body, mut conn)
 	unsafe { raw_headers.free() }
 }

@@ -5,7 +5,10 @@ import json
 import os
 import utils
 
-const default_headers = { 'Content-Type': 'text/plain', 'Server': 'Vex' }
+const default_headers = {
+		'Content-Type': 'text/plain'
+		'Server':       'Vex'
+	}
 
 pub type HandlerFunc = fn (req &Req, mut res Resp)
 
@@ -14,13 +17,13 @@ pub type MiddlewareFunc = fn (mut req Req, mut res Resp)
 // Server request data
 pub struct Req {
 pub mut:
-	body    []byte
-	method  string
-	path    string
-	params  map[string]string
-	headers map[string]string
+	body      []byte
+	method    string
+	path      string
+	params    map[string]string
+	headers   map[string]string
 	raw_query string
-	ctx     voidptr
+	ctx       voidptr
 }
 
 pub fn (req Req) parse_query() ?map[string]string {
@@ -44,7 +47,6 @@ pub fn (req Req) parse_body() ?map[string]string {
 	} else if 'Content-Type' !in req.headers {
 		return error('body content-type header not present')
 	}
-
 	body := req.body.bytestr()
 	match req.headers['Content-Type'] {
 		'application/x-www-form-urlencoded' {
