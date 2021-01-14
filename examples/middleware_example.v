@@ -1,5 +1,6 @@
 module main
 
+import nedpals.vex.router
 import nedpals.vex.server
 import nedpals.vex.ctx
 import json
@@ -18,16 +19,16 @@ fn do_stuff(mut req ctx.Req, mut res ctx.Resp) {
 }
 
 fn main() {
-	mut s := server.new()
-	s.use(do_stuff, print_req_info)
-	s.get('/', fn (req ctx.Req, mut res ctx.Resp) {
+	mut app := router.new()
+	app.use(do_stuff, print_req_info)
+	app.get('/', fn (req ctx.Req, mut res ctx.Resp) {
 		res.send_json(Person{
 			name: req.query['name']
 			doing: req.query['doing']
 		}, 200)
 	})
-	s.get('/hello', fn (req ctx.Req, mut res ctx.Resp) {
+	app.get('/hello', fn (req ctx.Req, mut res ctx.Resp) {
 		res.send('Hello World!', 200)
 	})
-	s.serve(8080)
+	server.serve(app, 8080)
 }

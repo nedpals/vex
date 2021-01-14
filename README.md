@@ -5,6 +5,7 @@ Easy-to-use, modular web framework for V.
 ```v
 module main
 
+import nedpals.vex.router
 import nedpals.vex.server
 import nedpals.vex.ctx
 
@@ -17,28 +18,28 @@ fn do_stuff(mut req ctx.Req, mut res ctx.Resp) {
 }
 
 fn main() {
-    mut s := server.new()
-    s.use(do_stuff, print_req_info)
+    mut app := router.new()
+    app.use(do_stuff, print_req_info)
 
-    s.route(.get, '/', fn (req &ctx.Req, mut res ctx.Resp) {
+    app.route(.get, '/', fn (req &ctx.Req, mut res ctx.Resp) {
         res.send_file('index.html', 200)
     })
     
-    s.route(.get, '/public/*path', fn (req &ctx.Req, mut res ctx.Resp) {
+    app.route(.get, '/public/*path', fn (req &ctx.Req, mut res ctx.Resp) {
         res.send_file('public/' + req.params['path'], 200)
     })
 
-    s.route(.get, '/path/:name', fn (req &ctx.Req, mut res ctx.Resp) {
+    app.route(.get, '/path/:name', fn (req &ctx.Req, mut res ctx.Resp) {
         println('path is ${req.params["name"]}')
     }, fn (req &ctx.Req, mut res ctx.Resp) {
         res.send('path: ' + req.params['name'], 200)
     })
 
-    s.route(.get, '/complex/:name/*path', fn (req &ctx.Req, mut res ctx.Resp) {
+    app.route(.get, '/complex/:name/*path', fn (req &ctx.Req, mut res ctx.Resp) {
         res.send('username: ' + req.params['name'] + '\npath: ' + req.params['path'], 200)
     })
 
-    s.serve(6789)
+    server.serve(app, 6789)
 }
 ```
 

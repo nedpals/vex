@@ -1,9 +1,9 @@
 module main
 
-import router
-import server
-import html
-import ctx
+import nedpals.vex.router
+import nedpals.vex.server
+import nedpals.vex.html
+import nedpals.vex.ctx
 import sqlite
 
 fn layout(title string, body []html.Tag) html.Tag {
