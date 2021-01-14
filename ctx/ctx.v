@@ -150,7 +150,7 @@ pub fn (mut res Resp) send_html(ht string, status_code int) {
 	res.send(ht, status_code)
 }
 
-fn error_route(req &Req, mut res Resp) {
+pub fn error_route(req &Req, mut res Resp) {
 	code := int(req.ctx)
 	res.send_status(code)
 }
