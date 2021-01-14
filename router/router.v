@@ -1,6 +1,9 @@
 module router
 
 import ctx
+import io
+import net.http
+import net.urllib
 
 pub type GroupCallbackFn =  fn (mut group map[string]&Route)
 
@@ -14,6 +17,68 @@ pub struct Router {
 mut:
 	routes map[string]&Route
 	middlewares []ctx.MiddlewareFunc
+	on_error ctx.HandlerFunc = ctx.error_route
+	ctx voidptr
+}
+
+pub fn new() Router {
+	return Router{}
+}
+
+pub fn (r Router) receive(method string, path string, raw_headers []string, mut reader io.BufferedReader) (int, string, string) {
+	req_path := urllib.parse(path) or {
+		internal_err_body := r.respond_error(500)
+		return 500, raw_headers.join('\r\n'), internal_err_body
+	}
+
+	mut req := ctx.Req{
+		headers: http.parse_headers(raw_headers)
+		method: method
+		path: req_path.path
+		raw_query: req_path.raw_query
+		ctx: r.ctx
+	}
+
+	if method == 'POST' && 'Content-Length' in req.headers && req.headers['Content-Length'].int() > 0 {
+		body := io.read_all(reader: reader) or { []byte{} }
+		req.body = body
+	}
+
+	mut res := ctx.Resp{
+		path: req_path.path
+	}
+
+	params, route_middlewares, handlers := r.routes.find(req.method.to_lower(), req.path) or {
+		not_found_body := r.respond_error(404)
+		return 404, raw_headers.join('\r\n'), not_found_body
+	}
+
+	req.params = params
+	for app_middleware in r.middlewares {
+		app_middleware(mut req, mut res)
+	}
+
+	for route_middleware in route_middlewares {
+		route_middleware(mut req, mut res)
+	}
+
+	for route_handler in handlers {
+		route_handler(&req, mut res)
+	}
+
+	return res.status_code, res.headers.keys().map(it + ': ' + res.headers[it]).join('\r\n'), res.body
+}
+
+pub fn (r Router) respond_error(code int) string {
+	req := ctx.Req{ctx: code}
+	mut resp := ctx.Resp{}
+	err_route := r.on_error
+	err_route(&req, mut resp)
+	return resp.body
+}
+
+pub fn (mut r Router) inject(data voidptr) {
+	r.ctx = data
 }
 
 // route is a shortcut method to `r.routes.route` method
@@ -24,11 +89,6 @@ pub fn (mut r Router) route(method Method, path string, handlers ...ctx.HandlerF
 // group is a shortcut method to `r.routes.group` method
 pub fn (mut r Router) group(prefix string, callback GroupCallbackFn) {
 	r.routes.group(prefix, callback)
-}
-
-// find is a shortcut method to `r.routes.find` method
-pub fn (r Router) find(method string, path string) ?(map[string]string, []ctx.MiddlewareFunc, []ctx.HandlerFunc) {
-	return r.routes.find(method, path)
 }
 
 // use registers handlers as app-wide middlewares
@@ -182,7 +242,7 @@ pub fn (mut routes map[string]&Route) group(path string, callback GroupCallbackF
 		if ('*' in cur_routes || ':' in cur_routes) && name !in ['*', ':'] {
 			panic('only one wildcard or param route in an endpoint group is allowed.')
 		} else if name !in cur_routes {
-			cur_routes.add(.get, '/$name$param_name$children', ctx.send_404) or { panic(err) }
+			cur_routes.add(.get, '/$name$param_name$children', ctx.error_route) or { panic(err) }
 		}
 
 		route = unsafe { cur_routes[name] }

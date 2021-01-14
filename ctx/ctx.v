@@ -5,6 +5,8 @@ import json
 import os
 import utils
 
+const default_headers = { 'Content-Type': 'text/plain', 'Server': 'Vex' }
+
 pub type HandlerFunc = fn (req &Req, mut res Resp)
 
 pub type MiddlewareFunc = fn (mut req Req, mut res Resp)
@@ -12,12 +14,23 @@ pub type MiddlewareFunc = fn (mut req Req, mut res Resp)
 // Server request data
 pub struct Req {
 pub mut:
-	body    string
+	body    []byte
 	method  string
 	path    string
-	query   map[string]string
 	params  map[string]string
 	headers map[string]string
+	raw_query string
+	ctx     voidptr
+}
+
+pub fn (req Req) parse_query() ?map[string]string {
+	mut queries := map[string]string{}
+	if query_map := urllib.parse_query(req.raw_query) {
+		for name, _ in query_map.data {
+			queries[name] = query_map.data[name].data[0]
+		}
+	}
+	return queries
 }
 
 // parse_form_body parses the body based on its provided content-type
@@ -25,16 +38,18 @@ pub mut:
 // and `application/json` content types. Returns an error if the body is blank,
 // the "Content-Type" header is not present, or the content type header
 // is not supported.
-pub fn (req Req) parse_form_body() ?map[string]string {
+pub fn (req Req) parse_body() ?map[string]string {
 	if req.body.len == 0 {
 		return error('empty body')
 	} else if 'Content-Type' !in req.headers {
 		return error('body content-type header not present')
 	}
+
+	body := req.body.bytestr()
 	match req.headers['Content-Type'] {
 		'application/x-www-form-urlencoded' {
 			mut form_data_map := map[string]string{}
-			form_arr := req.body.split('&')
+			form_arr := body.split('&')
 			for form_data in form_arr {
 				form_data_arr := form_data.split('=')
 				form_data_map[form_data_arr[0]] = form_data_arr[1]
@@ -42,7 +57,7 @@ pub fn (req Req) parse_form_body() ?map[string]string {
 			return form_data_map
 		}
 		'application/json' {
-			form_data_map := json.decode(map[string]string, req.body) ?
+			form_data_map := json.decode(map[string]string, body) ?
 			return form_data_map
 		}
 		else {}
@@ -70,10 +85,10 @@ pub fn (req Req) parse_cookies() ?map[string]string {
 pub struct Resp {
 pub mut:
 	body        string
-	status_code int
+	status_code int = 200
 	path        string
 	cookies     map[string]string
-	headers     map[string]string
+	headers     map[string]string = default_headers
 }
 
 // send writes the body and status code to the response data.
@@ -116,6 +131,12 @@ pub fn (mut res Resp) send_status(status_code int) {
 // specified url or location
 [inline]
 pub fn (mut res Resp) redirect(url string) {
+	res.status_code = 302
+	res.headers['Location'] = url
+}
+
+[inline]
+pub fn (mut res Resp) permanent_redirect(url string) {
 	res.status_code = 301
 	res.headers['Location'] = url
 }
@@ -127,7 +148,7 @@ pub fn (mut res Resp) send_html(ht string, status_code int) {
 	res.send(ht, status_code)
 }
 
-// send_404 is a handler for sending 404s
-pub fn send_404(req &Req, mut res Resp) {
-	res.send_status(404)
+fn error_route(req &Req, mut res Resp) {
+	code := int(req.ctx)
+	res.send_status(code)
 }

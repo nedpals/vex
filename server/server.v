@@ -3,29 +3,22 @@
 module server
 
 import net
-import net.http
 import io
-import net.urllib
 import strings
-import router
-import ctx
 import utils
+import time
 
 const (
 	sep = '\r\n'
 )
 
-pub struct Server {
-	router.Router
-}
-
-// create server
-pub fn new() Server {
-	return Server{}
+pub interface Router {
+	respond_error(code int) string
+	receive(method string, path string, raw_headers []string, mut reader io.BufferedReader) (int, string, string)
 }
 
 // serve starts the server at the give port
-pub fn (mut srv Server) serve(port int) {
+pub fn serve(router Router, port int) {
 	println('[vex] Vex HTTP Server has started.\n[vex] Serving on http://localhost:$port')
 	listener := net.listen_tcp(port) or { panic('Failed to listen to port $port') }
 	for {
@@ -33,103 +26,50 @@ pub fn (mut srv Server) serve(port int) {
 			listener.close() or { }
 			panic('conn accept() failed.')
 		}
-		handle_http_connection(mut srv, mut conn)
+		handle_http_connection(router, mut conn)
 	}
 }
 
 // write_body writes the response body into the TCP server
-fn write_body(res &ctx.Resp, mut conn net.TcpConn) {
+fn write_body(code int, headers string, body string, mut conn net.TcpConn) {
 	mut response := strings.new_builder(1024)
-	statuscode_msg := utils.status_code_msg(res.status_code)
-	response.write('HTTP/1.1 $res.status_code $statuscode_msg$sep')
-	for header_name, header_value in res.headers {
-		response.write('$header_name: $header_value$sep')
-	}
-	response.write('Content-Length: $res.body.len${sep}Connection: close$sep$sep$res.body')
+	response.write('HTTP/1.1 $code ' + utils.status_code_msg(code))
+	response.write(if headers.len > 0 { sep + headers } else { headers })
+	response.write('${sep}Content-Length: $body.len')
+	response.write('${sep}Connection: close')
+	response.write(sep.repeat(2) + body)
 	conn.write(response.buf) or { }
-	conn.close() or { }
 	unsafe { response.free() }
 }
 
-fn send_500(mut conn net.TcpConn) {
-	mut eres := ctx.Resp{}
-	eres.send_status(500)
-	write_body(&eres, mut conn)
-}
+fn handle_http_connection(router Router, mut conn net.TcpConn) {
+	conn.set_read_timeout(1 * time.second)
+	defer {	conn.close() or { } }
 
-// handle_http_connection processes the incoming request and returns a response.
-fn handle_http_connection(mut srv Server, mut conn net.TcpConn) {
 	mut reader := io.new_buffered_reader(reader: io.make_reader(conn))
 	first_line := reader.read_line() or {
-		send_500(mut conn)
+		bad_req_body := router.respond_error(400)
+		write_body(400, '', bad_req_body, mut conn)
 		return
 	}
 	data := first_line.split(' ')
 	if data.len < 2 {
-		send_500(mut conn)
+		bad_req_body := router.respond_error(400)
+		write_body(400, '', bad_req_body, mut conn)
 		return
 	}
-	req_path := urllib.parse(data[1]) or {
-		send_500(mut conn)
-		return
-	}
-	mut headers := []string{}
+	mut raw_headers := []string{}
 	// encode headers
 	for {
 		header_line := reader.read_line() or {
-			send_500(mut conn)
+			internal_err_body := router.respond_error(500)
+			write_body(500, '', internal_err_body, mut conn)
 			return
 		}
-		if header_line.len == 0 {
-			break
-		}
-		headers << header_line
+		if header_line.len == 0 { break }
+		raw_headers << header_line
 	}
-	mut req := ctx.Req{
-		headers: http.parse_headers(headers)
-		method: data[0]
-		path: req_path.path
-	}
-	unsafe { headers.free() }
-	// parse queries
-	if req_path.raw_query.len > 0 {
-		query_map := req_path.query().data
-		for q in query_map.keys() {
-			req.query[q] = query_map[q].data[0]
-		}
-	}
-	if req.method == 'POST' && 'Content-Length' in req.headers {
-		mut conlen := req.headers['Content-Length'].int()
-		for conlen > 0 {
-			content := reader.read_line() or {
-				send_500(mut conn)
-				return
-			}
-			conlen -= content.len
-			req.body += content
-		}
-	}
-	mut res := ctx.Resp{
-		status_code: 200
-		path: req_path.path
-		headers: {
-			'Content-Type': 'text/plain'
-			'Server':       'Vex'
-		}
-	}
-	params, route_middlewares, handlers := srv.find(req.method.to_lower(), req.path) or {
-		ctx.send_404(req, mut res)
-		return
-	}
-	req.params = params
-	for app_middleware in srv.middlewares {
-		app_middleware(mut req, mut res)
-	}
-	for route_middleware in route_middlewares {
-		route_middleware(mut req, mut res)
-	}
-	for route_handler in handlers {
-		route_handler(&req, mut res)
-	}
-	write_body(&res, mut conn)
+	status_code, enc_header, body := router.receive(data[0], data[1], raw_headers, mut reader)
+	write_body(status_code, enc_header, body, mut conn)
+	unsafe { raw_headers.free() }
 }

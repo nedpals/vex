@@ -380,3 +380,9 @@ fn test_router_use_simple() {
 	router.use(dummy_middleware, dummy_middleware)
 	assert router.middlewares.len == 2
 }
+
+fn test_respond_error() {
+	mut router := Router{}
+	body := router.respond_error(200)
+	assert body == '<h1>404 Not Found</h1>'
+}
