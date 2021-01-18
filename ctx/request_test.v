@@ -7,7 +7,7 @@ fn test_parse_body_urlencoded() {
 			'Content-Type': 'application/x-www-form-urlencoded'
 		}
 	}
-	body := req.parse_body() or {
+	body := req.parse_form() or {
 		assert false
 		return
 	}
@@ -23,7 +23,7 @@ fn test_parse_body_json() {
 			'Content-Type': 'application/json'
 		}
 	}
-	body := req.parse_body() or {
+	body := req.parse_form() or {
 		assert false
 		return
 	}
@@ -35,7 +35,7 @@ fn test_parse_body_content_type_not_present() {
 	req := Req{
 		body: '{"test":"123"}'.bytes()
 	}
-	_ := req.parse_body() or {
+	_ := req.parse_form() or {
 		assert err == 'body content-type header not present'
 		return
 	}
@@ -49,7 +49,7 @@ fn test_parse_body_invalid() {
 			'Content-Type': 'text/plain'
 		}
 	}
-	_ := req.parse_body() or {
+	_ := req.parse_form() or {
 		assert err == 'no appropriate content-type header for body found'
 		return
 	}
@@ -58,7 +58,7 @@ fn test_parse_body_invalid() {
 
 fn test_parse_body_empty() {
 	req := Req{}
-	_ := req.parse_body() or {
+	_ := req.parse_form() or {
 		assert err == 'empty body'
 		return
 	}

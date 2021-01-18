@@ -36,12 +36,12 @@ pub fn (req &Req) parse_query() ?map[string]string {
 	return queries
 }
 
-// parse_form_body parses the body based on its provided content-type
+// parse_form parses the body based on its provided content-type
 // and returns the output of it. Supports `application/x-www-form-urlencoded`
 // and `application/json` content types. Returns an error if the body is blank,
 // the "Content-Type" header is not present, or the content type header
 // is not supported.
-pub fn (req Req) parse_body() ?map[string]string {
+pub fn (req &Req) parse_form() ?map[string]string {
 	if req.body.len == 0 {
 		return error('empty body')
 	} else if 'Content-Type' !in req.headers {
