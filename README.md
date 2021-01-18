@@ -55,10 +55,10 @@ Learn how to setup and use Vex by reading the [Wiki](https://github.com/nedpals/
 - [x] Middleware support
 - [x] Cookie parsing (basic support)
 - [ ] Websocket Server
-- [ ] Body parsing
+- [x] Body parsing
   - [x] `application/x-www-form-urlencoded` support
   - [x] `application/json` support
-  - [ ] `multipart/form-data` support
+  - [x] `multipart/form-data` support
 
 ## Contributing
 1. Fork it (<https://github.com/nedpals/vex/fork>)

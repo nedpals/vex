@@ -23,6 +23,7 @@ pub mut:
 	params    map[string]string
 	headers   map[string]string
 	raw_query string
+	boundary  string
 	ctx       voidptr
 }
 
@@ -62,6 +63,21 @@ pub fn (req &Req) parse_form() ?map[string]string {
 			form_data_map := json.decode(map[string]string, body) ?
 			return form_data_map
 		}
+		'multipart/form-data' {
+			multipart_form_data := req.parse_files() ?
+			mut form_data_map := map[string]string{}
+			for key, datum in multipart_form_data {
+				for i, data in datum {
+					if data.content_type != 'vex/form' {
+						continue
+					}
+					name := if i > 0 { '${key}_${i+1}' } else { key }
+					form_data_map[name] = data.content.bytestr()
+				}
+			}
+			unsafe { multipart_form_data.free() }
+			return form_data_map
+		}
 		else {}
 	}
 	return error('no appropriate content-type header for body found')
@@ -81,6 +97,70 @@ pub fn (req &Req) parse_cookies() ?map[string]string {
 		cookies[ck[0]] = ck_val
 	}
 	return cookies
+}
+
+pub fn (req &Req) parse_files() ?map[string][]FormData {
+	if req.headers['Content-Type'] != 'multipart/form-data' {
+		return error('content type must be multipart/form-data')
+	}
+	mut start := 0
+	mut filename := ''
+	mut form_name := ''
+	mut content_type := ''
+	mut files := map[string][]FormData{}
+	mut in_body := false
+	for i := 0; i < req.body.len; i++ {
+		chr := req.body[i]
+		if i+req.boundary.len+2 < req.body.len && req.body[i..i+req.boundary.len+2].bytestr().starts_with(req.boundary) {
+			if in_body {
+				if i-2 >= start {
+					files[form_name] << FormData{
+						filename: filename
+						content_type: content_type
+						content: req.body[start..i-2].clone()
+					}
+				}
+				in_body = false
+			}
+			start = req.boundary.len+2
+			i += req.boundary.len+2
+			continue
+		}
+		if !in_body && i+1 < req.body.len && chr == `\r` && req.body[i+1] == `\n` {
+			str := req.body[start..i].bytestr()
+			if str.starts_with('Content-Disposition: ') {
+				filename = ''
+				content_type = 'vex/form'
+				form_name = ''
+				fields := str.all_after('Content-Disposition: ').split('; ')[1..]
+				for field in fields {
+					vals := field.split('=')
+					val := vals[1].find_between('"', '"')
+					match vals[0] {
+						'name' { form_name = val }
+						'filename' { filename = val }
+						else {}
+					}
+					unsafe { vals.free() }
+				}
+			} else if str.starts_with('Content-Type') {
+				content_type = str.all_after('Content-Type: ')
+			} else {
+				in_body = true
+			}
+			start = i + 2
+			i++
+			unsafe { str.free() }
+			continue
+		}
+	}
+
+	unsafe {
+		filename.free()
+		form_name.free()
+		content_type.free()
+	}
+	return files
 }
 
 // Server response data
@@ -153,4 +233,11 @@ pub fn (mut res Resp) send_html(ht string, status_code int) {
 pub fn error_route(req &Req, mut res Resp) {
 	code := int(req.ctx)
 	res.send_status(code)
+}
+
+pub struct FormData {
+pub mut:
+	filename string
+	content_type string
+	content []byte
 }

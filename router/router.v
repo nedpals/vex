@@ -5,6 +5,10 @@ import io
 import net.http
 import net.urllib
 
+const (
+	form_methods = ['POST', 'PATCH', 'PUT']
+)
+
 pub type GroupCallbackFn = fn (mut group map[string]&Route)
 
 enum Kind {
@@ -37,10 +41,16 @@ pub fn (r Router) receive(method string, path string, raw_headers []string, mut 
 		raw_query: req_path.raw_query
 		ctx: r.ctx
 	}
-	if method == 'POST' &&
-		'Content-Length' in req.headers && req.headers['Content-Length'].int() > 0 {
-		body := io.read_all(reader: reader) or { []byte{} }
-		req.body = body
+	if method in form_methods {
+		if 'Content-Type' in req.headers && req.headers['Content-Type'].starts_with('multipart/form-data')
+			 && req.headers['Content-Type'].all_after('; boundary=').len > 0 {
+			req.boundary = '--' + req.headers['Content-Type'].all_after('; boundary=')
+			req.headers['Content-Type'] = req.headers['Content-Type'].all_before('; boundary=')
+		}
+		if 'Content-Length' in req.headers && req.headers['Content-Length'].int() > 0 {
+			body := io.read_all(reader: reader) or { []byte{} }
+			req.body << body
+		}
 	}
 	mut res := ctx.Resp{
 		path: req_path.path
