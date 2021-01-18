@@ -41,7 +41,7 @@ fn main() {
 	db.exec('create table users (id integer primary key, name text default "");')
 	app.inject(db)
 	app.route(.get, '/', fn (req &ctx.Req, mut res ctx.Resp) {
-		page := layout([
+		page := layout('', [
 			html.tag(name: 'h1', text: 'It works!'),
 			html.block({ name: 'p' }, [
 				html.tag(name: 'text', text: 'For online documentation please refer to '),
@@ -53,14 +53,15 @@ fn main() {
 					text: 'vex'
 				),
 				html.br(),
-				html.block({ name: 'em', text: "It\'s a web framework based on " }, [
-					html.Tag{
+				html.block({ name: 'em' }, [
+					html.tag(name: 'text', text: "It\'s a web framework based on ")
+					html.tag(
 						name: 'a'
 						attr: {
 							'href': 'https://vlang.io'
 						}
 						text: 'V.'
-					},
+					),
 				]),
 			]),
 			html.tag(
@@ -92,7 +93,7 @@ fn main() {
 			}
 			users << tag
 		}
-		page := layout([
+		page := layout('Users', [
 			html.tag(name: 'h1', text: 'Users'),
 			html.block({ name: 'ul' }, users),
 			html.tag(
@@ -106,7 +107,7 @@ fn main() {
 		res.send_html(page.html(), 200)
 	})
 	app.route(.get, '/users/add', fn (req &ctx.Req, mut res ctx.Resp) {
-		page := layout([
+		page := layout('Add new User', [
 			html.tag(
 				name: 'a'
 				attr: {
@@ -144,7 +145,7 @@ fn main() {
 	})
 	app.route(.post, '/users/new', fn (req &ctx.Req, mut res ctx.Resp) {
 		db2 := &sqlite.DB(req.ctx)
-		form_data := req.parse_body() or { map[string]string{} }
+		form_data := req.parse_form() or { map[string]string{} }
 		name := form_data['name']
 		db2.exec('insert into users (name) values ("$name");')
 		res.permanent_redirect('/users')
