@@ -26,7 +26,7 @@ pub mut:
 	ctx       voidptr
 }
 
-pub fn (req Req) parse_query() ?map[string]string {
+pub fn (req &Req) parse_query() ?map[string]string {
 	mut queries := map[string]string{}
 	if query_map := urllib.parse_query(req.raw_query) {
 		for name, _ in query_map.data {
@@ -69,7 +69,7 @@ pub fn (req Req) parse_body() ?map[string]string {
 
 // parse_cookies parses the Cookie header content and returns the
 // content. Returns an error if the header is not present.
-pub fn (req Req) parse_cookies() ?map[string]string {
+pub fn (req &Req) parse_cookies() ?map[string]string {
 	if 'Cookie' !in req.headers {
 		return error('cookies not found')
 	}
