@@ -1,4 +1,5 @@
-# Vex
+<img src="vex.svg" width="256" />
+
 Easy-to-use, modular web framework for V.
 ![Example written on Vex](examples/example.png)
 
@@ -76,3 +77,5 @@ Examples can be found at the [`/examples`](/examples) directory.
 ## Contributors
 
 - [Ned Palacios](https://github.com/nedpals) - creator and maintainer
+
+### Logo by: [alic110](https://github.com/alic110) 
