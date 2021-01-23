@@ -40,7 +40,7 @@ pub fn block(tag BlockTagConfig, children []Tag) Tag {
 	}
 }
 
-// meta returns a Tag equivalent to `<meta ...></meta>`
+// meta returns a Tag equivalent to `<meta />`
 [inline]
 pub fn meta(attr map[string]string) Tag {
 	return Tag{
@@ -50,7 +50,7 @@ pub fn meta(attr map[string]string) Tag {
 	}
 }
 
-// link returns a Tag equivalent to `<meta ...></meta>`
+// link returns a Tag equivalent to `<link />`
 [inline]
 pub fn link(attr map[string]string) Tag {
 	return Tag{
@@ -80,6 +80,7 @@ pub fn tag(tag Tag) Tag {
 pub fn br() Tag {
 	return Tag{
 		name: 'br'
+		empty: true
 	}
 }
 
