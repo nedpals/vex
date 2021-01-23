@@ -8,6 +8,7 @@ mut:
 	attr     map[string]string
 	children []Tag
 	text     string
+	empty    bool
 }
 
 pub struct BlockTagConfig {
@@ -45,6 +46,17 @@ pub fn meta(attr map[string]string) Tag {
 	return Tag{
 		name: 'meta'
 		attr: attr
+		empty: true
+	}
+}
+
+// link returns a Tag equivalent to `<meta ...></meta>`
+[inline]
+pub fn link(attr map[string]string) Tag {
+	return Tag{
+		name: 'link'
+		attr: attr
+		empty: true
 	}
 }
 
@@ -88,14 +100,20 @@ pub fn (tag Tag) html() string {
 		for prop_name, prop in tag.attr {
 			sb.write(' $prop_name="$prop"')
 		}
-		sb.write('>')
+		if !tag.empty {
+			sb.write('>')
+		} else {
+			sb.write('/>')
+		}
 	}
 	sb.write(tag.text)
-	for child in tag.children {
-		sb.write(child.html())
-	}
-	if !is_text {
-		sb.write('</$tag.name>')
+	if !tag.empty {
+		for child in tag.children {
+			sb.write(child.html())
+		}
+		if !is_text {
+			sb.write('</$tag.name>')
+		}
 	}
 	return sb.str()
 }
