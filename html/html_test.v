@@ -48,7 +48,7 @@ fn test_block() {
 
 fn test_br() {
 	brtg := br()
-	assert brtg.html() == '<br></br>'
+	assert brtg.html() == '<br/>'
 }
 
 fn test_meta() {
@@ -56,7 +56,7 @@ fn test_meta() {
 		'name':    'referrer'
 		'content': 'origin-when-cross-origin'
 	})
-	assert metatg.html() == '<meta name="referrer" content="origin-when-cross-origin"></meta>'
+	assert metatg.html() == '<meta name="referrer" content="origin-when-cross-origin"/>'
 }
 
 fn test_html() {
