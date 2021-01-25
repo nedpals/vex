@@ -1,4 +1,4 @@
-<p align="center"><img src="vex.svg" width="256" /></p>
+<p align="center"><img src="https://github.com/nedpals/vex/raw/master/vex.svg" width="256" /></p>
 
 Easy-to-use, modular web framework for V.
 ![Example written on VEX](examples/example.png)
