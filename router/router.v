@@ -45,7 +45,7 @@ pub fn (r Router) receive(method string, path string, raw_headers []string, mut 
 		if 'Content-Type' in req.headers && req.headers['Content-Type'].starts_with('multipart/form-data')
 			 && req.headers['Content-Type'].all_after('; boundary=').len > 0 {
 			req.boundary = '--' + req.headers['Content-Type'].all_after('; boundary=')
-			req.headers['Content-Type'] = req.headers['Content-Type'].all_before('; boundary=')
+			req.headers['Content-Type'] = 'multipart/form-data'
 		}
 		if 'Content-Length' in req.headers && req.headers['Content-Length'].int() > 0 {
 			body := io.read_all(reader: reader) or { []byte{} }
