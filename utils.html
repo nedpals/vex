@@ -63,6 +63,7 @@
 	status_code_msgs <span class="token operator">=</span> <span class="token punctuation">{</span>
 		<span class="token number">100</span><span class="token punctuation">:</span> <span class="token string">'Continue'</span>
 		<span class="token number">101</span><span class="token punctuation">:</span> <span class="token string">'Switching Protocols'</span>
+		<span class="token number">103</span><span class="token punctuation">:</span> <span class="token string">'Early Hints'</span>
 		<span class="token number">200</span><span class="token punctuation">:</span> <span class="token string">'OK'</span>
 		<span class="token number">201</span><span class="token punctuation">:</span> <span class="token string">'Created'</span>
 		<span class="token number">202</span><span class="token punctuation">:</span> <span class="token string">'Accepted'</span>
@@ -72,37 +73,74 @@
 		<span class="token number">206</span><span class="token punctuation">:</span> <span class="token string">'Partial Content'</span>
 		<span class="token number">300</span><span class="token punctuation">:</span> <span class="token string">'Multiple Choices'</span>
 		<span class="token number">301</span><span class="token punctuation">:</span> <span class="token string">'Moved Permanently'</span>
+		<span class="token number">302</span><span class="token punctuation">:</span> <span class="token string">'Found'</span>
+		<span class="token number">303</span><span class="token punctuation">:</span> <span class="token string">'See Other'</span>
+		<span class="token number">304</span><span class="token punctuation">:</span> <span class="token string">'Not Modified'</span>
+		<span class="token number">307</span><span class="token punctuation">:</span> <span class="token string">'Temporary Redirect'</span>
+		<span class="token number">308</span><span class="token punctuation">:</span> <span class="token string">'Permanent Redirect'</span>
 		<span class="token number">400</span><span class="token punctuation">:</span> <span class="token string">'Bad Request'</span>
 		<span class="token number">401</span><span class="token punctuation">:</span> <span class="token string">'Unauthorized'</span>
 		<span class="token number">403</span><span class="token punctuation">:</span> <span class="token string">'Forbidden'</span>
 		<span class="token number">404</span><span class="token punctuation">:</span> <span class="token string">'Not Found'</span>
 		<span class="token number">405</span><span class="token punctuation">:</span> <span class="token string">'Method Not Allowed'</span>
+		<span class="token number">406</span><span class="token punctuation">:</span> <span class="token string">'Not Acceptable'</span>
+		<span class="token number">407</span><span class="token punctuation">:</span> <span class="token string">'Proxy Authentication Required'</span>
 		<span class="token number">408</span><span class="token punctuation">:</span> <span class="token string">'Request Timeout'</span>
+		<span class="token number">409</span><span class="token punctuation">:</span> <span class="token string">'Conflict'</span>
+		<span class="token number">410</span><span class="token punctuation">:</span> <span class="token string">'Gone'</span>
+		<span class="token number">411</span><span class="token punctuation">:</span> <span class="token string">'Length Required'</span>
+		<span class="token number">412</span><span class="token punctuation">:</span> <span class="token string">'Precondition Failed'</span>
+		<span class="token number">413</span><span class="token punctuation">:</span> <span class="token string">'Payload Too Large'</span>
+		<span class="token number">414</span><span class="token punctuation">:</span> <span class="token string">'URI Too Long'</span>
+		<span class="token number">415</span><span class="token punctuation">:</span> <span class="token string">'Unsupported Media Type'</span>
+		<span class="token number">416</span><span class="token punctuation">:</span> <span class="token string">'Range Not Satisfiable'</span>
+		<span class="token number">417</span><span class="token punctuation">:</span> <span class="token string">'Expectation Failed'</span>
+		<span class="token number">418</span><span class="token punctuation">:</span> <span class="token string">'I'm a teapot'</span>
+		<span class="token number">421</span><span class="token punctuation">:</span> <span class="token string">'Misdirected Request'</span>
+		<span class="token number">426</span><span class="token punctuation">:</span> <span class="token string">'Upgrade Required'</span>
+		<span class="token number">428</span><span class="token punctuation">:</span> <span class="token string">'Precondition Required'</span>
+		<span class="token number">429</span><span class="token punctuation">:</span> <span class="token string">'Too Many Requests'</span>
+		<span class="token number">431</span><span class="token punctuation">:</span> <span class="token string">'Request Header Fields Too Large'</span>
+		<span class="token number">451</span><span class="token punctuation">:</span> <span class="token string">'Unavailable For Legal Reasons'</span>
 		<span class="token number">500</span><span class="token punctuation">:</span> <span class="token string">'Internal Server Error'</span>
 		<span class="token number">501</span><span class="token punctuation">:</span> <span class="token string">'Not Implemented'</span>
 		<span class="token number">502</span><span class="token punctuation">:</span> <span class="token string">'Bad Gateway'</span>
+		<span class="token number">503</span><span class="token punctuation">:</span> <span class="token string">'Service Unavailable'</span>
+		<span class="token number">504</span><span class="token punctuation">:</span> <span class="token string">'Gateway Timeout'</span>
+		<span class="token number">505</span><span class="token punctuation">:</span> <span class="token string">'HTTP Version Not Supported'</span>
+		<span class="token number">506</span><span class="token punctuation">:</span> <span class="token string">'Variant Also Negotiates'</span>
+		<span class="token number">510</span><span class="token punctuation">:</span> <span class="token string">'Not Extended'</span>
+		<span class="token number">511</span><span class="token punctuation">:</span> <span class="token string">'Network Authentication Required'</span>
 	<span class="token punctuation">}</span>
 <span class="token punctuation">)</span></code></pre>
 
 
 </section>
+						<section id="get_version" class="doc-node">
+							<div class="title"><h2>fn get_version <a href="#get_version">#</a></h2><a class="link" rel="noreferrer" target="_blank" href="https://github.com/nedpals/vex/blob/master/vex/utils/utils.v#L83"><svg xmlns="http://www.w3.org/2000/svg" height="24" viewBox="0 0 24 24" width="24"><path d="M0 0h24v24H0z" fill="none"/><path d="M3.9 12c0-1.71 1.39-3.1 3.1-3.1h4V7H7c-2.76 0-5 2.24-5 5s2.24 5 5 5h4v-1.9H7c-1.71 0-3.1-1.39-3.1-3.1zM8 13h8v-2H8v2zm9-6h-4v1.9h4c1.71 0 3.1 1.39 3.1 3.1s-1.39 3.1-3.1 3.1h-4V17h4c2.76 0 5-2.24 5-5s-2.24-5-5-5z"/></svg></a></div><pre class="signature"><code><span class="token keyword">fn</span> <span class="token function">get_version</span><span class="token punctuation">(</span><span class="token punctuation">)</span> <span class="token builtin">string</span></code></pre>
+<p>get VEX Version From v.mod File</p>
+
+</section>
 						<section id="identify_mime" class="doc-node">
-							<div class="title"><h2>fn identify_mime <a href="#identify_mime">#</a></h2><a class="link" rel="noreferrer" target="_blank" href="https://github.com/nedpals/vex/blob/master/vex/utils/utils.v#L42"><svg xmlns="http://www.w3.org/2000/svg" height="24" viewBox="0 0 24 24" width="24"><path d="M0 0h24v24H0z" fill="none"/><path d="M3.9 12c0-1.71 1.39-3.1 3.1-3.1h4V7H7c-2.76 0-5 2.24-5 5s2.24 5 5 5h4v-1.9H7c-1.71 0-3.1-1.39-3.1-3.1zM8 13h8v-2H8v2zm9-6h-4v1.9h4c1.71 0 3.1 1.39 3.1 3.1s-1.39 3.1-3.1 3.1h-4V17h4c2.76 0 5-2.24 5-5s-2.24-5-5-5z"/></svg></a></div><pre class="signature"><code><span class="token keyword">fn</span> <span class="token function">identify_mime</span><span class="token punctuation">(</span>filename <span class="token builtin">string</span><span class="token punctuation">)</span> <span class="token builtin">string</span></code></pre>
+							<div class="title"><h2>fn identify_mime <a href="#identify_mime">#</a></h2><a class="link" rel="noreferrer" target="_blank" href="https://github.com/nedpals/vex/blob/master/vex/utils/utils.v#L73"><svg xmlns="http://www.w3.org/2000/svg" height="24" viewBox="0 0 24 24" width="24"><path d="M0 0h24v24H0z" fill="none"/><path d="M3.9 12c0-1.71 1.39-3.1 3.1-3.1h4V7H7c-2.76 0-5 2.24-5 5s2.24 5 5 5h4v-1.9H7c-1.71 0-3.1-1.39-3.1-3.1zM8 13h8v-2H8v2zm9-6h-4v1.9h4c1.71 0 3.1 1.39 3.1 3.1s-1.39 3.1-3.1 3.1h-4V17h4c2.76 0 5-2.24 5-5s-2.24-5-5-5z"/></svg></a></div><pre class="signature"><code><span class="token keyword">fn</span> <span class="token function">identify_mime</span><span class="token punctuation">(</span>filename <span class="token builtin">string</span><span class="token punctuation">)</span> <span class="token builtin">string</span></code></pre>
 <p>identify_mime returns the MIME content type of a filename.</p>
 
 </section>
 						<section id="status_code_msg" class="doc-node">
-							<div class="title"><h2>fn status_code_msg <a href="#status_code_msg">#</a></h2><a class="link" rel="noreferrer" target="_blank" href="https://github.com/nedpals/vex/blob/master/vex/utils/utils.v#L34"><svg xmlns="http://www.w3.org/2000/svg" height="24" viewBox="0 0 24 24" width="24"><path d="M0 0h24v24H0z" fill="none"/><path d="M3.9 12c0-1.71 1.39-3.1 3.1-3.1h4V7H7c-2.76 0-5 2.24-5 5s2.24 5 5 5h4v-1.9H7c-1.71 0-3.1-1.39-3.1-3.1zM8 13h8v-2H8v2zm9-6h-4v1.9h4c1.71 0 3.1 1.39 3.1 3.1s-1.39 3.1-3.1 3.1h-4V17h4c2.76 0 5-2.24 5-5s-2.24-5-5-5z"/></svg></a></div><pre class="signature"><code><span class="token keyword">fn</span> <span class="token function">status_code_msg</span><span class="token punctuation">(</span>code <span class="token builtin">int</span><span class="token punctuation">)</span> <span class="token builtin">string</span></code></pre>
+							<div class="title"><h2>fn status_code_msg <a href="#status_code_msg">#</a></h2><a class="link" rel="noreferrer" target="_blank" href="https://github.com/nedpals/vex/blob/master/vex/utils/utils.v#L65"><svg xmlns="http://www.w3.org/2000/svg" height="24" viewBox="0 0 24 24" width="24"><path d="M0 0h24v24H0z" fill="none"/><path d="M3.9 12c0-1.71 1.39-3.1 3.1-3.1h4V7H7c-2.76 0-5 2.24-5 5s2.24 5 5 5h4v-1.9H7c-1.71 0-3.1-1.39-3.1-3.1zM8 13h8v-2H8v2zm9-6h-4v1.9h4c1.71 0 3.1 1.39 3.1 3.1s-1.39 3.1-3.1 3.1h-4V17h4c2.76 0 5-2.24 5-5s-2.24-5-5-5z"/></svg></a></div><pre class="signature"><code><span class="token keyword">fn</span> <span class="token function">status_code_msg</span><span class="token punctuation">(</span>code <span class="token builtin">int</span><span class="token punctuation">)</span> <span class="token builtin">string</span></code></pre>
 <p>status_code_msg returns the message of the given status code.  returns &quot;Internal Server Error&quot; if status is unknown.</p>
 
 </section>
 
 						<div class="footer">
-							Powered by vdoc. Generated on: 23 Jan 2021 09:47:01
+							Powered by vdoc. Generated on: 25 Jan 2021 05:10:57
 						</div>
 					</div>
 					<div class="doc-toc"><ul><li class="open"><a href="#readme_utils">README</a></li>
 <li class="open"><a href="#Constants">Constants</a></li>
+<li class="open"><a href="#get_version">fn get_version</a>        <ul>
+</ul>
+</li>
 <li class="open"><a href="#identify_mime">fn identify_mime</a>        <ul>
 </ul>
 </li>
