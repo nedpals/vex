@@ -1,7 +1,6 @@
 module utils
 
 import mime
-import os
 
 pub const (
 	// HTTP Server Code Messages
