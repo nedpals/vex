@@ -1,7 +1,7 @@
-<p align="center"><img src="vex.svg" width="256" /><div/>
+<p align="center"><img src="vex.svg" width="256" /></p>
 
 Easy-to-use, modular web framework for V.
-![Example written on Vex](examples/example.png)
+![Example written on VEX](examples/example.png)
 
 ```v
 module main
@@ -45,7 +45,7 @@ fn main() {
 ```
 
 ## Installation & Getting Started
-Learn how to setup and use Vex by reading the [Wiki](https://github.com/nedpals/vex/wiki/Installation).
+Learn how to setup and use VEX by reading the [Wiki](https://github.com/nedpals/vex/wiki/Installation).
 
 ## Roadmap
 - [X] Support for `GET`, `POST`, `PUT`, `PATCH`, `DELETE`, and `OPTION` HTTP methods.

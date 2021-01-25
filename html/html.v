@@ -16,6 +16,7 @@ pub struct BlockTagConfig {
 	attr map[string]string
 }
 
+// return the tag to encoded JSON
 [inline]
 pub fn (tag Tag) str() string {
 	return '{name: $tag.name, children: $tag.children.len}'

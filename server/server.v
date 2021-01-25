@@ -30,7 +30,7 @@ pub fn serve(router Router, port int) {
 	}
 }
 
-// write_body writes the response body into the TCP server
+// write_body Writes The Response Body into the TCP server
 fn write_body(code int, headers string, body string, mut conn net.TcpConn) {
 	mut response := strings.new_builder(1024)
 	response.write('HTTP/1.1 $code ' + utils.status_code_msg(code))
@@ -46,6 +46,7 @@ fn write_body(code int, headers string, body string, mut conn net.TcpConn) {
 	unsafe { response.free() }
 }
 
+// Handle All HTTP Connections
 fn handle_http_connection(router Router, mut conn net.TcpConn) {
 	conn.set_read_timeout(1 * time.second)
 	defer {
