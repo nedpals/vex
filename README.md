@@ -1,7 +1,12 @@
-<p align="center"><img src="https://github.com/nedpals/vex/raw/master/vex.svg" width="256" /></p>
+<div align="center">
+	<p align="center"><img src="https://github.com/nedpals/vex/raw/master/vex.svg" width="256" /></p>
+	<h1 align="center">The VEX Web Framework</h1>
+	<h3 align="center">Easy-to-use, Modular Web Framework Based on <a href="https://vlang.io">V</a></h2>
+		
+![CI](https://github.com/nedpals/vex/workflows/CI/badge.svg)</p>
+</div>
 
-Easy-to-use, modular web framework for V.
-![Example written on VEX](examples/example.png)
+![Example written on VEX](https://github.com/nedpals/vex/raw/master/examples/example.png)
 
 ```v
 module main
@@ -77,5 +82,3 @@ Examples can be found at the [`/examples`](/examples) directory.
 ## Contributors
 
 - [Ned Palacios](https://github.com/nedpals) - creator and maintainer
-
-### Logo by: [alic110](https://github.com/alic110) 
