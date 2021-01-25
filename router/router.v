@@ -125,7 +125,7 @@ mut:
 
 // empty str to avoid cgen error
 pub fn (r &Route) str() string {
-	return ''
+	return 'Route{ name: ${r.name}, middlewares: ${r.middlewares.len}, routes: ${r.children} }'
 }
 
 fn identify_kind(route_name string) Kind {
@@ -233,37 +233,29 @@ pub fn (mut routes map[string]&Route) route(method Method, path string, handlers
 
 // group adds a series of routes into the desired prefix
 pub fn (mut routes map[string]&Route) group(path string, callback GroupCallbackFn) {
-	mut new_routes := map[string]&Route{}
-	mut route := &Route{}
+	routes.route(.get, path, ctx.error_route)
 	mut children := path
-	callback(mut new_routes)
 	mut name := ''
 	mut cur_routes := routes
+	mut prev_routes := routes
+
 	for children.len > 0 {
-		new_name, param_name, new_children := extract_route_path(children) or { panic(err) }
+		new_name, _, new_children := extract_route_path(children) or { panic(err) }
 		children = new_children
 		name = new_name
-		if ('*' in cur_routes || ':' in cur_routes) && name !in ['*', ':'] {
-			panic('only one wildcard or param route in an endpoint group is allowed.')
-		} else if name !in cur_routes {
-			cur_routes.add(.get, '/$name$param_name$children', ctx.error_route) or { panic(err) }
-		}
-		route = unsafe { cur_routes[name] }
-		cur_routes = &route.children
+		prev_routes = cur_routes
+		cur_routes = unsafe { &cur_routes[name].children }
 	}
-	for new_path, new_route in new_routes {
-		if new_path.len == 0 {
-			route.middlewares << new_route.middlewares
-			for method_name, new_handlers in new_route.methods {
-				route.methods[method_name] = new_handlers
-			}
-			continue
-		}
+	callback(mut cur_routes)
+	if '' in cur_routes {
 		unsafe {
-			cur_routes[new_path] = new_route
+			prev_routes[name].middlewares << cur_routes[''].middlewares
+			for method_name, method_handlers in cur_routes[''].methods {
+				prev_routes[name].methods[method_name] = method_handlers
+			}
 		}
+		cur_routes.delete('')
 	}
-	unsafe { new_routes.free() }
 }
 
 pub fn (mut routes map[string]&Route) use(middlewares ...ctx.MiddlewareFunc) {
