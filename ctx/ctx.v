@@ -4,11 +4,16 @@ import net.urllib
 import json
 import os
 import utils
+import v.vmod
 
-const default_headers = {
-		'Content-Type': 'text/plain'
-		'Server':       'Vex'
+const (
+	default_headers = {
+		'Content-Type': 'text/html; charset=UTF-8'
+		'X-Powered-By': '$vm.name/$vm.version'
+		'server'	  : '$vm.name'
 	}
+	vm = vmod.from_file(os.getwd() + '/v.mod') or { panic(err) }
+	)
 
 pub type HandlerFunc = fn (req &Req, mut res Resp)
 
@@ -71,7 +76,7 @@ pub fn (req &Req) parse_form() ?map[string]string {
 					if data.content_type != 'vex/form' {
 						continue
 					}
-					name := if i > 0 { '${key}_${i+1}' } else { key }
+					name := if i > 0 { '${key}_${i + 1}' } else { key }
 					form_data_map[name] = data.content.bytestr()
 				}
 			}
@@ -99,6 +104,7 @@ pub fn (req &Req) parse_cookies() ?map[string]string {
 	return cookies
 }
 
+// parse_files parses the `multipart/form-data` content-type
 pub fn (req &Req) parse_files() ?map[string][]FormData {
 	if req.headers['Content-Type'] != 'multipart/form-data' {
 		return error('content type must be multipart/form-data')
@@ -111,22 +117,23 @@ pub fn (req &Req) parse_files() ?map[string][]FormData {
 	mut in_body := false
 	for i := 0; i < req.body.len; i++ {
 		chr := req.body[i]
-		if i+req.boundary.len+2 < req.body.len && req.body[i..i+req.boundary.len+2].bytestr().starts_with(req.boundary) {
+		if i + req.boundary.len + 2 < req.body.len
+			&& req.body[i..i + req.boundary.len + 2].bytestr().starts_with(req.boundary) {
 			if in_body {
-				if i-2 >= start {
+				if i - 2 >= start {
 					files[form_name] << FormData{
 						filename: filename
 						content_type: content_type
-						content: req.body[start..i-2].clone()
+						content: req.body[start..i - 2].clone()
 					}
 				}
 				in_body = false
 			}
-			start = req.boundary.len+2
-			i += req.boundary.len+2
+			start = req.boundary.len + 2
+			i += req.boundary.len + 2
 			continue
 		}
-		if !in_body && i+1 < req.body.len && chr == `\r` && req.body[i+1] == `\n` {
+		if !in_body && i + 1 < req.body.len && chr == `\r` && req.body[i + 1] == `\n` {
 			str := req.body[start..i].bytestr()
 			if str.starts_with('Content-Disposition: ') {
 				filename = ''
@@ -237,7 +244,7 @@ pub fn error_route(req &Req, mut res Resp) {
 
 pub struct FormData {
 pub mut:
-	filename string
+	filename     string
 	content_type string
-	content []byte
+	content      []byte
 }
