@@ -1,7 +1,8 @@
 <img src="https://github.com/nedpals/vex/raw/master/vex.svg" width="256" />
-Easy-to-use, modular web framework for [V](https://vlang.io).
 
-<img src="https://github.com/nedpals/vex/workflows/CI/badge.svg" alt="CI" width="64" />
+### Easy-to-use, modular web framework for [V](https://vlang.io).
+
+<img src="https://github.com/nedpals/vex/workflows/CI/badge.svg" alt="CI" width="100" />
 
 ![Example written on VEX](https://github.com/nedpals/vex/raw/master/examples/example.png)
 
