@@ -1,10 +1,7 @@
-<div align="center">
-	<p align="center"><img src="https://github.com/nedpals/vex/raw/master/vex.svg" width="256" /></p>
-	<h1 align="center">The VEX Web Framework</h1>
-	<h3 align="center">Easy-to-use, Modular Web Framework Based on <a href="https://vlang.io">V</a></h2>
-		
-![CI](https://github.com/nedpals/vex/workflows/CI/badge.svg)</p>
-</div>
+<img src="https://github.com/nedpals/vex/raw/master/vex.svg" width="256" />
+Easy-to-use, modular web framework for [V](https://vlang.io).
+
+<img src="https://github.com/nedpals/vex/workflows/CI/badge.svg" alt="CI" width="64" />
 
 ![Example written on VEX](https://github.com/nedpals/vex/raw/master/examples/example.png)
 
@@ -60,6 +57,7 @@ Learn how to setup and use VEX by reading the [Wiki](https://github.com/nedpals/
 - [x] Params and query parsing
 - [x] Middleware support
 - [x] Cookie parsing (basic support)
+- [ ] Cookie manipulation / Session support
 - [ ] Websocket Server
 - [x] Body parsing
   - [x] `application/x-www-form-urlencoded` support
