@@ -261,7 +261,7 @@ pub fn (mut routes map[string]&Route) group(path string, callback GroupCallbackF
 
 pub fn (mut routes map[string]&Route) use(middlewares ...ctx.MiddlewareFunc) {
 	if routes.len == 0 {
-		panic('endpoint/route middlewares can only be added after register a new route.')
+		panic('endpoint/route middlewares can only be added after creating a route.')
 	}
 	for name, _ in routes {
 		routes[name].middlewares << middlewares

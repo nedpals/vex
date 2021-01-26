@@ -362,6 +362,29 @@ fn test_routes_group_simple() {
 	assert routes['foo'].children['bar'].methods['post'].len == 1
 }
 
+fn test_routes_group_nested() {
+	mut routes := map[string]&Route{}
+	routes.group('/level-one', fn (mut rt map[string]&Route) {
+		rt.group('/level-two', fn (mut rt2 map[string]&Route) {
+			rt2.group('/level-three', fn (mut rt3 map[string]&Route) {
+				rt3.route(.get, '/hello', dummy_handler)
+			})
+
+			rt2.route(.get, '/world', dummy_handler)
+		})
+	})
+
+	assert routes.len == 1
+	assert 'level-one' in routes
+	assert routes['level-one'].children.len == 1
+	assert 'level-two' in routes['level-one'].children
+	assert routes['level-one'].children['level-two'].children.len == 2
+	assert 'world' in routes['level-one'].children['level-two'].children
+	assert routes['level-one'].children['level-two'].children['world'].methods.len == 1
+	assert 'level-three' in routes['level-one'].children['level-two'].children
+	assert routes['level-one'].children['level-two'].children['level-three'].children.len == 1
+}
+
 fn dummy_middleware(mut req ctx.Req, mut res ctx.Resp) {}
 
 fn test_routes_group_simple_with_middleware() {
