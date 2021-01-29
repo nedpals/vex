@@ -7,13 +7,13 @@ import utils
 import v.vmod
 
 const (
+	vm = vmod.decode(@VMOD_FILE) or { panic(err) }
 	default_headers = {
 		'Content-Type': 'text/html; charset=UTF-8'
 		'X-Powered-By': '$vm.name/$vm.version'
 		'server'	  : '$vm.name'
 	}
-	vm = vmod.from_file(os.getwd() + '/v.mod') or { panic(err) }
-	)
+)
 
 pub type HandlerFunc = fn (req &Req, mut res Resp)
 
