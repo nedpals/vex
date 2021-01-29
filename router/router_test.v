@@ -181,7 +181,10 @@ fn dummy_handler3(req &ctx.Req, mut res ctx.Resp) {}
 
 fn test_routes_add_simple() {
 	mut routes := map[string]&Route{}
-	routes.add(.get, '/hello', dummy_handler)
+	routes.add(.get, '/hello', dummy_handler) or {
+		assert false
+		return
+	}
 	assert 'hello' in routes
 	route := routes['hello']
 	assert route.kind == .regular
