@@ -21,13 +21,13 @@ fn do_stuff(mut req ctx.Req, mut res ctx.Resp) {
 fn main() {
 	mut app := router.new()
 	app.use(do_stuff, print_req_info)
-	app.get('/', fn (req ctx.Req, mut res ctx.Resp) {
+	app.route(.get, '/', fn (req ctx.Req, mut res ctx.Resp) {
 		res.send_json(Person{
 			name: req.query['name']
 			doing: req.query['doing']
 		}, 200)
 	})
-	app.get('/hello', fn (req ctx.Req, mut res ctx.Resp) {
+	app.route(.get, '/hello', fn (req ctx.Req, mut res ctx.Resp) {
 		res.send('Hello World!', 200)
 	})
 	server.serve(app, 8080)
