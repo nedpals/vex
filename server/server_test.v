@@ -1,1 +1,3 @@
-// stub
+fn test_server() {
+	// stub
+}
