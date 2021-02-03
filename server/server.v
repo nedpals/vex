@@ -19,7 +19,9 @@ pub interface Router {
 
 // serve starts the server at the give port
 pub fn serve(router Router, port int) {
-	println('[vex] Vex HTTP Server has started.\n[vex] Serving on http://localhost:$port')
+	vex_log := term.rgb(255, 221, 76, '[VEX]')
+	println('$vex_log \033[0;32mHTTP Server Has Started\033[0m')
+	println('$vex_log Serving On \033[0;36mhttp://localhost:$port \033[0m')
 	mut listener := net.listen_tcp(port) or { panic('Failed to listen to port $port') }
 	for {
 		mut conn := listener.accept() or {
