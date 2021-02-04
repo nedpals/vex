@@ -1,8 +1,8 @@
 module main
 
-import nedpals.vex.router
-import nedpals.vex.server
-import nedpals.vex.ctx
+import router
+import server
+import ctx
 
 fn main() {
 	mut app := router.new()
