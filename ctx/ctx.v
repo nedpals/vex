@@ -95,22 +95,6 @@ pub fn (req &Req) parse_form() ?map[string]string {
 	return error('no appropriate content-type header for body found')
 }
 
-// parse_cookies parses the Cookie header content and returns the
-// content. Returns an error if the header is not present.
-pub fn (req &Req) parse_cookies() ?map[string]string {
-	if 'Cookie' !in req.headers {
-		return error('cookies not found')
-	}
-	mut cookies := map[string]string{}
-	cookies_arr := req.headers['Cookie'].split('; ')
-	for cookie_data in cookies_arr {
-		ck := cookie_data.split('=')
-		ck_val := urllib.query_unescape(ck[1]) ?
-		cookies[ck[0]] = ck_val
-	}
-	return cookies
-}
-
 // parse_files parses the `multipart/form-data` content-type
 pub fn (req &Req) parse_files() ?map[string][]FormData {
 	if req.headers['Content-Type'][0] != 'multipart/form-data' {
