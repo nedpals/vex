@@ -55,7 +55,7 @@
 </section>
 
 						<section id="error_route" class="doc-node">
-							<div class="title"><h2>fn error_route <a href="#error_route">#</a></h2><a class="link" rel="noreferrer" target="_blank" href="https://github.com/nedpals/vex/blob/master/vex/ctx/ctx.v#L240"><svg xmlns="http://www.w3.org/2000/svg" height="24" viewBox="0 0 24 24" width="24"><path d="M0 0h24v24H0z" fill="none"/><path d="M3.9 12c0-1.71 1.39-3.1 3.1-3.1h4V7H7c-2.76 0-5 2.24-5 5s2.24 5 5 5h4v-1.9H7c-1.71 0-3.1-1.39-3.1-3.1zM8 13h8v-2H8v2zm9-6h-4v1.9h4c1.71 0 3.1 1.39 3.1 3.1s-1.39 3.1-3.1 3.1h-4V17h4c2.76 0 5-2.24 5-5s-2.24-5-5-5z"/></svg></a></div><pre class="signature"><code><span class="token keyword">fn</span> <span class="token function">error_route</span><span class="token punctuation">(</span>req <span class="token operator">&</span>Req<span class="token punctuation">,</span> <span class="token keyword">mut</span> res Resp<span class="token punctuation">)</span></code></pre>
+							<div class="title"><h2>fn error_route <a href="#error_route">#</a></h2><a class="link" rel="noreferrer" target="_blank" href="https://github.com/nedpals/vex/blob/master/vex/ctx/ctx.v#L247"><svg xmlns="http://www.w3.org/2000/svg" height="24" viewBox="0 0 24 24" width="24"><path d="M0 0h24v24H0z" fill="none"/><path d="M3.9 12c0-1.71 1.39-3.1 3.1-3.1h4V7H7c-2.76 0-5 2.24-5 5s2.24 5 5 5h4v-1.9H7c-1.71 0-3.1-1.39-3.1-3.1zM8 13h8v-2H8v2zm9-6h-4v1.9h4c1.71 0 3.1 1.39 3.1 3.1s-1.39 3.1-3.1 3.1h-4V17h4c2.76 0 5-2.24 5-5s-2.24-5-5-5z"/></svg></a></div><pre class="signature"><code><span class="token keyword">fn</span> <span class="token function">error_route</span><span class="token punctuation">(</span>req <span class="token operator">&</span>Req<span class="token punctuation">,</span> <span class="token keyword">mut</span> res Resp<span class="token punctuation">)</span></code></pre>
 
 
 </section>
@@ -69,8 +69,23 @@
 
 
 </section>
+						<section id="Cookie" class="doc-node">
+							<div class="title"><h2>struct Cookie <a href="#Cookie">#</a></h2><a class="link" rel="noreferrer" target="_blank" href="https://github.com/nedpals/vex/blob/master/vex/ctx/cookie.v#L13"><svg xmlns="http://www.w3.org/2000/svg" height="24" viewBox="0 0 24 24" width="24"><path d="M0 0h24v24H0z" fill="none"/><path d="M3.9 12c0-1.71 1.39-3.1 3.1-3.1h4V7H7c-2.76 0-5 2.24-5 5s2.24 5 5 5h4v-1.9H7c-1.71 0-3.1-1.39-3.1-3.1zM8 13h8v-2H8v2zm9-6h-4v1.9h4c1.71 0 3.1 1.39 3.1 3.1s-1.39 3.1-3.1 3.1h-4V17h4c2.76 0 5-2.24 5-5s-2.24-5-5-5z"/></svg></a></div><pre class="signature"><code><span class="token keyword">struct</span> <span class="token symbol">Cookie</span> <span class="token punctuation">{</span>
+	name      <span class="token builtin">string</span>
+	value     <span class="token builtin">string</span>
+	expires   time<span class="token punctuation">.</span>Time
+	max_age   <span class="token builtin">int</span>
+	domain    <span class="token builtin">string</span>
+	path      <span class="token builtin">string</span>
+	http_only <span class="token builtin">bool</span>
+	secure    <span class="token builtin">bool</span>
+	same_site SameSite <span class="token operator">=</span> <span class="token punctuation">.</span>lax
+<span class="token punctuation">}</span></code></pre>
+
+
+</section>
 						<section id="FormData" class="doc-node">
-							<div class="title"><h2>struct FormData <a href="#FormData">#</a></h2><a class="link" rel="noreferrer" target="_blank" href="https://github.com/nedpals/vex/blob/master/vex/ctx/ctx.v#L245"><svg xmlns="http://www.w3.org/2000/svg" height="24" viewBox="0 0 24 24" width="24"><path d="M0 0h24v24H0z" fill="none"/><path d="M3.9 12c0-1.71 1.39-3.1 3.1-3.1h4V7H7c-2.76 0-5 2.24-5 5s2.24 5 5 5h4v-1.9H7c-1.71 0-3.1-1.39-3.1-3.1zM8 13h8v-2H8v2zm9-6h-4v1.9h4c1.71 0 3.1 1.39 3.1 3.1s-1.39 3.1-3.1 3.1h-4V17h4c2.76 0 5-2.24 5-5s-2.24-5-5-5z"/></svg></a></div><pre class="signature"><code><span class="token keyword">struct</span> <span class="token symbol">FormData</span> <span class="token punctuation">{</span>
+							<div class="title"><h2>struct FormData <a href="#FormData">#</a></h2><a class="link" rel="noreferrer" target="_blank" href="https://github.com/nedpals/vex/blob/master/vex/ctx/ctx.v#L252"><svg xmlns="http://www.w3.org/2000/svg" height="24" viewBox="0 0 24 24" width="24"><path d="M0 0h24v24H0z" fill="none"/><path d="M3.9 12c0-1.71 1.39-3.1 3.1-3.1h4V7H7c-2.76 0-5 2.24-5 5s2.24 5 5 5h4v-1.9H7c-1.71 0-3.1-1.39-3.1-3.1zM8 13h8v-2H8v2zm9-6h-4v1.9h4c1.71 0 3.1 1.39 3.1 3.1s-1.39 3.1-3.1 3.1h-4V17h4c2.76 0 5-2.24 5-5s-2.24-5-5-5z"/></svg></a></div><pre class="signature"><code><span class="token keyword">struct</span> <span class="token symbol">FormData</span> <span class="token punctuation">{</span>
 <span class="token keyword">pub</span> <span class="token keyword">mut</span><span class="token punctuation">:</span>
 	filename     <span class="token builtin">string</span>
 	content_type <span class="token builtin">string</span>
@@ -86,7 +101,7 @@
 	method    <span class="token builtin">string</span>
 	path      <span class="token builtin">string</span>
 	params    <span class="token builtin">map</span><span class="token punctuation">[</span><span class="token builtin">string</span><span class="token punctuation">]</span><span class="token builtin">string</span>
-	headers   <span class="token builtin">map</span><span class="token punctuation">[</span><span class="token builtin">string</span><span class="token punctuation">]</span><span class="token builtin">string</span>
+	headers   <span class="token builtin">map</span><span class="token punctuation">[</span><span class="token builtin">string</span><span class="token punctuation">]</span><span class="token punctuation">[</span><span class="token punctuation">]</span><span class="token builtin">string</span>
 	raw_query <span class="token builtin">string</span>
 	boundary  <span class="token builtin">string</span>
 	ctx       <span class="token builtin">voidptr</span>
@@ -94,76 +109,89 @@
 <p>Server request data</p>
 
 </section>
-						<section id="Req.parse_query" class="doc-node">
-							<div class="title"><h2>fn (Req) parse_query <a href="#Req.parse_query">#</a></h2><a class="link" rel="noreferrer" target="_blank" href="https://github.com/nedpals/vex/blob/master/vex/ctx/ctx.v#L35"><svg xmlns="http://www.w3.org/2000/svg" height="24" viewBox="0 0 24 24" width="24"><path d="M0 0h24v24H0z" fill="none"/><path d="M3.9 12c0-1.71 1.39-3.1 3.1-3.1h4V7H7c-2.76 0-5 2.24-5 5s2.24 5 5 5h4v-1.9H7c-1.71 0-3.1-1.39-3.1-3.1zM8 13h8v-2H8v2zm9-6h-4v1.9h4c1.71 0 3.1 1.39 3.1 3.1s-1.39 3.1-3.1 3.1h-4V17h4c2.76 0 5-2.24 5-5s-2.24-5-5-5z"/></svg></a></div><pre class="signature"><code><span class="token keyword">fn</span> <span class="token punctuation">(</span>req <span class="token operator">&</span>Req<span class="token punctuation">)</span> <span class="token function">parse_query</span><span class="token punctuation">(</span><span class="token punctuation">)</span> ?<span class="token builtin">map</span><span class="token punctuation">[</span><span class="token builtin">string</span><span class="token punctuation">]</span><span class="token builtin">string</span></code></pre>
-
-
-</section>
-						<section id="Req.parse_form" class="doc-node">
-							<div class="title"><h2>fn (Req) parse_form <a href="#Req.parse_form">#</a></h2><a class="link" rel="noreferrer" target="_blank" href="https://github.com/nedpals/vex/blob/master/vex/ctx/ctx.v#L50"><svg xmlns="http://www.w3.org/2000/svg" height="24" viewBox="0 0 24 24" width="24"><path d="M0 0h24v24H0z" fill="none"/><path d="M3.9 12c0-1.71 1.39-3.1 3.1-3.1h4V7H7c-2.76 0-5 2.24-5 5s2.24 5 5 5h4v-1.9H7c-1.71 0-3.1-1.39-3.1-3.1zM8 13h8v-2H8v2zm9-6h-4v1.9h4c1.71 0 3.1 1.39 3.1 3.1s-1.39 3.1-3.1 3.1h-4V17h4c2.76 0 5-2.24 5-5s-2.24-5-5-5z"/></svg></a></div><pre class="signature"><code><span class="token keyword">fn</span> <span class="token punctuation">(</span>req <span class="token operator">&</span>Req<span class="token punctuation">)</span> <span class="token function">parse_form</span><span class="token punctuation">(</span><span class="token punctuation">)</span> ?<span class="token builtin">map</span><span class="token punctuation">[</span><span class="token builtin">string</span><span class="token punctuation">]</span><span class="token builtin">string</span></code></pre>
-<p>parse_form parses the body based on its provided content-type  and returns the output of it. Supports <code>application/x-www-form-urlencoded</code>  and <code>application/json</code> content types. Returns an error if the body is blank,  the &quot;Content-Type&quot; header is not present, or the content type header  is not supported.</p>
-
-</section>
 						<section id="Req.parse_cookies" class="doc-node">
-							<div class="title"><h2>fn (Req) parse_cookies <a href="#Req.parse_cookies">#</a></h2><a class="link" rel="noreferrer" target="_blank" href="https://github.com/nedpals/vex/blob/master/vex/ctx/ctx.v#L93"><svg xmlns="http://www.w3.org/2000/svg" height="24" viewBox="0 0 24 24" width="24"><path d="M0 0h24v24H0z" fill="none"/><path d="M3.9 12c0-1.71 1.39-3.1 3.1-3.1h4V7H7c-2.76 0-5 2.24-5 5s2.24 5 5 5h4v-1.9H7c-1.71 0-3.1-1.39-3.1-3.1zM8 13h8v-2H8v2zm9-6h-4v1.9h4c1.71 0 3.1 1.39 3.1 3.1s-1.39 3.1-3.1 3.1h-4V17h4c2.76 0 5-2.24 5-5s-2.24-5-5-5z"/></svg></a></div><pre class="signature"><code><span class="token keyword">fn</span> <span class="token punctuation">(</span>req <span class="token operator">&</span>Req<span class="token punctuation">)</span> <span class="token function">parse_cookies</span><span class="token punctuation">(</span><span class="token punctuation">)</span> ?<span class="token builtin">map</span><span class="token punctuation">[</span><span class="token builtin">string</span><span class="token punctuation">]</span><span class="token builtin">string</span></code></pre>
+							<div class="title"><h2>fn (Req) parse_cookies <a href="#Req.parse_cookies">#</a></h2><a class="link" rel="noreferrer" target="_blank" href="https://github.com/nedpals/vex/blob/master/vex/ctx/cookie.v#L53"><svg xmlns="http://www.w3.org/2000/svg" height="24" viewBox="0 0 24 24" width="24"><path d="M0 0h24v24H0z" fill="none"/><path d="M3.9 12c0-1.71 1.39-3.1 3.1-3.1h4V7H7c-2.76 0-5 2.24-5 5s2.24 5 5 5h4v-1.9H7c-1.71 0-3.1-1.39-3.1-3.1zM8 13h8v-2H8v2zm9-6h-4v1.9h4c1.71 0 3.1 1.39 3.1 3.1s-1.39 3.1-3.1 3.1h-4V17h4c2.76 0 5-2.24 5-5s-2.24-5-5-5z"/></svg></a></div><pre class="signature"><code><span class="token keyword">fn</span> <span class="token punctuation">(</span>req <span class="token operator">&</span>Req<span class="token punctuation">)</span> <span class="token function">parse_cookies</span><span class="token punctuation">(</span><span class="token punctuation">)</span> ?<span class="token builtin">map</span><span class="token punctuation">[</span><span class="token builtin">string</span><span class="token punctuation">]</span>Cookie</code></pre>
 <p>parse_cookies parses the Cookie header content and returns the  content. Returns an error if the header is not present.</p>
 
 </section>
 						<section id="Req.parse_files" class="doc-node">
-							<div class="title"><h2>fn (Req) parse_files <a href="#Req.parse_files">#</a></h2><a class="link" rel="noreferrer" target="_blank" href="https://github.com/nedpals/vex/blob/master/vex/ctx/ctx.v#L108"><svg xmlns="http://www.w3.org/2000/svg" height="24" viewBox="0 0 24 24" width="24"><path d="M0 0h24v24H0z" fill="none"/><path d="M3.9 12c0-1.71 1.39-3.1 3.1-3.1h4V7H7c-2.76 0-5 2.24-5 5s2.24 5 5 5h4v-1.9H7c-1.71 0-3.1-1.39-3.1-3.1zM8 13h8v-2H8v2zm9-6h-4v1.9h4c1.71 0 3.1 1.39 3.1 3.1s-1.39 3.1-3.1 3.1h-4V17h4c2.76 0 5-2.24 5-5s-2.24-5-5-5z"/></svg></a></div><pre class="signature"><code><span class="token keyword">fn</span> <span class="token punctuation">(</span>req <span class="token operator">&</span>Req<span class="token punctuation">)</span> <span class="token function">parse_files</span><span class="token punctuation">(</span><span class="token punctuation">)</span> ?<span class="token builtin">map</span><span class="token punctuation">[</span><span class="token builtin">string</span><span class="token punctuation">]</span><span class="token punctuation">[</span><span class="token punctuation">]</span>FormData</code></pre>
+							<div class="title"><h2>fn (Req) parse_files <a href="#Req.parse_files">#</a></h2><a class="link" rel="noreferrer" target="_blank" href="https://github.com/nedpals/vex/blob/master/vex/ctx/ctx.v#L103"><svg xmlns="http://www.w3.org/2000/svg" height="24" viewBox="0 0 24 24" width="24"><path d="M0 0h24v24H0z" fill="none"/><path d="M3.9 12c0-1.71 1.39-3.1 3.1-3.1h4V7H7c-2.76 0-5 2.24-5 5s2.24 5 5 5h4v-1.9H7c-1.71 0-3.1-1.39-3.1-3.1zM8 13h8v-2H8v2zm9-6h-4v1.9h4c1.71 0 3.1 1.39 3.1 3.1s-1.39 3.1-3.1 3.1h-4V17h4c2.76 0 5-2.24 5-5s-2.24-5-5-5z"/></svg></a></div><pre class="signature"><code><span class="token keyword">fn</span> <span class="token punctuation">(</span>req <span class="token operator">&</span>Req<span class="token punctuation">)</span> <span class="token function">parse_files</span><span class="token punctuation">(</span><span class="token punctuation">)</span> ?<span class="token builtin">map</span><span class="token punctuation">[</span><span class="token builtin">string</span><span class="token punctuation">]</span><span class="token punctuation">[</span><span class="token punctuation">]</span>FormData</code></pre>
 <p>parse_files parses the <code>multipart/form-data</code> content-type</p>
 
 </section>
+						<section id="Req.parse_form" class="doc-node">
+							<div class="title"><h2>fn (Req) parse_form <a href="#Req.parse_form">#</a></h2><a class="link" rel="noreferrer" target="_blank" href="https://github.com/nedpals/vex/blob/master/vex/ctx/ctx.v#L61"><svg xmlns="http://www.w3.org/2000/svg" height="24" viewBox="0 0 24 24" width="24"><path d="M0 0h24v24H0z" fill="none"/><path d="M3.9 12c0-1.71 1.39-3.1 3.1-3.1h4V7H7c-2.76 0-5 2.24-5 5s2.24 5 5 5h4v-1.9H7c-1.71 0-3.1-1.39-3.1-3.1zM8 13h8v-2H8v2zm9-6h-4v1.9h4c1.71 0 3.1 1.39 3.1 3.1s-1.39 3.1-3.1 3.1h-4V17h4c2.76 0 5-2.24 5-5s-2.24-5-5-5z"/></svg></a></div><pre class="signature"><code><span class="token keyword">fn</span> <span class="token punctuation">(</span>req <span class="token operator">&</span>Req<span class="token punctuation">)</span> <span class="token function">parse_form</span><span class="token punctuation">(</span><span class="token punctuation">)</span> ?<span class="token builtin">map</span><span class="token punctuation">[</span><span class="token builtin">string</span><span class="token punctuation">]</span><span class="token builtin">string</span></code></pre>
+<p>parse_form parses the body based on its provided content-type  and returns the output of it. Supports <code>application/x-www-form-urlencoded</code>  and <code>application/json</code> content types. Returns an error if the body is blank,  the &quot;Content-Type&quot; header is not present, or the content type header  is not supported.</p>
+
+</section>
+						<section id="Req.parse_headers" class="doc-node">
+							<div class="title"><h2>fn (Req) parse_headers <a href="#Req.parse_headers">#</a></h2><a class="link" rel="noreferrer" target="_blank" href="https://github.com/nedpals/vex/blob/master/vex/ctx/ctx.v#L37"><svg xmlns="http://www.w3.org/2000/svg" height="24" viewBox="0 0 24 24" width="24"><path d="M0 0h24v24H0z" fill="none"/><path d="M3.9 12c0-1.71 1.39-3.1 3.1-3.1h4V7H7c-2.76 0-5 2.24-5 5s2.24 5 5 5h4v-1.9H7c-1.71 0-3.1-1.39-3.1-3.1zM8 13h8v-2H8v2zm9-6h-4v1.9h4c1.71 0 3.1 1.39 3.1 3.1s-1.39 3.1-3.1 3.1h-4V17h4c2.76 0 5-2.24 5-5s-2.24-5-5-5z"/></svg></a></div><pre class="signature"><code><span class="token keyword">fn</span> <span class="token punctuation">(</span><span class="token keyword">mut</span> req Req<span class="token punctuation">)</span> <span class="token function">parse_headers</span><span class="token punctuation">(</span>raw_headers <span class="token punctuation">[</span><span class="token punctuation">]</span><span class="token builtin">string</span><span class="token punctuation">)</span></code></pre>
+<p>parse_headers parses and injects the raw_headers into  the request struct. Used internally by the router.</p>
+
+</section>
+						<section id="Req.parse_query" class="doc-node">
+							<div class="title"><h2>fn (Req) parse_query <a href="#Req.parse_query">#</a></h2><a class="link" rel="noreferrer" target="_blank" href="https://github.com/nedpals/vex/blob/master/vex/ctx/ctx.v#L46"><svg xmlns="http://www.w3.org/2000/svg" height="24" viewBox="0 0 24 24" width="24"><path d="M0 0h24v24H0z" fill="none"/><path d="M3.9 12c0-1.71 1.39-3.1 3.1-3.1h4V7H7c-2.76 0-5 2.24-5 5s2.24 5 5 5h4v-1.9H7c-1.71 0-3.1-1.39-3.1-3.1zM8 13h8v-2H8v2zm9-6h-4v1.9h4c1.71 0 3.1 1.39 3.1 3.1s-1.39 3.1-3.1 3.1h-4V17h4c2.76 0 5-2.24 5-5s-2.24-5-5-5z"/></svg></a></div><pre class="signature"><code><span class="token keyword">fn</span> <span class="token punctuation">(</span>req <span class="token operator">&</span>Req<span class="token punctuation">)</span> <span class="token function">parse_query</span><span class="token punctuation">(</span><span class="token punctuation">)</span> ?<span class="token builtin">map</span><span class="token punctuation">[</span><span class="token builtin">string</span><span class="token punctuation">]</span><span class="token builtin">string</span></code></pre>
+<p>parse_query parses the raw query string from the request  and returns a map of strings</p>
+
+</section>
 						<section id="Resp" class="doc-node">
-							<div class="title"><h2>struct Resp <a href="#Resp">#</a></h2><a class="link" rel="noreferrer" target="_blank" href="https://github.com/nedpals/vex/blob/master/vex/ctx/ctx.v#L174"><svg xmlns="http://www.w3.org/2000/svg" height="24" viewBox="0 0 24 24" width="24"><path d="M0 0h24v24H0z" fill="none"/><path d="M3.9 12c0-1.71 1.39-3.1 3.1-3.1h4V7H7c-2.76 0-5 2.24-5 5s2.24 5 5 5h4v-1.9H7c-1.71 0-3.1-1.39-3.1-3.1zM8 13h8v-2H8v2zm9-6h-4v1.9h4c1.71 0 3.1 1.39 3.1 3.1s-1.39 3.1-3.1 3.1h-4V17h4c2.76 0 5-2.24 5-5s-2.24-5-5-5z"/></svg></a></div><pre class="signature"><code><span class="token keyword">struct</span> <span class="token symbol">Resp</span> <span class="token punctuation">{</span>
+							<div class="title"><h2>struct Resp <a href="#Resp">#</a></h2><a class="link" rel="noreferrer" target="_blank" href="https://github.com/nedpals/vex/blob/master/vex/ctx/ctx.v#L169"><svg xmlns="http://www.w3.org/2000/svg" height="24" viewBox="0 0 24 24" width="24"><path d="M0 0h24v24H0z" fill="none"/><path d="M3.9 12c0-1.71 1.39-3.1 3.1-3.1h4V7H7c-2.76 0-5 2.24-5 5s2.24 5 5 5h4v-1.9H7c-1.71 0-3.1-1.39-3.1-3.1zM8 13h8v-2H8v2zm9-6h-4v1.9h4c1.71 0 3.1 1.39 3.1 3.1s-1.39 3.1-3.1 3.1h-4V17h4c2.76 0 5-2.24 5-5s-2.24-5-5-5z"/></svg></a></div><pre class="signature"><code><span class="token keyword">struct</span> <span class="token symbol">Resp</span> <span class="token punctuation">{</span>
 <span class="token keyword">pub</span> <span class="token keyword">mut</span><span class="token punctuation">:</span>
-	body        <span class="token builtin">string</span>
+	body        <span class="token punctuation">[</span><span class="token punctuation">]</span><span class="token builtin">byte</span>
 	status_code <span class="token builtin">int</span> <span class="token operator">=</span> <span class="token number">200</span>
-	path        <span class="token builtin">string</span>
-	cookies     <span class="token builtin">map</span><span class="token punctuation">[</span><span class="token builtin">string</span><span class="token punctuation">]</span><span class="token builtin">string</span>
-	headers     <span class="token builtin">map</span><span class="token punctuation">[</span><span class="token builtin">string</span><span class="token punctuation">]</span><span class="token builtin">string</span> <span class="token operator">=</span> ctx<span class="token punctuation">.</span>default_headers
+	headers     <span class="token builtin">map</span><span class="token punctuation">[</span><span class="token builtin">string</span><span class="token punctuation">]</span><span class="token punctuation">[</span><span class="token punctuation">]</span><span class="token builtin">string</span> <span class="token operator">=</span> ctx<span class="token punctuation">.</span>default_headers
 <span class="token punctuation">}</span></code></pre>
 <p>Server response data</p>
 
 </section>
+						<section id="Resp.headers_bytes" class="doc-node">
+							<div class="title"><h2>fn (Resp) headers_bytes <a href="#Resp.headers_bytes">#</a></h2><a class="link" rel="noreferrer" target="_blank" href="https://github.com/nedpals/vex/blob/master/vex/ctx/ctx.v#L234"><svg xmlns="http://www.w3.org/2000/svg" height="24" viewBox="0 0 24 24" width="24"><path d="M0 0h24v24H0z" fill="none"/><path d="M3.9 12c0-1.71 1.39-3.1 3.1-3.1h4V7H7c-2.76 0-5 2.24-5 5s2.24 5 5 5h4v-1.9H7c-1.71 0-3.1-1.39-3.1-3.1zM8 13h8v-2H8v2zm9-6h-4v1.9h4c1.71 0 3.1 1.39 3.1 3.1s-1.39 3.1-3.1 3.1h-4V17h4c2.76 0 5-2.24 5-5s-2.24-5-5-5z"/></svg></a></div><pre class="signature"><code><span class="token keyword">fn</span> <span class="token punctuation">(</span>res <span class="token operator">&</span>Resp<span class="token punctuation">)</span> <span class="token function">headers_bytes</span><span class="token punctuation">(</span><span class="token punctuation">)</span> <span class="token punctuation">[</span><span class="token punctuation">]</span><span class="token builtin">byte</span></code></pre>
+
+
+</section>
+						<section id="Resp.permanent_redirect" class="doc-node">
+							<div class="title"><h2>fn (Resp) permanent_redirect <a href="#Resp.permanent_redirect">#</a></h2><a class="link" rel="noreferrer" target="_blank" href="https://github.com/nedpals/vex/blob/master/vex/ctx/ctx.v#L222"><svg xmlns="http://www.w3.org/2000/svg" height="24" viewBox="0 0 24 24" width="24"><path d="M0 0h24v24H0z" fill="none"/><path d="M3.9 12c0-1.71 1.39-3.1 3.1-3.1h4V7H7c-2.76 0-5 2.24-5 5s2.24 5 5 5h4v-1.9H7c-1.71 0-3.1-1.39-3.1-3.1zM8 13h8v-2H8v2zm9-6h-4v1.9h4c1.71 0 3.1 1.39 3.1 3.1s-1.39 3.1-3.1 3.1h-4V17h4c2.76 0 5-2.24 5-5s-2.24-5-5-5z"/></svg></a></div><pre class="signature"><code><span class="token keyword">fn</span> <span class="token punctuation">(</span><span class="token keyword">mut</span> res Resp<span class="token punctuation">)</span> <span class="token function">permanent_redirect</span><span class="token punctuation">(</span>url <span class="token builtin">string</span><span class="token punctuation">)</span></code></pre>
+
+
+</section>
+						<section id="Resp.redirect" class="doc-node">
+							<div class="title"><h2>fn (Resp) redirect <a href="#Resp.redirect">#</a></h2><a class="link" rel="noreferrer" target="_blank" href="https://github.com/nedpals/vex/blob/master/vex/ctx/ctx.v#L216"><svg xmlns="http://www.w3.org/2000/svg" height="24" viewBox="0 0 24 24" width="24"><path d="M0 0h24v24H0z" fill="none"/><path d="M3.9 12c0-1.71 1.39-3.1 3.1-3.1h4V7H7c-2.76 0-5 2.24-5 5s2.24 5 5 5h4v-1.9H7c-1.71 0-3.1-1.39-3.1-3.1zM8 13h8v-2H8v2zm9-6h-4v1.9h4c1.71 0 3.1 1.39 3.1 3.1s-1.39 3.1-3.1 3.1h-4V17h4c2.76 0 5-2.24 5-5s-2.24-5-5-5z"/></svg></a></div><pre class="signature"><code><span class="token keyword">fn</span> <span class="token punctuation">(</span><span class="token keyword">mut</span> res Resp<span class="token punctuation">)</span> <span class="token function">redirect</span><span class="token punctuation">(</span>url <span class="token builtin">string</span><span class="token punctuation">)</span></code></pre>
+<p>redirect writes a 301 response and redirects to the   specified url or location</p>
+
+</section>
 						<section id="Resp.send" class="doc-node">
-							<div class="title"><h2>fn (Resp) send <a href="#Resp.send">#</a></h2><a class="link" rel="noreferrer" target="_blank" href="https://github.com/nedpals/vex/blob/master/vex/ctx/ctx.v#L185"><svg xmlns="http://www.w3.org/2000/svg" height="24" viewBox="0 0 24 24" width="24"><path d="M0 0h24v24H0z" fill="none"/><path d="M3.9 12c0-1.71 1.39-3.1 3.1-3.1h4V7H7c-2.76 0-5 2.24-5 5s2.24 5 5 5h4v-1.9H7c-1.71 0-3.1-1.39-3.1-3.1zM8 13h8v-2H8v2zm9-6h-4v1.9h4c1.71 0 3.1 1.39 3.1 3.1s-1.39 3.1-3.1 3.1h-4V17h4c2.76 0 5-2.24 5-5s-2.24-5-5-5z"/></svg></a></div><pre class="signature"><code><span class="token keyword">fn</span> <span class="token punctuation">(</span><span class="token keyword">mut</span> res Resp<span class="token punctuation">)</span> <span class="token function">send</span><span class="token punctuation">(</span>body <span class="token builtin">string</span><span class="token punctuation">,</span> status_code <span class="token builtin">int</span><span class="token punctuation">)</span></code></pre>
+							<div class="title"><h2>fn (Resp) send <a href="#Resp.send">#</a></h2><a class="link" rel="noreferrer" target="_blank" href="https://github.com/nedpals/vex/blob/master/vex/ctx/ctx.v#L178"><svg xmlns="http://www.w3.org/2000/svg" height="24" viewBox="0 0 24 24" width="24"><path d="M0 0h24v24H0z" fill="none"/><path d="M3.9 12c0-1.71 1.39-3.1 3.1-3.1h4V7H7c-2.76 0-5 2.24-5 5s2.24 5 5 5h4v-1.9H7c-1.71 0-3.1-1.39-3.1-3.1zM8 13h8v-2H8v2zm9-6h-4v1.9h4c1.71 0 3.1 1.39 3.1 3.1s-1.39 3.1-3.1 3.1h-4V17h4c2.76 0 5-2.24 5-5s-2.24-5-5-5z"/></svg></a></div><pre class="signature"><code><span class="token keyword">fn</span> <span class="token punctuation">(</span><span class="token keyword">mut</span> res Resp<span class="token punctuation">)</span> <span class="token function">send</span><span class="token punctuation">(</span>body <span class="token builtin">string</span><span class="token punctuation">,</span> status_code <span class="token builtin">int</span><span class="token punctuation">)</span></code></pre>
 <p>send writes the body and status code to the response data.</p>
 
 </section>
 						<section id="Resp.send_file" class="doc-node">
-							<div class="title"><h2>fn (Resp) send_file <a href="#Resp.send_file">#</a></h2><a class="link" rel="noreferrer" target="_blank" href="https://github.com/nedpals/vex/blob/master/vex/ctx/ctx.v#L192"><svg xmlns="http://www.w3.org/2000/svg" height="24" viewBox="0 0 24 24" width="24"><path d="M0 0h24v24H0z" fill="none"/><path d="M3.9 12c0-1.71 1.39-3.1 3.1-3.1h4V7H7c-2.76 0-5 2.24-5 5s2.24 5 5 5h4v-1.9H7c-1.71 0-3.1-1.39-3.1-3.1zM8 13h8v-2H8v2zm9-6h-4v1.9h4c1.71 0 3.1 1.39 3.1 3.1s-1.39 3.1-3.1 3.1h-4V17h4c2.76 0 5-2.24 5-5s-2.24-5-5-5z"/></svg></a></div><pre class="signature"><code><span class="token keyword">fn</span> <span class="token punctuation">(</span><span class="token keyword">mut</span> res Resp<span class="token punctuation">)</span> <span class="token function">send_file</span><span class="token punctuation">(</span>filename <span class="token builtin">string</span><span class="token punctuation">,</span> status_code <span class="token builtin">int</span><span class="token punctuation">)</span></code></pre>
+							<div class="title"><h2>fn (Resp) send_file <a href="#Resp.send_file">#</a></h2><a class="link" rel="noreferrer" target="_blank" href="https://github.com/nedpals/vex/blob/master/vex/ctx/ctx.v#L185"><svg xmlns="http://www.w3.org/2000/svg" height="24" viewBox="0 0 24 24" width="24"><path d="M0 0h24v24H0z" fill="none"/><path d="M3.9 12c0-1.71 1.39-3.1 3.1-3.1h4V7H7c-2.76 0-5 2.24-5 5s2.24 5 5 5h4v-1.9H7c-1.71 0-3.1-1.39-3.1-3.1zM8 13h8v-2H8v2zm9-6h-4v1.9h4c1.71 0 3.1 1.39 3.1 3.1s-1.39 3.1-3.1 3.1h-4V17h4c2.76 0 5-2.24 5-5s-2.24-5-5-5z"/></svg></a></div><pre class="signature"><code><span class="token keyword">fn</span> <span class="token punctuation">(</span><span class="token keyword">mut</span> res Resp<span class="token punctuation">)</span> <span class="token function">send_file</span><span class="token punctuation">(</span>filename <span class="token builtin">string</span><span class="token punctuation">,</span> status_code <span class="token builtin">int</span><span class="token punctuation">)</span></code></pre>
 <p>send_file writes the contents of the file to the response data.</p>
 
 </section>
+						<section id="Resp.send_html" class="doc-node">
+							<div class="title"><h2>fn (Resp) send_html <a href="#Resp.send_html">#</a></h2><a class="link" rel="noreferrer" target="_blank" href="https://github.com/nedpals/vex/blob/master/vex/ctx/ctx.v#L229"><svg xmlns="http://www.w3.org/2000/svg" height="24" viewBox="0 0 24 24" width="24"><path d="M0 0h24v24H0z" fill="none"/><path d="M3.9 12c0-1.71 1.39-3.1 3.1-3.1h4V7H7c-2.76 0-5 2.24-5 5s2.24 5 5 5h4v-1.9H7c-1.71 0-3.1-1.39-3.1-3.1zM8 13h8v-2H8v2zm9-6h-4v1.9h4c1.71 0 3.1 1.39 3.1 3.1s-1.39 3.1-3.1 3.1h-4V17h4c2.76 0 5-2.24 5-5s-2.24-5-5-5z"/></svg></a></div><pre class="signature"><code><span class="token keyword">fn</span> <span class="token punctuation">(</span><span class="token keyword">mut</span> res Resp<span class="token punctuation">)</span> <span class="token function">send_html</span><span class="token punctuation">(</span>ht <span class="token builtin">string</span><span class="token punctuation">,</span> status_code <span class="token builtin">int</span><span class="token punctuation">)</span></code></pre>
+<p>send_html writes the body to the response data as an HTML content</p>
+
+</section>
 						<section id="Resp.send_json" class="doc-node">
-							<div class="title"><h2>fn (Resp) send_json <a href="#Resp.send_json">#</a></h2><a class="link" rel="noreferrer" target="_blank" href="https://github.com/nedpals/vex/blob/master/vex/ctx/ctx.v#L205"><svg xmlns="http://www.w3.org/2000/svg" height="24" viewBox="0 0 24 24" width="24"><path d="M0 0h24v24H0z" fill="none"/><path d="M3.9 12c0-1.71 1.39-3.1 3.1-3.1h4V7H7c-2.76 0-5 2.24-5 5s2.24 5 5 5h4v-1.9H7c-1.71 0-3.1-1.39-3.1-3.1zM8 13h8v-2H8v2zm9-6h-4v1.9h4c1.71 0 3.1 1.39 3.1 3.1s-1.39 3.1-3.1 3.1h-4V17h4c2.76 0 5-2.24 5-5s-2.24-5-5-5z"/></svg></a></div><pre class="signature"><code><span class="token keyword">fn</span> <span class="token punctuation">(</span><span class="token keyword">mut</span> res Resp<span class="token punctuation">)</span> send_json<span class="token operator"><</span><span class="token builtin">T</span><span class="token operator">></span><span class="token punctuation">(</span>payload <span class="token builtin">T</span><span class="token punctuation">,</span> status_code <span class="token builtin">int</span><span class="token punctuation">)</span></code></pre>
+							<div class="title"><h2>fn (Resp) send_json <a href="#Resp.send_json">#</a></h2><a class="link" rel="noreferrer" target="_blank" href="https://github.com/nedpals/vex/blob/master/vex/ctx/ctx.v#L199"><svg xmlns="http://www.w3.org/2000/svg" height="24" viewBox="0 0 24 24" width="24"><path d="M0 0h24v24H0z" fill="none"/><path d="M3.9 12c0-1.71 1.39-3.1 3.1-3.1h4V7H7c-2.76 0-5 2.24-5 5s2.24 5 5 5h4v-1.9H7c-1.71 0-3.1-1.39-3.1-3.1zM8 13h8v-2H8v2zm9-6h-4v1.9h4c1.71 0 3.1 1.39 3.1 3.1s-1.39 3.1-3.1 3.1h-4V17h4c2.76 0 5-2.24 5-5s-2.24-5-5-5z"/></svg></a></div><pre class="signature"><code><span class="token keyword">fn</span> <span class="token punctuation">(</span><span class="token keyword">mut</span> res Resp<span class="token punctuation">)</span> send_json<span class="token operator"><</span><span class="token builtin">T</span><span class="token operator">></span><span class="token punctuation">(</span>payload <span class="token builtin">T</span><span class="token punctuation">,</span> status_code <span class="token builtin">int</span><span class="token punctuation">)</span></code></pre>
 <p>send_json is a generic function that encodes the payload and  writes the JSON string to the response data.</p>
 
 </section>
 						<section id="Resp.send_status" class="doc-node">
-							<div class="title"><h2>fn (Resp) send_status <a href="#Resp.send_status">#</a></h2><a class="link" rel="noreferrer" target="_blank" href="https://github.com/nedpals/vex/blob/master/vex/ctx/ctx.v#L213"><svg xmlns="http://www.w3.org/2000/svg" height="24" viewBox="0 0 24 24" width="24"><path d="M0 0h24v24H0z" fill="none"/><path d="M3.9 12c0-1.71 1.39-3.1 3.1-3.1h4V7H7c-2.76 0-5 2.24-5 5s2.24 5 5 5h4v-1.9H7c-1.71 0-3.1-1.39-3.1-3.1zM8 13h8v-2H8v2zm9-6h-4v1.9h4c1.71 0 3.1 1.39 3.1 3.1s-1.39 3.1-3.1 3.1h-4V17h4c2.76 0 5-2.24 5-5s-2.24-5-5-5z"/></svg></a></div><pre class="signature"><code><span class="token keyword">fn</span> <span class="token punctuation">(</span><span class="token keyword">mut</span> res Resp<span class="token punctuation">)</span> <span class="token function">send_status</span><span class="token punctuation">(</span>status_code <span class="token builtin">int</span><span class="token punctuation">)</span></code></pre>
+							<div class="title"><h2>fn (Resp) send_status <a href="#Resp.send_status">#</a></h2><a class="link" rel="noreferrer" target="_blank" href="https://github.com/nedpals/vex/blob/master/vex/ctx/ctx.v#L207"><svg xmlns="http://www.w3.org/2000/svg" height="24" viewBox="0 0 24 24" width="24"><path d="M0 0h24v24H0z" fill="none"/><path d="M3.9 12c0-1.71 1.39-3.1 3.1-3.1h4V7H7c-2.76 0-5 2.24-5 5s2.24 5 5 5h4v-1.9H7c-1.71 0-3.1-1.39-3.1-3.1zM8 13h8v-2H8v2zm9-6h-4v1.9h4c1.71 0 3.1 1.39 3.1 3.1s-1.39 3.1-3.1 3.1h-4V17h4c2.76 0 5-2.24 5-5s-2.24-5-5-5z"/></svg></a></div><pre class="signature"><code><span class="token keyword">fn</span> <span class="token punctuation">(</span><span class="token keyword">mut</span> res Resp<span class="token punctuation">)</span> <span class="token function">send_status</span><span class="token punctuation">(</span>status_code <span class="token builtin">int</span><span class="token punctuation">)</span></code></pre>
 <p>send_status sends an HTML response of the status code</p>
 
 </section>
-						<section id="Resp.redirect" class="doc-node">
-							<div class="title"><h2>fn (Resp) redirect <a href="#Resp.redirect">#</a></h2><a class="link" rel="noreferrer" target="_blank" href="https://github.com/nedpals/vex/blob/master/vex/ctx/ctx.v#L222"><svg xmlns="http://www.w3.org/2000/svg" height="24" viewBox="0 0 24 24" width="24"><path d="M0 0h24v24H0z" fill="none"/><path d="M3.9 12c0-1.71 1.39-3.1 3.1-3.1h4V7H7c-2.76 0-5 2.24-5 5s2.24 5 5 5h4v-1.9H7c-1.71 0-3.1-1.39-3.1-3.1zM8 13h8v-2H8v2zm9-6h-4v1.9h4c1.71 0 3.1 1.39 3.1 3.1s-1.39 3.1-3.1 3.1h-4V17h4c2.76 0 5-2.24 5-5s-2.24-5-5-5z"/></svg></a></div><pre class="signature"><code><span class="token keyword">fn</span> <span class="token punctuation">(</span><span class="token keyword">mut</span> res Resp<span class="token punctuation">)</span> <span class="token function">redirect</span><span class="token punctuation">(</span>url <span class="token builtin">string</span><span class="token punctuation">)</span></code></pre>
-<p>redirect writes a 301 response and redirects to the   specified url or location</p>
+						<section id="Resp.set_cookies" class="doc-node">
+							<div class="title"><h2>fn (Resp) set_cookies <a href="#Resp.set_cookies">#</a></h2><a class="link" rel="noreferrer" target="_blank" href="https://github.com/nedpals/vex/blob/master/vex/ctx/cookie.v#L72"><svg xmlns="http://www.w3.org/2000/svg" height="24" viewBox="0 0 24 24" width="24"><path d="M0 0h24v24H0z" fill="none"/><path d="M3.9 12c0-1.71 1.39-3.1 3.1-3.1h4V7H7c-2.76 0-5 2.24-5 5s2.24 5 5 5h4v-1.9H7c-1.71 0-3.1-1.39-3.1-3.1zM8 13h8v-2H8v2zm9-6h-4v1.9h4c1.71 0 3.1 1.39 3.1 3.1s-1.39 3.1-3.1 3.1h-4V17h4c2.76 0 5-2.24 5-5s-2.24-5-5-5z"/></svg></a></div><pre class="signature"><code><span class="token keyword">fn</span> <span class="token punctuation">(</span><span class="token keyword">mut</span> resp Resp<span class="token punctuation">)</span> <span class="token function">set_cookies</span><span class="token punctuation">(</span>cookies <span class="token builtin">map</span><span class="token punctuation">[</span><span class="token builtin">string</span><span class="token punctuation">]</span>Cookie<span class="token punctuation">)</span></code></pre>
 
-</section>
-						<section id="Resp.permanent_redirect" class="doc-node">
-							<div class="title"><h2>fn (Resp) permanent_redirect <a href="#Resp.permanent_redirect">#</a></h2><a class="link" rel="noreferrer" target="_blank" href="https://github.com/nedpals/vex/blob/master/vex/ctx/ctx.v#L228"><svg xmlns="http://www.w3.org/2000/svg" height="24" viewBox="0 0 24 24" width="24"><path d="M0 0h24v24H0z" fill="none"/><path d="M3.9 12c0-1.71 1.39-3.1 3.1-3.1h4V7H7c-2.76 0-5 2.24-5 5s2.24 5 5 5h4v-1.9H7c-1.71 0-3.1-1.39-3.1-3.1zM8 13h8v-2H8v2zm9-6h-4v1.9h4c1.71 0 3.1 1.39 3.1 3.1s-1.39 3.1-3.1 3.1h-4V17h4c2.76 0 5-2.24 5-5s-2.24-5-5-5z"/></svg></a></div><pre class="signature"><code><span class="token keyword">fn</span> <span class="token punctuation">(</span><span class="token keyword">mut</span> res Resp<span class="token punctuation">)</span> <span class="token function">permanent_redirect</span><span class="token punctuation">(</span>url <span class="token builtin">string</span><span class="token punctuation">)</span></code></pre>
-
-
-</section>
-						<section id="Resp.send_html" class="doc-node">
-							<div class="title"><h2>fn (Resp) send_html <a href="#Resp.send_html">#</a></h2><a class="link" rel="noreferrer" target="_blank" href="https://github.com/nedpals/vex/blob/master/vex/ctx/ctx.v#L235"><svg xmlns="http://www.w3.org/2000/svg" height="24" viewBox="0 0 24 24" width="24"><path d="M0 0h24v24H0z" fill="none"/><path d="M3.9 12c0-1.71 1.39-3.1 3.1-3.1h4V7H7c-2.76 0-5 2.24-5 5s2.24 5 5 5h4v-1.9H7c-1.71 0-3.1-1.39-3.1-3.1zM8 13h8v-2H8v2zm9-6h-4v1.9h4c1.71 0 3.1 1.39 3.1 3.1s-1.39 3.1-3.1 3.1h-4V17h4c2.76 0 5-2.24 5-5s-2.24-5-5-5z"/></svg></a></div><pre class="signature"><code><span class="token keyword">fn</span> <span class="token punctuation">(</span><span class="token keyword">mut</span> res Resp<span class="token punctuation">)</span> <span class="token function">send_html</span><span class="token punctuation">(</span>ht <span class="token builtin">string</span><span class="token punctuation">,</span> status_code <span class="token builtin">int</span><span class="token punctuation">)</span></code></pre>
-<p>send_html writes the body to the response data as an HTML content</p>
 
 </section>
 
 						<div class="footer">
-							Powered by vdoc. Generated on: 4 Feb 2021 08:21:07
+							Powered by vdoc. Generated on: 5 Feb 2021 11:02:39
 						</div>
 					</div>
 					<div class="doc-toc"><ul><li class="open"><a href="#readme_ctx">README</a></li>
@@ -176,24 +204,30 @@
 <li class="open"><a href="#MiddlewareFunc">type MiddlewareFunc</a>        <ul>
 </ul>
 </li>
+<li class="open"><a href="#Cookie">struct Cookie</a>        <ul>
+</ul>
+</li>
 <li class="open"><a href="#FormData">struct FormData</a>        <ul>
 </ul>
 </li>
 <li class="open"><a href="#Req">struct Req</a>        <ul>
-<li><a href="#Req.parse_query">fn parse_query</a></li>
-<li><a href="#Req.parse_form">fn parse_form</a></li>
 <li><a href="#Req.parse_cookies">fn parse_cookies</a></li>
 <li><a href="#Req.parse_files">fn parse_files</a></li>
+<li><a href="#Req.parse_form">fn parse_form</a></li>
+<li><a href="#Req.parse_headers">fn parse_headers</a></li>
+<li><a href="#Req.parse_query">fn parse_query</a></li>
 </ul>
 </li>
 <li class="open"><a href="#Resp">struct Resp</a>        <ul>
+<li><a href="#Resp.headers_bytes">fn headers_bytes</a></li>
+<li><a href="#Resp.permanent_redirect">fn permanent_redirect</a></li>
+<li><a href="#Resp.redirect">fn redirect</a></li>
 <li><a href="#Resp.send">fn send</a></li>
 <li><a href="#Resp.send_file">fn send_file</a></li>
+<li><a href="#Resp.send_html">fn send_html</a></li>
 <li><a href="#Resp.send_json">fn send_json</a></li>
 <li><a href="#Resp.send_status">fn send_status</a></li>
-<li><a href="#Resp.redirect">fn redirect</a></li>
-<li><a href="#Resp.permanent_redirect">fn permanent_redirect</a></li>
-<li><a href="#Resp.send_html">fn send_html</a></li>
+<li><a href="#Resp.set_cookies">fn set_cookies</a></li>
 </ul>
 </li>
 </ul></div>
