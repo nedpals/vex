@@ -40,7 +40,7 @@ pub const (
 		415: 'Unsupported Media Type'
 		416: 'Range Not Satisfiable'
 		417: 'Expectation Failed'
-		418: 'I\'m a teapot'
+		418: "I'm a teapot"
 		421: 'Misdirected Request'
 		426: 'Upgrade Required'
 		428: 'Precondition Required'
@@ -62,10 +62,10 @@ pub const (
 // status_code_msg returns the message of the given status code.
 // returns "Internal Server Error" if status is unknown.
 pub fn status_code_msg(code int) string {
-	if code in status_code_msgs {
-		return status_code_msgs[code]
+	if code in utils.status_code_msgs {
+		return utils.status_code_msgs[code]
 	}
-	return status_code_msgs[500]
+	return utils.status_code_msgs[500]
 }
 
 // identify_mime returns the MIME content type of a filename.

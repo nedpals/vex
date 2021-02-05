@@ -38,9 +38,9 @@ fn write_body(code int, headers []byte, body []byte, mut conn net.TcpConn) {
 	mut response := strings.new_builder(body.len)
 	response.write('HTTP/1.1 $code ' + utils.status_code_msg(code))
 	response.write_bytes(headers.data, headers.len)
-	response.write('${sep}Content-Length: $body.len')
-	response.write('${sep}Connection: close')
-	response.write(sep.repeat(2))
+	response.write('${server.sep}Content-Length: $body.len')
+	response.write('${server.sep}Connection: close')
+	response.write(server.sep.repeat(2))
 	response.write_bytes(body.data, body.len)
 	conn.write(response.buf) or { }
 	unsafe { response.free() }
@@ -82,7 +82,6 @@ fn handle_http_connection(router Router, mut conn net.TcpConn) {
 		raw_headers << header_line
 	}
 	if conlen > 0 {
-		
 	}
 	status_code, enc_header, body := router.receive(data[0], data[1], raw_headers, mut
 		reader)

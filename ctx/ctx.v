@@ -7,11 +7,11 @@ import utils
 import v.vmod
 
 const (
-	vm = vmod.decode(@VMOD_FILE) or { panic(err) }
+	vm              = vmod.decode(@VMOD_FILE) or { panic(err) }
 	default_headers = {
 		'Content-Type': ['text/html; charset=UTF-8']
 		'X-Powered-By': ['$vm.name/$vm.version']
-		'server'	  : ['$vm.name']
+		'server':       ['$vm.name']
 	}
 )
 
@@ -170,7 +170,7 @@ pub struct Resp {
 pub mut:
 	body        []byte
 	status_code int = 200
-	headers     map[string][]string = default_headers
+	headers     map[string][]string = ctx.default_headers
 }
 
 // send writes the body and status code to the response data.

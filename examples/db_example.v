@@ -54,7 +54,7 @@ fn main() {
 				),
 				html.br(),
 				html.block({ name: 'em' }, [
-					html.tag(name: 'text', text: "It\'s a web framework based on ")
+					html.tag(name: 'text', text: "It's a web framework based on "),
 					html.tag(
 						name: 'a'
 						attr: {

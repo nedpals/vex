@@ -1,7 +1,7 @@
 module ctx
 
-import time
 // import strings
+import time
 import net.urllib
 
 enum SameSite {
@@ -11,14 +11,14 @@ enum SameSite {
 }
 
 pub struct Cookie {
-	name string
-	value string
-	expires time.Time
-	max_age int
-	domain string
-	path string
+	name      string
+	value     string
+	expires   time.Time
+	max_age   int
+	domain    string
+	path      string
 	http_only bool
-	secure bool
+	secure    bool
 	same_site SameSite = .lax
 }
 
