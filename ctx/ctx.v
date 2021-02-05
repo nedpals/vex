@@ -32,6 +32,8 @@ pub mut:
 	ctx       voidptr
 }
 
+// parse_headers parses and injects the raw_headers into
+// the request struct. Used internally by the router.
 pub fn (mut req Req) parse_headers(raw_headers []string) {
 	for rh in raw_headers {
 		spl := rh.split(': ')
@@ -39,6 +41,8 @@ pub fn (mut req Req) parse_headers(raw_headers []string) {
 	}
 }
 
+// parse_query parses the raw query string from the request
+// and returns a map of strings
 pub fn (req &Req) parse_query() ?map[string]string {
 	mut queries := map[string]string{}
 	if query_map := urllib.parse_query(req.raw_query) {
