@@ -40,5 +40,5 @@ fn test_cookie_header_str_with_attrs() {
 		http_only: true
 		path: '/'
 	}
-	assert ck.header_str() == 'test=hello; Path=/; Secure; SameSite=None'
+	assert ck.header_str() == 'test=hello; Path=/; HttpOnly; Secure; SameSite=None'
 }
