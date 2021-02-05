@@ -1,8 +1,6 @@
 module router
 
 import ctx
-import io
-import net.http
 import net.urllib
 
 const (
@@ -29,35 +27,29 @@ pub fn new() Router {
 	return Router{}
 }
 
-pub fn (r Router) receive(method string, path string, raw_headers []string, mut reader io.BufferedReader) (int, string, string) {
+pub fn (r Router) receive(method string, path string, raw_headers []string, body []byte) (int, []byte, []byte) {
+	def_header := ('\r\n' + raw_headers.join('\r\n')).bytes()
 	req_path := urllib.parse(path) or {
 		internal_err_body := r.respond_error(500)
-		return 500, raw_headers.join('\r\n'), internal_err_body
+		return 500, def_header, internal_err_body
 	}
 	mut req := ctx.Req{
-		headers: http.parse_headers(raw_headers)
 		method: method
 		path: req_path.path
 		raw_query: req_path.raw_query
 		ctx: r.ctx
 	}
-	if method in form_methods {
-		if 'Content-Type' in req.headers && req.headers['Content-Type'].starts_with('multipart/form-data')
-			 && req.headers['Content-Type'].all_after('; boundary=').len > 0 {
-			req.boundary = '--' + req.headers['Content-Type'].all_after('; boundary=')
-			req.headers['Content-Type'] = 'multipart/form-data'
-		}
-		if 'Content-Length' in req.headers && req.headers['Content-Length'].int() > 0 {
-			body := io.read_all(reader: reader) or { []byte{} }
-			req.body << body
-		}
-	}
-	mut res := ctx.Resp{
-		path: req_path.path
+	mut res := ctx.Resp{}
+	req.parse_headers(raw_headers)
+	if method in form_methods && 'Content-Type' in req.headers && 
+		req.headers['Content-Type'][0].starts_with('multipart/form-data') && 
+		req.headers['Content-Type'][0].all_after('; boundary=').len > 0 {
+		req.boundary = '--' + req.headers['Content-Type'][0].all_after('; boundary=')
+		req.headers['Content-Type'][0] = 'multipart/form-data'
 	}
 	params, route_middlewares, handlers := r.routes.find(req.method.to_lower(), req.path) or {
 		not_found_body := r.respond_error(404)
-		return 404, raw_headers.join('\r\n'), not_found_body
+		return 404, def_header, not_found_body
 	}
 	req.params = params
 	for app_middleware in r.middlewares {
@@ -69,10 +61,10 @@ pub fn (r Router) receive(method string, path string, raw_headers []string, mut 
 	for route_handler in handlers {
 		route_handler(&req, mut res)
 	}
-	return res.status_code, res.headers.keys().map(it + ': ' + res.headers[it]).join('\r\n'), res.body
+	return res.status_code, res.headers_bytes(), res.body
 }
 
-pub fn (r Router) respond_error(code int) string {
+pub fn (r Router) respond_error(code int) []byte {
 	req := ctx.Req{
 		ctx: code
 	}

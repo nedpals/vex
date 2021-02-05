@@ -15,7 +15,7 @@ const (
 
 pub interface Router {
 	respond_error(code int) string
-	receive(method string, path string, raw_headers []string, mut reader io.BufferedReader) (int, string, string)
+	receive(method string, path string, raw_headers []string, body []byte) (int, []byte, []byte)
 }
 
 // serve starts the server at the give port
@@ -34,17 +34,14 @@ pub fn serve(router Router, port int) {
 }
 
 // write_body Writes The Response Body into the TCP server
-fn write_body(code int, headers string, body string, mut conn net.TcpConn) {
-	mut response := strings.new_builder(1024)
+fn write_body(code int, headers []byte, body []byte, mut conn net.TcpConn) {
+	mut response := strings.new_builder(body.len)
 	response.write('HTTP/1.1 $code ' + utils.status_code_msg(code))
-	response.write(if headers.len > 0 {
-		sep + headers
-	} else {
-		headers
-	})
+	response.write_bytes(headers.data, headers.len)
 	response.write('${sep}Content-Length: $body.len')
 	response.write('${sep}Connection: close')
-	response.write(sep.repeat(2) + body)
+	response.write(sep.repeat(2))
+	response.write_bytes(body.data, body.len)
 	conn.write(response.buf) or { }
 	unsafe { response.free() }
 }
@@ -68,6 +65,7 @@ fn handle_http_connection(router Router, mut conn net.TcpConn) {
 		return
 	}
 	mut raw_headers := []string{}
+	mut conlen := 0
 	// encode headers
 	for {
 		header_line := reader.read_line() or {
@@ -75,10 +73,16 @@ fn handle_http_connection(router Router, mut conn net.TcpConn) {
 			write_body(500, '', internal_err_body, mut conn)
 			return
 		}
+		if header_line.starts_with('Content-Length: ') {
+			conlen = header_line.all_after('Content-Length: ').int()
+		}
 		if header_line.len == 0 {
 			break
 		}
 		raw_headers << header_line
+	}
+	if conlen > 0 {
+		
 	}
 	status_code, enc_header, body := router.receive(data[0], data[1], raw_headers, mut
 		reader)

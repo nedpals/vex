@@ -9,9 +9,9 @@ import v.vmod
 const (
 	vm = vmod.decode(@VMOD_FILE) or { panic(err) }
 	default_headers = {
-		'Content-Type': 'text/html; charset=UTF-8'
-		'X-Powered-By': '$vm.name/$vm.version'
-		'server'	  : '$vm.name'
+		'Content-Type': ['text/html; charset=UTF-8']
+		'X-Powered-By': ['$vm.name/$vm.version']
+		'server'	  : ['$vm.name']
 	}
 )
 
@@ -26,10 +26,17 @@ pub mut:
 	method    string
 	path      string
 	params    map[string]string
-	headers   map[string]string
+	headers   map[string][]string
 	raw_query string
 	boundary  string
 	ctx       voidptr
+}
+
+pub fn (mut req Req) parse_headers(raw_headers []string) {
+	for rh in raw_headers {
+		spl := rh.split(': ')
+		req.headers[spl[0]] = [spl[1..].join(': ')]
+	}
 }
 
 pub fn (req &Req) parse_query() ?map[string]string {
@@ -54,7 +61,7 @@ pub fn (req &Req) parse_form() ?map[string]string {
 		return error('body content-type header not present')
 	}
 	body := req.body.bytestr()
-	match req.headers['Content-Type'] {
+	match req.headers['Content-Type'][0] {
 		'application/x-www-form-urlencoded' {
 			mut form_data_map := map[string]string{}
 			form_arr := body.split('&')
@@ -106,7 +113,7 @@ pub fn (req &Req) parse_cookies() ?map[string]string {
 
 // parse_files parses the `multipart/form-data` content-type
 pub fn (req &Req) parse_files() ?map[string][]FormData {
-	if req.headers['Content-Type'] != 'multipart/form-data' {
+	if req.headers['Content-Type'][0] != 'multipart/form-data' {
 		return error('content type must be multipart/form-data')
 	}
 	mut start := 0
@@ -173,30 +180,29 @@ pub fn (req &Req) parse_files() ?map[string][]FormData {
 // Server response data
 pub struct Resp {
 pub mut:
-	body        string
+	body        []byte
 	status_code int = 200
-	path        string
-	cookies     map[string]string
-	headers     map[string]string = default_headers
+	headers     map[string][]string = default_headers
 }
 
 // send writes the body and status code to the response data.
 [inline]
 pub fn (mut res Resp) send(body string, status_code int) {
-	res.body = body
+	res.body = body.bytes()
 	res.status_code = status_code
 }
 
 // send_file writes the contents of the file to the response data.
 [inline]
 pub fn (mut res Resp) send_file(filename string, status_code int) {
-	fl := os.read_file(os.getwd() + '/$filename') or {
+	fl := os.read_bytes(os.join_path(os.getwd(), '/$filename')) or {
 		res.send_status(404)
 		return
 	}
-	res.send(fl, status_code)
+	res.body = fl
+	res.status_code = status_code
 	mimetype := utils.identify_mime(filename)
-	res.headers['Content-Type'] = mimetype
+	res.headers['Content-Type'] = [mimetype]
 }
 
 // send_json is a generic function that encodes the payload and
@@ -205,14 +211,14 @@ pub fn (mut res Resp) send_file(filename string, status_code int) {
 pub fn (mut res Resp) send_json<T>(payload T, status_code int) {
 	json_string := json.encode(payload)
 	res.send(json_string, status_code)
-	res.headers['Content-Type'] = 'application/json'
+	res.headers['Content-Type'] = ['application/json']
 }
 
 // send_status sends an HTML response of the status code
 [inline]
 pub fn (mut res Resp) send_status(status_code int) {
 	msg := utils.status_code_msg(status_code)
-	res.headers['Content-Type'] = 'text/html'
+	res.headers['Content-Type'] = ['text/html']
 	res.send('<h1>$status_code $msg</h1>', status_code)
 }
 
@@ -221,20 +227,33 @@ pub fn (mut res Resp) send_status(status_code int) {
 [inline]
 pub fn (mut res Resp) redirect(url string) {
 	res.status_code = 302
-	res.headers['Location'] = url
+	res.headers['Location'] = [url]
 }
 
 [inline]
 pub fn (mut res Resp) permanent_redirect(url string) {
 	res.status_code = 301
-	res.headers['Location'] = url
+	res.headers['Location'] = [url]
 }
 
 // send_html writes the body to the response data as an HTML content
 [inline]
 pub fn (mut res Resp) send_html(ht string, status_code int) {
-	res.headers['Content-Type'] = 'text/html'
+	res.headers['Content-Type'] = ['text/html']
 	res.send(ht, status_code)
+}
+
+pub fn (res &Resp) headers_bytes() []byte {
+	mut buf := []byte{}
+	for k, values in res.headers {
+		for v in values {
+			buf << [`\r`, `\n`]
+			buf << k.bytes()
+			buf << [`:`, ` `]
+			buf << v.bytes()
+		}
+	}
+	return buf
 }
 
 pub fn error_route(req &Req, mut res Resp) {
