@@ -5,13 +5,14 @@ import json
 import os
 import utils
 import v.vmod
+import strings
 
 const (
 	vm              = vmod.decode(@VMOD_FILE) or { panic(err) }
 	default_headers = {
 		'Content-Type': ['text/html; charset=UTF-8']
 		'X-Powered-By': ['$vm.name/$vm.version']
-		'server':       ['$vm.name']
+		'Server':       ['$vm.name']
 	}
 )
 
@@ -232,15 +233,14 @@ pub fn (mut res Resp) send_html(ht string, status_code int) {
 }
 
 pub fn (res &Resp) headers_bytes() []byte {
-	mut buf := []byte{}
+	mut headers := strings.new_builder(res.headers.len * 10)
 	for k, values in res.headers {
 		for v in values {
-			buf << [`\r`, `\n`]
-			buf << k.bytes()
-			buf << [`:`, ` `]
-			buf << v.bytes()
+			headers.write('\r\n$k: $v')
 		}
 	}
+	buf := headers.buf.clone()
+	unsafe { headers.free() }
 	return buf
 }
 

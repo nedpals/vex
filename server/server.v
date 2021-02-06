@@ -14,7 +14,7 @@ const (
 )
 
 pub interface Router {
-	respond_error(code int) string
+	respond_error(code int) []byte
 	receive(method string, path string, raw_headers []string, body []byte) (int, []byte, []byte)
 }
 
@@ -55,22 +55,23 @@ fn handle_http_connection(router Router, mut conn net.TcpConn) {
 	mut reader := io.new_buffered_reader(reader: io.make_reader(conn))
 	first_line := reader.read_line() or {
 		bad_req_body := router.respond_error(400)
-		write_body(400, '', bad_req_body, mut conn)
+		write_body(400, []byte{}, bad_req_body, mut conn)
 		return
 	}
 	data := first_line.split(' ')
 	if data.len < 2 {
 		bad_req_body := router.respond_error(400)
-		write_body(400, '', bad_req_body, mut conn)
+		write_body(400, []byte{}, bad_req_body, mut conn)
 		return
 	}
 	mut raw_headers := []string{}
 	mut conlen := 0
+	mut rbody := []byte{}
 	// encode headers
 	for {
 		header_line := reader.read_line() or {
 			internal_err_body := router.respond_error(500)
-			write_body(500, '', internal_err_body, mut conn)
+			write_body(500, []byte{}, internal_err_body, mut conn)
 			return
 		}
 		if header_line.starts_with('Content-Length: ') {
@@ -82,9 +83,9 @@ fn handle_http_connection(router Router, mut conn net.TcpConn) {
 		raw_headers << header_line
 	}
 	if conlen > 0 {
+		rbody = io.read_all(reader: reader) or { []byte{} }
 	}
-	status_code, enc_header, body := router.receive(data[0], data[1], raw_headers, mut
-		reader)
+	status_code, enc_header, body := router.receive(data[0], data[1], raw_headers, rbody)
 	write_body(status_code, enc_header, body, mut conn)
 	unsafe { raw_headers.free() }
 }

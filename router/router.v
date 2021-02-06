@@ -41,11 +41,15 @@ pub fn (r Router) receive(method string, path string, raw_headers []string, body
 	}
 	mut res := ctx.Resp{}
 	req.parse_headers(raw_headers)
-	if method in router.form_methods && 'Content-Type' in req.headers
+	if method in router.form_methods {
+		req.body << body
+		
+		if 'Content-Type' in req.headers
 		&& req.headers['Content-Type'][0].starts_with('multipart/form-data')
 		&& req.headers['Content-Type'][0].all_after('; boundary=').len > 0 {
-		req.boundary = '--' + req.headers['Content-Type'][0].all_after('; boundary=')
-		req.headers['Content-Type'][0] = 'multipart/form-data'
+			req.boundary = '--' + req.headers['Content-Type'][0].all_after('; boundary=')
+			req.headers['Content-Type'][0] = 'multipart/form-data'
+		}
 	}
 	params, route_middlewares, handlers := r.routes.find(req.method.to_lower(), req.path) or {
 		not_found_body := r.respond_error(404)
