@@ -43,10 +43,10 @@ pub fn (r Router) receive(method string, path string, raw_headers []string, body
 	req.parse_headers(raw_headers)
 	if method in router.form_methods {
 		req.body << body
-		
+
 		if 'Content-Type' in req.headers
-		&& req.headers['Content-Type'][0].starts_with('multipart/form-data')
-		&& req.headers['Content-Type'][0].all_after('; boundary=').len > 0 {
+			&& req.headers['Content-Type'][0].starts_with('multipart/form-data')
+			&& req.headers['Content-Type'][0].all_after('; boundary=').len > 0 {
 			req.boundary = '--' + req.headers['Content-Type'][0].all_after('; boundary=')
 			req.headers['Content-Type'][0] = 'multipart/form-data'
 		}
@@ -121,7 +121,7 @@ mut:
 
 // empty str to avoid cgen error
 pub fn (r &Route) str() string {
-	return 'Route{ name: ${r.name}, middlewares: ${r.middlewares.len}, routes: ${r.children} }'
+	return 'Route{ name: $r.name, middlewares: $r.middlewares.len, routes: $r.children }'
 }
 
 // identify route kind ( parameter, wildcard or regular )
