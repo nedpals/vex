@@ -11,6 +11,7 @@ enum SameSite {
 }
 
 pub struct Cookie {
+pub:
 	name      string
 	value     string
 	expires   time.Time
