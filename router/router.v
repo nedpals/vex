@@ -233,14 +233,14 @@ pub fn (mut routes map[string]&Route) group(path string, callback GroupCallbackF
 	routes.route(.get, path, ctx.error_route)
 	mut children := path
 	mut name := ''
-	mut cur_routes := routes
-	mut prev_routes := routes
+	mut cur_routes := unsafe { routes }
+	mut prev_routes := unsafe { routes }
 
 	for children.len > 0 {
 		new_name, _, new_children := extract_route_path(children) or { panic(err) }
 		children = new_children
 		name = new_name
-		prev_routes = cur_routes
+		prev_routes = unsafe { cur_routes }
 		cur_routes = unsafe { &cur_routes[name].children }
 	}
 	callback(mut cur_routes)
