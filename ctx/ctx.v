@@ -61,9 +61,9 @@ pub fn (req &Req) parse_query() ?map[string]string {
 // is not supported.
 pub fn (req &Req) parse_form() ?map[string]string {
 	if req.body.len == 0 {
-		return error('empty body')
+		return error('${utils.red_log()} Form Body Is Empty!')
 	} else if 'Content-Type' !in req.headers {
-		return error('body content-type header not present')
+		return error('${utils.red_log()} body Content-Type header Not Present!')
 	}
 	body := req.body.bytestr()
 	match req.headers['Content-Type'][0] {
@@ -97,13 +97,13 @@ pub fn (req &Req) parse_form() ?map[string]string {
 		}
 		else {}
 	}
-	return error('no appropriate content-type header for body found')
+	return error('${utils.red_log()} No Appropriate Content-Type header For body Found!')
 }
 
 // parse_files parses the `multipart/form-data` content-type
 pub fn (req &Req) parse_files() ?map[string][]FormData {
 	if req.headers['Content-Type'][0] != 'multipart/form-data' {
-		return error('content type must be multipart/form-data')
+		return error('${utils.red_log()} Content-Type Must be multipart/form-data!')
 	}
 	mut start := 0
 	mut filename := ''

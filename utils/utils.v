@@ -2,6 +2,7 @@ module utils
 
 import mime
 
+
 pub const (
 	// HTTP Server Code Messages
 	// See: https://github.com/for-GET/know-your-http-well/blob/master/json/status-codes.json
@@ -57,15 +58,30 @@ pub const (
 		510: 'Not Extended'
 		511: 'Network Authentication Required'
 	}
+	log_name = '[VEX]'
 )
+
+
+pub fn green_log() string {
+	return '\x1b[38;2;56;255;100m$log_name\x1b[39m'
+}
+
+pub fn yellow_log() string {
+	return '\x1b[38;2;247;255;8m$log_name\x1b[39m'
+}
+
+pub fn red_log() string {
+	return '\x1b[38;2;255;56;56m$log_name\x1b[39m'
+}
+
 
 // status_code_msg returns the message of the given status code.
 // returns "Internal Server Error" if status is unknown.
 pub fn status_code_msg(code int) string {
-	if code in utils.status_code_msgs {
-		return utils.status_code_msgs[code]
+	if code in status_code_msgs {
+		return status_code_msgs[code]
 	}
-	return utils.status_code_msgs[500]
+	return status_code_msgs[500]
 }
 
 // identify_mime returns the MIME content type of a filename.
