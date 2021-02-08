@@ -7,7 +7,6 @@ import io
 import strings
 import utils
 import time
-import term
 
 const (
 	sep = '\r\n'
@@ -20,14 +19,14 @@ pub interface Router {
 
 // serve starts the server at the give port
 pub fn serve(router Router, port int) {
-	vex_log := term.rgb(255, 221, 76, '[VEX]')
-	println('$vex_log ${term.green('HTTP Server Has Started')}')
-	println('$vex_log Serving On ${term.cyan('http://localhost:$port')}')
-	mut listener := net.listen_tcp(port) or { panic('Failed to listen to port $port') }
+	// Listen To Port
+	mut listener := net.listen_tcp(port) or { panic('${utils.red_log()} Failed To Listen To Port $port') }
+	println('${utils.green_log()} HTTP Server Has Started')
+	println('${utils.green_log()} Running On http://localhost:$port')
 	for {
 		mut conn := listener.accept() or {
 			listener.close() or { }
-			panic('conn accept() failed.')
+			panic('${utils.red_log()} Failed To Accept Connection!')
 		}
 		handle_http_connection(router, mut conn)
 	}

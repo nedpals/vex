@@ -140,7 +140,7 @@ fn identify_kind(route_name string) Kind {
 // and the remaining children route paths
 pub fn extract_route_path(path string) ?(string, string, string) {
 	if !path.starts_with('/') {
-		return error('route path must start with a slash (/)')
+		return error('${utils.red_log()} Route Path Must Start With a Slash (/)')
 	}
 	mut paths := path[1..].split('/')
 	mut param_name := ''
@@ -154,7 +154,7 @@ pub fn extract_route_path(path string) ?(string, string, string) {
 	}
 	if paths.len > 1 {
 		if has_wildcard {
-			return error('wildcard routes should not have children routes')
+			return error('${utils.red_log()} Wildcard Routes Can Not Contain Children Routes!')
 		}
 		children = '/' + paths[1..].join('/')
 	}
@@ -168,7 +168,7 @@ pub fn extract_route_path(path string) ?(string, string, string) {
 // See `router.Method` for the list of available methods.
 fn (mut routes map[string]&Route) add(method Method, path string, handlers ...ctx.HandlerFunc) ? {
 	if '*' in routes || ':' in routes {
-		return error('only one wildcard or param route in an endpoint group is allowed.')
+		return error('${utils.red_log()} Only One Wildcard OR Param Route in an endpoint Group is Allowed!')
 	}
 	name, param_name, children := extract_route_path(path) ?
 	if name !in routes {
@@ -183,7 +183,7 @@ fn (mut routes map[string]&Route) add(method Method, path string, handlers ...ct
 		routes[name].children.add(method, children, ...handlers) ?
 		return
 	} else if handlers.len == 0 {
-		return error('provided route handlers are empty')
+		return error('${utils.red_log()} Provided Route Handlers Are Empty!')
 	}
 	method_str := method.str()
 	routes[name].methods[method_str] = handlers
@@ -199,7 +199,7 @@ pub fn (routes map[string]&Route) find(method string, path string) ?(map[string]
 			r_name = if '*' in routes { '*' } else { ':' }
 			param_name = routes[r_name].param_name
 		} else {
-			return error('not found')
+			return error('${utils.red_log()} Route Not Found!')
 		}
 	}
 	match r_name {
@@ -217,7 +217,7 @@ pub fn (routes map[string]&Route) find(method string, path string) ?(map[string]
 		unsafe { child_params.free() }
 		return params, child_route_middlewares, handlers
 	} else if method !in route.methods {
-		return error('method not found')
+		return error('${utils.red_log()} Method Not Found!')
 	}
 	return params, route.middlewares, route.methods[method]
 }
@@ -225,7 +225,7 @@ pub fn (routes map[string]&Route) find(method string, path string) ?(map[string]
 // route creates a new route based on the given method, path, and the handlers.
 // See `router.Method` for the list of available methods.
 pub fn (mut routes map[string]&Route) route(method Method, path string, handlers ...ctx.HandlerFunc) {
-	routes.add(method, path, ...handlers) or { panic(err) }
+	routes.add(method, path, ...handlers) or { panic('${utils.red_log()} Failed To Add Route [$path]\n $err') }
 }
 
 // group adds a series of routes into the desired prefix
@@ -257,7 +257,7 @@ pub fn (mut routes map[string]&Route) group(path string, callback GroupCallbackF
 
 pub fn (mut routes map[string]&Route) use(middlewares ...ctx.MiddlewareFunc) {
 	if routes.len == 0 {
-		panic('endpoint/route middlewares can only be added after creating a route.')
+		panic('${utils.red_log()} endpoint/route Middlewares Can Only Be Added After Creating a Route.')
 	}
 	for name, _ in routes {
 		routes[name].middlewares << middlewares
