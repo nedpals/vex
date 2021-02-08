@@ -38,9 +38,9 @@ fn write_body(code int, headers []byte, body []byte, mut conn net.TcpConn) {
 	mut response := strings.new_builder(body.len)
 	response.write('HTTP/1.1 $code ' + utils.status_code_msg(code))
 	response.write_bytes(headers.data, headers.len)
-	response.write('${server.sep}Content-Length: $body.len')
-	response.write('${server.sep}Connection: close')
-	response.write(server.sep.repeat(2))
+	response.write('${sep}Content-Length: $body.len')
+	response.write('${sep}Connection: close')
+	response.write(sep.repeat(2))
 	response.write_bytes(body.data, body.len)
 	conn.write(response.buf) or { }
 	unsafe { response.free() }
@@ -54,8 +54,9 @@ fn handle_http_connection(router Router, mut conn net.TcpConn) {
 	}
 	mut reader := io.new_buffered_reader(reader: io.make_reader(conn))
 	first_line := reader.read_line() or {
-		bad_req_body := router.respond_error(400)
-		write_body(400, []byte{}, bad_req_body, mut conn)
+		$if debug {
+			eprintln('Failed To Read First Line') // show this only in debug mode, because it always would be shown after a chromium user visits the site
+		}
 		return
 	}
 	data := first_line.split(' ')
