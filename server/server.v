@@ -20,13 +20,13 @@ pub interface Router {
 // serve starts the server at the give port
 pub fn serve(router Router, port int) {
 	// Listen To Port
-	mut listener := net.listen_tcp(port) or { panic('${utils.red_log()} Failed To Listen To Port $port') }
-	println('${utils.green_log()} HTTP Server Has Started')
-	println('${utils.green_log()} Running On http://localhost:$port')
+	mut listener := net.listen_tcp(port) or { panic(utils.red_log('Failed to listen to port $port')) }
+	println(utils.green_log('HTTP Server has started.'))
+	println(utils.green_log('Running On http://localhost:$port'))
 	for {
 		mut conn := listener.accept() or {
 			listener.close() or { }
-			panic('${utils.red_log()} Failed To Accept Connection!')
+			panic(utils.red_log('Failed to accept connection.'))
 		}
 		handle_http_connection(router, mut conn)
 	}

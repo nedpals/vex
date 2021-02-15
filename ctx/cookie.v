@@ -3,7 +3,6 @@ module ctx
 // import strings
 import time
 import net.urllib
-import utils
 
 enum SameSite {
 	@none
@@ -54,7 +53,7 @@ fn (c Cookie) header_str() string {
 // content. Returns an error if the header is not present.
 pub fn (req &Req) parse_cookies() ?map[string]Cookie {
 	if 'Cookie' !in req.headers {
-		return error('${utils.red_log()} Cookies Not Found!')
+		return error('Cookies not found.')
 	}
 	mut cookies := map[string]Cookie{}
 	for cookie in req.headers['Cookie'] {

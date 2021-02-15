@@ -1,7 +1,7 @@
 module utils
 
 import mime
-
+import term
 
 pub const (
 	// HTTP Server Code Messages
@@ -62,16 +62,16 @@ pub const (
 )
 
 
-pub fn green_log() string {
-	return '\x1b[38;2;56;255;100m$log_name\x1b[39m'
+pub fn green_log(msg string) string {
+	return term.green(log_name) + ' ' + msg
 }
 
-pub fn yellow_log() string {
-	return '\x1b[38;2;247;255;8m$log_name\x1b[39m'
+pub fn yellow_log(msg string) string {
+	return term.yellow(log_name) + ' ' + msg
 }
 
-pub fn red_log() string {
-	return '\x1b[38;2;255;56;56m$log_name\x1b[39m'
+pub fn red_log(msg string) string {
+	return term.red(log_name) + ' ' + msg
 }
 
 
