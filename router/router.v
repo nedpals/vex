@@ -226,7 +226,9 @@ pub fn (routes map[string]&Route) find(method string, path string) ?(map[string]
 // route creates a new route based on the given method, path, and the handlers.
 // See `router.Method` for the list of available methods.
 pub fn (mut routes map[string]&Route) route(method Method, path string, handlers ...ctx.HandlerFunc) {
-	routes.add(method, path, ...handlers) or { panic(utils.red_log('Failed to add route `$path`. Reason: $err')) }
+	routes.add(method, path, ...handlers) or {
+		panic(utils.red_log('Failed to add route `$path`. Reason: $err'))
+	}
 }
 
 // group adds a series of routes into the desired prefix

@@ -13,7 +13,7 @@ fn test_tag_with_text() {
 fn test_tag_with_attr() {
 	div := tag(
 		name: 'div'
-		attr: {
+		attr: map{
 			'id':    'foo'
 			'class': 'bar'
 		}
@@ -24,7 +24,7 @@ fn test_tag_with_attr() {
 fn test_tag_with_text_and_attr() {
 	div := tag(
 		name: 'div'
-		attr: {
+		attr: map{
 			'id':    'foo'
 			'class': 'bar'
 		}
@@ -36,7 +36,7 @@ fn test_tag_with_text_and_attr() {
 fn test_block() {
 	div := block({
 		name: 'div'
-		attr: {
+		attr: map{
 			'id':    'foo'
 			'class': 'bar'
 		}
@@ -52,7 +52,7 @@ fn test_br() {
 }
 
 fn test_meta() {
-	metatg := meta({
+	metatg := meta(map{
 		'name':    'referrer'
 		'content': 'origin-when-cross-origin'
 	})

@@ -6,7 +6,7 @@ import term
 pub const (
 	// HTTP Server Code Messages
 	// See: https://github.com/for-GET/know-your-http-well/blob/master/json/status-codes.json
-	status_code_msgs = {
+	status_code_msgs = map{
 		100: 'Continue'
 		101: 'Switching Protocols'
 		103: 'Early Hints'
@@ -58,38 +58,32 @@ pub const (
 		510: 'Not Extended'
 		511: 'Network Authentication Required'
 	}
-	log_name = '[VEX]'
+	log_name         = '[VEX]'
 )
 
-
 pub fn green_log(msg string) string {
-	return term.green(log_name) + ' ' + msg
+	return term.green(utils.log_name) + ' ' + msg
 }
 
 pub fn yellow_log(msg string) string {
-	return term.yellow(log_name) + ' ' + msg
+	return term.yellow(utils.log_name) + ' ' + msg
 }
 
 pub fn red_log(msg string) string {
-	return term.red(log_name) + ' ' + msg
+	return term.red(utils.log_name) + ' ' + msg
 }
-
 
 // status_code_msg returns the message of the given status code.
 // returns "Internal Server Error" if status is unknown.
 pub fn status_code_msg(code int) string {
-	if code in status_code_msgs {
-		return status_code_msgs[code]
+	if code in utils.status_code_msgs {
+		return utils.status_code_msgs[code]
 	}
-	return status_code_msgs[500]
+	return utils.status_code_msgs[500]
 }
 
 // identify_mime returns the MIME content type of a filename.
 pub fn identify_mime(filename string) string {
 	mt := mime.db.lookup(filename)
-	return if mt.len > 0 {
-		mt
-	} else {
-		'application/octet-stream'
-	}
+	return if mt.len > 0 { mt } else { 'application/octet-stream' }
 }

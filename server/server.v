@@ -20,7 +20,9 @@ pub interface Router {
 // serve starts the server at the give port
 pub fn serve(router Router, port int) {
 	// Listen To Port
-	mut listener := net.listen_tcp(port) or { panic(utils.red_log('Failed to listen to port $port')) }
+	mut listener := net.listen_tcp(port) or {
+		panic(utils.red_log('Failed to listen to port $port'))
+	}
 	println(utils.green_log('HTTP Server has started.'))
 	println(utils.green_log('Running On http://localhost:$port'))
 	for {
@@ -37,9 +39,9 @@ fn write_body(code int, headers []byte, body []byte, mut conn net.TcpConn) {
 	mut response := strings.new_builder(body.len)
 	response.write('HTTP/1.1 $code ' + utils.status_code_msg(code))
 	response.write_bytes(headers.data, headers.len)
-	response.write('${sep}Content-Length: $body.len')
-	response.write('${sep}Connection: close')
-	response.write(sep.repeat(2))
+	response.write('${server.sep}Content-Length: $body.len')
+	response.write('${server.sep}Connection: close')
+	response.write(server.sep.repeat(2))
 	response.write_bytes(body.data, body.len)
 	conn.write(response.buf) or { }
 	unsafe { response.free() }

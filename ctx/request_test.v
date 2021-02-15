@@ -3,7 +3,7 @@ module ctx
 fn test_parse_body_urlencoded() {
 	req := Req{
 		body: 'foo=bar&lol=edgy'.bytes()
-		headers: {
+		headers: map{
 			'Content-Type': ['application/x-www-form-urlencoded']
 		}
 	}
@@ -19,7 +19,7 @@ fn test_parse_body_urlencoded() {
 fn test_parse_body_json() {
 	req := Req{
 		body: '{"bar":"baz"}'.bytes()
-		headers: {
+		headers: map{
 			'Content-Type': ['application/json']
 		}
 	}
@@ -45,7 +45,7 @@ fn test_parse_body_content_type_not_present() {
 fn test_parse_body_invalid() {
 	req := Req{
 		body: 'text content'.bytes()
-		headers: {
+		headers: map{
 			'Content-Type': ['text/plain']
 		}
 	}

@@ -9,7 +9,7 @@ import strings
 
 const (
 	vm              = vmod.decode(@VMOD_FILE) or { panic(err) }
-	default_headers = {
+	default_headers = map{
 		'Content-Type': ['text/html; charset=UTF-8']
 		'X-Powered-By': ['$vm.name/$vm.version']
 		'Server':       ['$vm.name']

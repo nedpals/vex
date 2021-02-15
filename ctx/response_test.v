@@ -10,7 +10,7 @@ fn test_send() {
 // fn test_send_file() {}
 fn test_send_json() {
 	mut res := Resp{}
-	res.send_json({
+	res.send_json(map{
 		'hello': 'world'
 	}, 201)
 	assert res.body == '{"hello":"world"}'.bytes()

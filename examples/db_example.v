@@ -9,11 +9,11 @@ import sqlite
 fn layout(title string, body []html.Tag) html.Tag {
 	template := html.html([
 		html.block({ name: 'head' }, [
-			html.meta({
+			html.meta(map{
 				'http-equiv': 'Content-Type'
 				'content':    'text/html;charset=UTF-8'
 			}),
-			html.meta({
+			html.meta(map{
 				'name':    'referrer'
 				'content': 'origin-when-cross-origin'
 			}),
@@ -47,7 +47,7 @@ fn main() {
 				html.tag(name: 'text', text: 'For online documentation please refer to '),
 				html.tag(
 					name: 'a'
-					attr: {
+					attr: map{
 						'href': 'https://github.com/nedpals/vex'
 					}
 					text: 'vex'
@@ -57,7 +57,7 @@ fn main() {
 					html.tag(name: 'text', text: "It's a web framework based on "),
 					html.tag(
 						name: 'a'
-						attr: {
+						attr: map{
 							'href': 'https://vlang.io'
 						}
 						text: 'V.'
@@ -66,7 +66,7 @@ fn main() {
 			]),
 			html.tag(
 				name: 'a'
-				attr: {
+				attr: map{
 					'href': '/users'
 				}
 				text: 'All users'
@@ -74,7 +74,7 @@ fn main() {
 			html.br(),
 			html.tag(
 				name: 'a'
-				attr: {
+				attr: map{
 					'href': '/users/add'
 				}
 				text: 'Add a user'
@@ -98,7 +98,7 @@ fn main() {
 			html.block({ name: 'ul' }, users),
 			html.tag(
 				name: 'a'
-				attr: {
+				attr: map{
 					'href': '/'
 				}
 				text: 'Back to homepage'
@@ -110,7 +110,7 @@ fn main() {
 		page := layout('Add new User', [
 			html.tag(
 				name: 'a'
-				attr: {
+				attr: map{
 					'href': '/users'
 				}
 				text: 'All users'
@@ -118,7 +118,7 @@ fn main() {
 			html.tag(name: 'h1', text: 'Add user'),
 			html.block({
 				name: 'form'
-				attr: {
+				attr: map{
 					'id':     'form'
 					'method': 'post'
 					'action': '/users/new'
@@ -126,7 +126,7 @@ fn main() {
 			}, [
 				html.Tag{
 					name: 'input'
-					attr: {
+					attr: map{
 						'id':    'name'
 						'name':  'name'
 						'value': ''
@@ -134,7 +134,7 @@ fn main() {
 				},
 				html.Tag{
 					name: 'button'
-					attr: {
+					attr: map{
 						'type': 'submit'
 					}
 					text: 'Add'
