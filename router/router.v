@@ -108,7 +108,7 @@ pub enum Method {
 	options
 }
 
-[ref_only]
+[heap]
 pub struct Route {
 	name       string
 	param_name string
