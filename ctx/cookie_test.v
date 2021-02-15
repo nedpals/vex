@@ -18,7 +18,7 @@ fn test_parse_cookies() {
 fn test_parse_cookies_empty() {
 	req := Req{}
 	_ := req.parse_cookies() or {
-		assert err.contains('Cookies Not Found!')
+		assert err == 'Cookies not found.'
 		return
 	}
 	assert false
