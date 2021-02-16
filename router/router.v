@@ -56,7 +56,7 @@ pub fn (r Router) receive(method string, path string, raw_headers []string, body
 		not_found_body := r.respond_error(404)
 		return 404, def_header, not_found_body
 	}
-	req.params = params
+	req.params = params.clone()
 	for app_middleware in r.middlewares {
 		app_middleware(mut req, mut res)
 	}
