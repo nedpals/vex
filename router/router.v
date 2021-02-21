@@ -21,6 +21,7 @@ pub mut:
 	on_error    ctx.HandlerFunc = ctx.error_route
 mut:
 	routes      map[string]&Route
+	plugins     []Plugin // TODO: check if instead use: map[string]&Plugin ... wip
 	middlewares []ctx.MiddlewareFunc
 	ctx         voidptr
 }
@@ -117,6 +118,18 @@ pub fn (mut r Router) group(prefix string, callback GroupCallbackFn) {
 pub fn (mut r Router) use(handlers ...ctx.MiddlewareFunc) {
 	r.middlewares << handlers
 }
+
+// add a plugin and load it
+pub fn (mut r Router) register(plugin Plugin, config voidptr) {
+	// TODO: only if the server is not already started, but later ... 
+	// TODO: check if add it only if not already added (check the name and maybe even the version) ... wip
+	r.plugins << plugin
+	plugin.init() // initializes the plugin
+	// load the plugin // TODO: check if really needed now ... wip
+	// TODO: ... wip
+}
+
+// TODO: check if move all Route related stuff in its own source (and related tests) ...
 
 // List of supported HTTP methods.
 pub enum Method {
