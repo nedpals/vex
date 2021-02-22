@@ -7,6 +7,8 @@ import nedpals.vex.ctx
 // new_base_plugin creates and return a new PluginBase without additions
 fn new_base_plugin(mut rou router.Router) Plugin {
 	plugin := &PluginBase{
+		name: 'empty-plugin'
+		version: '1.0.0'
 		app: rou
 	}
 	// app.register(plugin, voidptr(0)) // but register outside here
@@ -21,26 +23,46 @@ struct HelloPlugin {
 	dependencies []string = []
 	cfg          voidptr
 mut:
-	app          &Router // TODO: check if keep app mutable ...
+	app          &Router
 	status       PluginStatus
-    info         map[string]string // TODO: check if useful ...
 	metadata     map[string]string // TODO: check if useful ...
-	// TODO: add other fields, as a sample ...
 }
 
-// init by default do nothing
-pub fn (mut p HelloPlugin) init() {
-	println(@FN + ' $p.name-$p.version ...')
+// init initializes the plugin and add some routes as a sample
+pub fn (mut p HelloPlugin) init(config voidptr) {
+	println(@FN + ' ${p.info()} ...')
 	// TODO: check if dedicate this method to only config stuff, or even load stuff (like currently) ...
+	// add some routes
 	p.app.route(.get, '/hello-text', fn (req &ctx.Req, mut res ctx.Resp) {
 		res.send('Hello world!', 200)
+		res.headers['Content-Type'] = ['text/plain']
 	})
-	println('registered route for ' + '/hello-text')
+	println('${p.info()}: registered route for ' + '/hello-text')
 	p.app.route(.get, '/hello-json', fn (req &ctx.Req, mut res ctx.Resp) {
 		res.send('{"Hello":"World"}', 200)
 		res.headers['Content-Type'] = ['application/json']
 	})
-	println('registered route for ' + '/hello-json')
+	println('${p.info()}: registered route for ' + '/hello-json')
+	// end of plugin initialization
+	p.status = .initialized
+}
+
+// close closed the plugin (useful to close used resources, etc)
+pub fn (mut p HelloPlugin) close() {
+	p.status = .closed
+}
+
+// info tell name and version of the plugin
+pub fn (p HelloPlugin) info() string {
+	return '$p.name@$p.version'
+}
+
+// add a custom method to HelloPlugin, as a sample (to call later)
+
+// greeting return a greeting for the given name
+pub fn (p HelloPlugin) greeting(name string) string {
+	// return '${p.info()}: Hello $name !'
+	return 'Hello $name !'
 }
 
 // new_hello_plugin creates and return a new HelloPlugin that defines some routes
@@ -94,6 +116,8 @@ fn main() {
 	// TODO: add a route that always returns an error, both as text and as json ... wip
 
 	// TODO: other route/s ? ... wip
+
+	// TODO: in a dedicated function, get all plugins and print some info, and execute specific methods on some plugins ... wip
 
 	server.serve(app, 8080)
 }
