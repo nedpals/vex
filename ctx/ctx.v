@@ -236,7 +236,7 @@ pub fn (res &Resp) headers_bytes() []byte {
 	mut headers := strings.new_builder(res.headers.len * 10)
 	for k, values in res.headers {
 		for v in values {
-			headers.write('\r\n$k: $v')
+			headers.write_string('\r\n$k: $v')
 		}
 	}
 	buf := headers.buf.clone()
