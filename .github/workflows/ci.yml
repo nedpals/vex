@@ -13,8 +13,6 @@ jobs:
     runs-on: ubuntu-latest
     timeout-minutes: 30
     if: github.event_name == 'push'
-    env:
-      VFLAGS: -cc tcc
     steps:
       - name: Checkout V
         uses: actions/checkout@v2
@@ -24,7 +22,7 @@ jobs:
         with:
           path: vex
       - name: Build local v
-        run: make -j4
+        run: make
       - name: Generate docs
         run: ./v doc -f html -m -readme ./vex
       - name: Deploy
@@ -36,8 +34,6 @@ jobs:
   ubuntu-tcc:
     runs-on: ubuntu-latest
     timeout-minutes: 30
-    env:
-      VFLAGS: -cc tcc
     steps:
     - name: Checkout V
       uses: actions/checkout@v2
@@ -47,15 +43,13 @@ jobs:
       with:
         path: vex
     - name: Build local v
-      run: make -j4
+      run: make
     - name: Run tests
       run: ./v test vex
 
   macos-clang:
     runs-on: macOS-latest
     timeout-minutes: 30
-    env:
-      VFLAGS: -cc clang
     steps:
     - name: Checkout V
       uses: actions/checkout@v2
@@ -65,15 +59,13 @@ jobs:
       with:
         path: vex
     - name: Build local v
-      run: make -j4
+      run: make
     - name: Run tests
       run: ./v test vex
-
+  
   windows-msvc:
     runs-on: windows-2019
     timeout-minutes: 30
-    env:
-        VFLAGS: -cc msvc
     steps:
     - name: Checkout V
       uses: actions/checkout@v2
@@ -83,6 +75,6 @@ jobs:
       with:
         path: vex
     - name: Build local v
-      run: .\make.bat -msvc
+      run: .\make.bat
     - name: Run tests
       run: .\v.exe test vex

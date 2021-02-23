@@ -37,11 +37,11 @@ pub fn serve(router Router, port int) {
 // write_body Writes The Response Body into the TCP server
 fn write_body(code int, headers []byte, body []byte, mut conn net.TcpConn) {
 	mut response := strings.new_builder(body.len)
-	response.write('HTTP/1.1 $code ' + utils.status_code_msg(code))
+	response.write_string('HTTP/1.1 $code ' + utils.status_code_msg(code))
 	unsafe { response.write_bytes(headers.data, headers.len) }
-	response.write('${server.sep}Content-Length: $body.len')
-	response.write('${server.sep}Connection: close')
-	response.write(server.sep.repeat(2))
+	response.write_string('${server.sep}Content-Length: $body.len')
+	response.write_string('${server.sep}Connection: close')
+	response.write_string(server.sep.repeat(2))
 	unsafe { response.write_bytes(body.data, body.len) }
 	conn.write(response.buf) or { }
 	unsafe { response.free() }
