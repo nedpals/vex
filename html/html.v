@@ -96,25 +96,25 @@ pub fn (tag Tag) html() string {
 	is_text := tag.is_text()
 	if !is_text {
 		if tag.name == 'html' {
-			sb.write('<!DOCTYPE html>')
+			sb.write_string('<!DOCTYPE html>')
 		}
-		sb.write('<$tag.name')
+		sb.write_string('<$tag.name')
 		for prop_name, prop in tag.attr {
-			sb.write(' $prop_name="$prop"')
+			sb.write_string(' $prop_name="$prop"')
 		}
 		if !tag.empty {
-			sb.write('>')
+			sb.write_string('>')
 		} else {
-			sb.write('/>')
+			sb.write_string('/>')
 		}
 	}
-	sb.write(tag.text)
+	sb.write_string(tag.text)
 	if !tag.empty {
 		for child in tag.children {
-			sb.write(child.html())
+			sb.write_string(child.html())
 		}
 		if !is_text {
-			sb.write('</$tag.name>')
+			sb.write_string('</$tag.name>')
 		}
 	}
 	return sb.str()
