@@ -77,6 +77,23 @@ fn new_hello_plugin(mut rou router.Router) Plugin {
 
 // TODO: add an home page plugin ...
 
+// retrieve_plugins get some plugins from the router, and do some check on them
+fn retrieve_plugins(mut rou router.Router) {
+	p_base := rou.plugin('empty-plugin') or {
+		eprintln('Error: $err')
+		return
+	}
+	assert p_base is PluginBase
+	match p_base {
+		PluginBase { println('PluginBase instance found') }
+		else { eprintln('Other plugin found...') }
+	}
+	println('Plugin found: ${p_base.info()}')
+	// p_wrong := rou.plugin('not-present') or { return }  // expected failure
+
+	// TODO: retrieve HelloPlugin and check it, then call its additional method/s ... wip 
+}
+
 fn main() {
 	mut app := router.new()
 
@@ -117,7 +134,9 @@ fn main() {
 
 	// TODO: other route/s ? ... wip
 
-	// TODO: in a dedicated function, get all plugins and print some info, and execute specific methods on some plugins ... wip
+	// sample to get some plugins and print some info, and execute specific methods on some plugins
+	retrieve_plugins(mut app)
 
+	// start the server
 	server.serve(app, 8080)
 }

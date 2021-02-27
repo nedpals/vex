@@ -119,12 +119,40 @@ pub fn (mut r Router) use(handlers ...ctx.MiddlewareFunc) {
 	r.middlewares << handlers
 }
 
-// add a plugin and load it
+// register add a plugin and load it
 pub fn (mut r Router) register(plugin Plugin, config voidptr) {
 	// TODO: add only if the server is not already started, but later ... 
 	// TODO: add only if not already added (check the name and maybe even the version) ... wip
 	r.plugins << &plugin
 	plugin.init(config) // initializes the plugin
+}
+
+// TODO: fix the plugin searching logic, currently it doesn't work ... wip
+// TODO: check why here I need to use mut r router ... wip
+// plugin get a plugin by name
+pub fn (mut r Router) plugin(name string) ?&Plugin {
+	// println('Router plugins: $r.plugins') // TODO: temp ... wip
+	// TODO: check if match even by version ... maybe later
+	/*
+	// TODO: fix this (preferred way) ... wip
+	// search with for in array ...
+	for plugin in r.plugins {
+		// println(typeof(plugin).name) // &router.Plugin
+		// println(plugin.name)
+		// println((*plugin).info()) // TODO: check why Runtime error ... wip
+		// println(plugin.info()) // TODO: check why Runtime error ... wip
+		println((*plugin).name) // TODO: check why empty value printed ... wip
+		if plugin.name == name { return plugin }
+	}
+	 */
+	/*
+	// TODO: fix this (alternative way) ... wip
+	// search with filter the array
+	plugin := r.plugins.filter(it.name != '')[0]
+	println(plugin.name) // TODO: check why empty value printed ... wip
+	 */
+	// return none // TODO: check if return an error instead, like "Plugin '$name' not found" ...
+	return error("Plugin '$name' not found")
 }
 
 // TODO: check if move all Route related stuff in its own source (and related tests) ...

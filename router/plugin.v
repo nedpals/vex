@@ -11,8 +11,8 @@ mut:
 	app          &Router // TODO: check if keep app mutable ...
 	cfg          voidptr
 	status       PluginStatus
-	info         map[string]string // TODO: check if useful ...
-	metadata     map[string]string // TODO: check if useful ...
+	// info         map[string]string // TODO: check if useful ...
+	// metadata     map[string]string // TODO: check if useful ...
 	// routes      map[string]&Route // TODO: check later if useful ...
 	// middlewares []ctx.MiddlewareFunc // TODO: check later if useful ...
 }
@@ -29,8 +29,13 @@ pub fn (mut p PluginBase) close() {
 	p.status = .closed
 }
 
-// info tell name and version of the plugin
-pub fn (mut p PluginBase) info() string {
+// str return a string representation (as summary) of the plugin
+pub fn (p PluginBase) str() string {
+	return 'Plugin{ name:$p.name, version:$p.version }'
+}
+
+// info tell main info (usually name and version) of the plugin
+pub fn (p PluginBase) info() string {
 	return '$p.name-$p.version'
 }
 
@@ -39,7 +44,9 @@ pub enum PluginStatus {
 	unknown
 	initialized
 	error
-	closed
+	// enabled // future use
+	// disabled // future use
+	closed 
 }
 
 pub interface Plugin {
@@ -48,6 +55,7 @@ pub interface Plugin {
 	// PluginBase // TODO: check if/how to embed here fields ...
 
 	init(config voidptr)
+	info() string
 	close()
 	// dependencies() []string
 	// status() PluginStatus
