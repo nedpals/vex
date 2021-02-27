@@ -1,37 +1,29 @@
 module main
 
-import nedpals.vex.router {Plugin, PluginBase, PluginStatus, Router}
+import nedpals.vex.router
+import nedpals.vex.plugin
+// import nedpals.vex.router {Plugin, PluginBase, PluginStatus, Router}
 import nedpals.vex.server
 import nedpals.vex.ctx
-
-// new_base_plugin creates and return a new PluginBase without additions
-fn new_base_plugin(mut rou router.Router) Plugin {
-	plugin := &PluginBase{
-		name: 'empty-plugin'
-		version: '1.0.0'
-		app: rou
-	}
-	// app.register(plugin, voidptr(0)) // but register outside here
-	return plugin
-}
+import time
 
 [heap]
 struct HelloPlugin {
-	// PluginBase // TODO: check how to use struct embedding here ...
+	// TODO: when possible, to simplify, use struct embedding here from PluginBase ... wip
 	name         string
 	version      string // semver string
 	dependencies []string = []
-	cfg          voidptr
 mut:
-	app          &Router
-	status       PluginStatus
-	metadata     map[string]string // TODO: check if useful ...
+	app          voidptr // TODO: check if instance of &router.Router ... wip
+	status       plugin.PluginStatus
+	info         map[string]string
 }
 
 // init initializes the plugin and add some routes as a sample
-pub fn (mut p HelloPlugin) init(config voidptr) {
-	println(@FN + ' ${p.info()} ...')
-	// TODO: check if dedicate this method to only config stuff, or even load stuff (like currently) ...
+pub fn (mut p HelloPlugin) init() {
+	// println(@FN + ' ${p.info()} ...')
+	/*
+	// TODO: check how to achieve this ... wip
 	// add some routes
 	p.app.route(.get, '/hello-text', fn (req &ctx.Req, mut res ctx.Resp) {
 		res.send('Hello world!', 200)
@@ -43,6 +35,8 @@ pub fn (mut p HelloPlugin) init(config voidptr) {
 		res.headers['Content-Type'] = ['application/json']
 	})
 	println('${p.info()}: registered route for ' + '/hello-json')
+	 */
+
 	// end of plugin initialization
 	p.status = .initialized
 }
@@ -53,8 +47,12 @@ pub fn (mut p HelloPlugin) close() {
 }
 
 // info tell name and version of the plugin
-pub fn (p HelloPlugin) info() string {
-	return '$p.name@$p.version'
+pub fn (p HelloPlugin) info() map[string]string {
+	return map{
+		'name':    p.name
+		'version': p.version
+		'status':  p.status.str()
+	}
 }
 
 // add a custom method to HelloPlugin, as a sample (to call later)
@@ -66,32 +64,33 @@ pub fn (p HelloPlugin) greeting(name string) string {
 }
 
 // new_hello_plugin creates and return a new HelloPlugin that defines some routes
-fn new_hello_plugin(mut rou router.Router) Plugin {
+fn new_hello_plugin() &plugin.Plugin {
 	plugin := &HelloPlugin{
 		name:    'hello-plugin'
 		version: '1.0.0'
-		app:     rou
 	}
 	return plugin
 }
 
-// TODO: add an home page plugin ...
-
-// retrieve_plugins get some plugins from the router, and do some check on them
-fn retrieve_plugins(mut rou router.Router) {
-	p_base := rou.plugin('empty-plugin') or {
+// retrieve_and_check_plugins get some plugins from the router, and do some check on them
+fn retrieve_and_check_plugins(mut rou router.Router) {
+	// TODO: remove mutable on Router if possible ...
+	/*
+	// TODO: enable and fix ...
+	p_base := rou.get_plugin('empty-plugin') or {
 		eprintln('Error: $err')
 		return
 	}
-	assert p_base is PluginBase
+	assert p_base is plugin.PluginBase
 	match p_base {
-		PluginBase { println('PluginBase instance found') }
+		plugin.PluginBase { println('PluginBase instance found') }
 		else { eprintln('Other plugin found...') }
 	}
 	println('Plugin found: ${p_base.info()}')
-	// p_wrong := rou.plugin('not-present') or { return }  // expected failure
+	// p_wrong := rou.get_plugin('not-present') or { return }  // expected failure
 
 	// TODO: retrieve HelloPlugin and check it, then call its additional method/s ... wip 
+	 */
 }
 
 fn main() {
@@ -102,29 +101,28 @@ fn main() {
 	// and application-specific routes could be splitted easily in its own modules
 
 	// a sample empty plugin
-	base_plugin := new_base_plugin(mut app)
-	app.register(base_plugin, voidptr(0))
+	app.register(&plugin.PluginBase{
+		name: 'empty-plugin'
+		version: '1.0.0'
+	})
 	// a sample hello plugin defined here
-	mut hello_plugin := new_hello_plugin(mut app)
-	app.register(hello_plugin, voidptr(0))
-	// etc ...
+	mut hello_plugin := new_hello_plugin()
+	app.register(mut hello_plugin)
 
-	// TODO: add that page, with links to all published routes (defined statically for now) ... wip
 	// TODO: move into an home page plugin ...
 	app.route(.get, '/', fn (req &ctx.Req, mut res ctx.Resp) {
-		res.send_file('plugin_example.html', 200)
+		res.send_file('./plugin_example.html', 200)
 	})
 
-	// TODO: move routes etc in dedicated plugins ... wip
-
+	// TODO: move generic routes here in a dedicated UtilityPlugin ... wip
 	app.route(.get, '/info', fn (req &ctx.Req, mut res ctx.Resp) {
 		res.send('{"msg":"Info"}', 200)
 		res.headers['Content-Type'] = ['application/json']
 	})
 
-	// TODO: return dynamic time ... wip
 	app.route(.get, '/time', fn (req &ctx.Req, mut res ctx.Resp) {
-		res.send('{"time":"time"}', 200)
+		now := time.now()
+		res.send('{"timestamp":"$now.unix_time()", "time":"$now"}', 200)
 		res.headers['Content-Type'] = ['application/json']
 	})
 
@@ -135,7 +133,7 @@ fn main() {
 	// TODO: other route/s ? ... wip
 
 	// sample to get some plugins and print some info, and execute specific methods on some plugins
-	retrieve_plugins(mut app)
+	retrieve_and_check_plugins(mut app)
 
 	// start the server
 	server.serve(app, 8080)

@@ -3,6 +3,7 @@ module router
 import ctx
 import utils
 import net.urllib
+import plugin { Plugin }
 
 const (
 	form_methods = ['POST', 'PATCH', 'PUT']
@@ -120,17 +121,19 @@ pub fn (mut r Router) use(handlers ...ctx.MiddlewareFunc) {
 }
 
 // register add a plugin and load it
-pub fn (mut r Router) register(plugin Plugin, config voidptr) {
+pub fn (mut r Router) register(mut plugin Plugin) {
 	// TODO: add only if the server is not already started, but later ... 
-	// TODO: add only if not already added (check the name and maybe even the version) ... wip
+	// TODO: add only if not already added (check the name and even the version, even to serve many versions of some routes) ... wip
+	// &plugin.app = r // TODO: check if/how to achieve this ... wip
 	r.plugins << &plugin
-	plugin.init(config) // initializes the plugin
+	plugin.init() // initializes the plugin
+	println('Registered plugin: $plugin.info()')
 }
 
 // TODO: fix the plugin searching logic, currently it doesn't work ... wip
 // TODO: check why here I need to use mut r router ... wip
 // plugin get a plugin by name
-pub fn (mut r Router) plugin(name string) ?&Plugin {
+pub fn (mut r Router) get_plugin(name string) ?&Plugin {
 	// println('Router plugins: $r.plugins') // TODO: temp ... wip
 	// TODO: check if match even by version ... maybe later
 	/*
@@ -145,13 +148,6 @@ pub fn (mut r Router) plugin(name string) ?&Plugin {
 		if plugin.name == name { return plugin }
 	}
 	 */
-	/*
-	// TODO: fix this (alternative way) ... wip
-	// search with filter the array
-	plugin := r.plugins.filter(it.name != '')[0]
-	println(plugin.name) // TODO: check why empty value printed ... wip
-	 */
-	// return none // TODO: check if return an error instead, like "Plugin '$name' not found" ...
 	return error("Plugin '$name' not found")
 }
 

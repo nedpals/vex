@@ -1,4 +1,4 @@
-module router
+module plugin
 
 fn test_plugin() {
 	// stub
