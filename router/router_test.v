@@ -141,7 +141,7 @@ fn test_extract_route_path_with_wildcard_invalid() {
 	assert root_param.len == 0
 	assert root_children == '/*slug/comments'
 	_, _, _ := extract_route_path(root_children) or {
-		assert err == 'Wildcard routes must not contain children routes.'
+		assert err.msg == 'Wildcard routes must not contain children routes.'
 		return
 	}
 	assert false
@@ -271,7 +271,7 @@ fn test_routes_add_with_wildcard() {
 fn test_routes_add_invalid() {
 	mut routes := map[string]&Route{}
 	routes.add(.get, 'without_slash_at_first', dummy_handler2) or {
-		assert err == 'Route path must start with a slash (/)'
+		assert err.msg == 'Route path must start with a slash (/)'
 		return
 	}
 	assert false
@@ -284,7 +284,7 @@ fn test_routes_add_error() {
 		return
 	}
 	routes.add(.get, '/book/what', dummy_handler2) or {
-		assert err == 'Only one wildcard OR param route in a route list is allowed.'
+		assert err.msg == 'Only one wildcard OR param route in a route list is allowed.'
 		return
 	}
 	assert false
@@ -293,7 +293,7 @@ fn test_routes_add_error() {
 fn test_routes_add_empty_handler_error() {
 	mut routes := map[string]&Route{}
 	routes.add(.get, '/no_handler') or {
-		assert err == 'Provided route handlers are empty.'
+		assert err.msg == 'Provided route handlers are empty.'
 		return
 	}
 	assert false
