@@ -21,6 +21,7 @@ mut:
 
 // init initializes the plugin and add some routes as a sample
 pub fn (mut p HelloPlugin) init() {
+	// TODO: if already initialized, raise an error ...
 	// println(@FN + ' ${p.info()} ...')
 	/*
 	// TODO: check how to achieve this ... wip
@@ -43,6 +44,7 @@ pub fn (mut p HelloPlugin) init() {
 
 // close closed the plugin (useful to close used resources, etc)
 pub fn (mut p HelloPlugin) close() {
+	// TODO: if not initialized, raise an error ...
 	p.status = .closed
 }
 
@@ -64,11 +66,13 @@ pub fn (p HelloPlugin) greeting(name string) string {
 }
 
 // new_hello_plugin creates and return a new HelloPlugin that defines some routes
-fn new_hello_plugin() &plugin.Plugin {
+fn new_hello_plugin() server.Plugin {
 	plugin := &HelloPlugin{
 		name:    'hello-plugin'
 		version: '1.0.0'
 	}
+	// do other stuff on it ...
+	// then return it
 	return plugin
 }
 
@@ -100,14 +104,16 @@ fn main() {
 	// note that generic routes could be bundled in its own modules/dependencies
 	// and application-specific routes could be splitted easily in its own modules
 
-	// a sample empty plugin
-	app.register(&plugin.PluginBase{
+	// add a sample empty plugin created directly
+	server.register(mut app, mut plugin.Plugin{
 		name: 'empty-plugin'
 		version: '1.0.0'
 	})
-	// a sample hello plugin defined here
+	// add a sample hello plugin returned from a factory function
 	mut hello_plugin := new_hello_plugin()
-	app.register(mut hello_plugin)
+	server.register(mut app, mut &hello_plugin)
+	// try to add another time a plugin already added, should be skipped
+	server.register(mut app, mut &hello_plugin)
 
 	// TODO: move into an home page plugin ...
 	app.route(.get, '/', fn (req &ctx.Req, mut res ctx.Resp) {

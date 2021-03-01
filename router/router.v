@@ -3,7 +3,7 @@ module router
 import ctx
 import utils
 import net.urllib
-import plugin { Plugin }
+import server
 
 const (
 	form_methods = ['POST', 'PATCH', 'PUT']
@@ -22,7 +22,7 @@ pub mut:
 	on_error    ctx.HandlerFunc = ctx.error_route
 mut:
 	routes      map[string]&Route
-	plugins     []&Plugin // TODO: check if instead use: map[string]&Plugin ... wip
+	plugins     []server.Plugin
 	middlewares []ctx.MiddlewareFunc
 	ctx         voidptr
 }
@@ -120,34 +120,31 @@ pub fn (mut r Router) use(handlers ...ctx.MiddlewareFunc) {
 	r.middlewares << handlers
 }
 
-// register add a plugin and load it
-pub fn (mut r Router) register(mut plugin Plugin) {
-	// TODO: add only if the server is not already started, but later ... 
-	// TODO: add only if not already added (check the name and even the version, even to serve many versions of some routes) ... wip
-	// &plugin.app = r // TODO: check if/how to achieve this ... wip
-	r.plugins << &plugin
-	plugin.init() // initializes the plugin
-	println('Registered plugin: $plugin.info()')
+// add_plugin add the given plugin as app-wide plugin, if not already added
+pub fn (mut r Router) add_plugin(plugin server.Plugin) int {
+	// println("DEBUG: Add plugin: '$plugin.name' to router")
+	// add a plugin only if not already added
+	// println('DEBUG: plugins: $r.plugins.len')
+	_ := r.get_plugin(plugin.name) or {
+		r.plugins << plugin
+		// println("DEBUG: Plugin: '$plugin.name' added to router")
+		// println('DEBUG: plugins now: $r.plugins.len')
+		return r.plugins.len
+	}
+	return -1
 }
 
-// TODO: fix the plugin searching logic, currently it doesn't work ... wip
-// TODO: check why here I need to use mut r router ... wip
+// TODO: check if search even by version (by default all versions) ... maybe later, for now set in plugin name if/when needed
 // plugin get a plugin by name
-pub fn (mut r Router) get_plugin(name string) ?&Plugin {
-	// println('Router plugins: $r.plugins') // TODO: temp ... wip
-	// TODO: check if match even by version ... maybe later
-	/*
-	// TODO: fix this (preferred way) ... wip
+pub fn (r Router) get_plugin(name string) ?server.Plugin {
+	// println("DEBUG: Router, get plugin: '$name'")
+	// println('DEBUG: Router plugins: $r.plugins')
 	// search with for in array ...
 	for plugin in r.plugins {
-		// println(typeof(plugin).name) // &router.Plugin
-		// println(plugin.name)
-		// println((*plugin).info()) // TODO: check why Runtime error ... wip
-		// println(plugin.info()) // TODO: check why Runtime error ... wip
-		println((*plugin).name) // TODO: check why empty value printed ... wip
+		// println('DEBUG: current plugin type: ${typeof(plugin).name}') // server.Plugin
+		// println('DEBUG: current plugin name: $plugin.name')
 		if plugin.name == name { return plugin }
 	}
-	 */
 	return error("Plugin '$name' not found")
 }
 

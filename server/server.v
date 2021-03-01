@@ -15,6 +15,28 @@ const (
 pub interface Router {
 	respond_error(code int) []byte
 	receive(method string, path string, raw_headers []string, body []byte) (int, []byte, []byte)
+	add_plugin(plugin Plugin) int
+	// get_plugin(name string) ?Plugin // TODO: check if keep only in Router implementation ...
+}
+
+pub interface Plugin {
+	name         string
+	version      string // semver string
+	init()
+	info() map[string]string
+	close()
+	// dependencies() []string // dependency on other plugins (by name)
+	// status() PluginStatus
+}
+
+// register add a plugin and load it
+pub fn register(mut router Router, mut plugin Plugin) {
+	// &plugin.app = router // TODO: check if/how to achieve this, here or in the add_plugin ... wip
+	num := router.add_plugin(*plugin)
+	if num >= 0 {
+		plugin.init() // initializes the plugin
+		println("Plugin: '$plugin.info()' registered and initialized")
+	}
 }
 
 // serve starts the server at the give port
