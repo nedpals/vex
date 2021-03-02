@@ -122,33 +122,22 @@ pub fn (mut r Router) use(handlers ...ctx.MiddlewareFunc) {
 
 // add_plugin add the given plugin as app-wide plugin, if not already added
 pub fn (mut r Router) add_plugin(plugin server.Plugin) int {
-	// println("DEBUG: Add plugin: '$plugin.name' to router")
 	// add a plugin only if not already added
-	// println('DEBUG: plugins: $r.plugins.len')
 	_ := r.get_plugin(plugin.name) or {
 		r.plugins << plugin
-		// println("DEBUG: Plugin: '$plugin.name' added to router")
-		// println('DEBUG: plugins now: $r.plugins.len')
 		return r.plugins.len
 	}
 	return -1
 }
 
-// TODO: check if search even by version (by default all versions) ... maybe later, for now set in plugin name if/when needed
 // plugin get a plugin by name
 pub fn (r Router) get_plugin(name string) ?server.Plugin {
-	// println("DEBUG: Router, get plugin: '$name'")
-	// println('DEBUG: Router plugins: $r.plugins')
-	// search with for in array ...
+	// search by name ...
 	for plugin in r.plugins {
-		// println('DEBUG: current plugin type: ${typeof(plugin).name}') // server.Plugin
-		// println('DEBUG: current plugin name: $plugin.name')
 		if plugin.name == name { return plugin }
 	}
 	return error("Plugin '$name' not found")
 }
-
-// TODO: check if move all Route related stuff in its own source (and related tests) ...
 
 // List of supported HTTP methods.
 pub enum Method {

@@ -1,10 +1,7 @@
 module plugin
 
-// import router
-// import router { Router }
-
-// TODO: check if/how to fully encapsulate plugin related stuff (if it makes sense here) ... 
-
+// Plugin empty plugin with some additions but almost empty methods
+// At least define same attributes and methods of server.Plugin
 pub struct Plugin {
 	name         string [required]
 	version      string [required] // semver string
@@ -14,7 +11,7 @@ mut:
 	status       PluginStatus
 }
 
-// List of plugin statuses.
+// PluginStatus list of plugin statuses
 pub enum PluginStatus {
 	unknown
 	initialized
@@ -24,6 +21,7 @@ pub enum PluginStatus {
 	closed 
 }
 
+// new factory function that returns a new Plugin instance using some default values
 pub fn new() Plugin {
 	return Plugin{
 		name:    ''
@@ -32,22 +30,23 @@ pub fn new() Plugin {
 	}
 }
 
-// init by default set only the flag
+// init plugin initialization, by default set only its status flag
 pub fn (mut p Plugin) init() {
 	p.status = .initialized
 }
 
-// close by default set only the flag
+// close plugin shutdown, by default set only its status flag
 pub fn (mut p Plugin) close() {
 	p.status = .closed
 }
 
-// info tell main info (usually name and version) about the plugin
+// info tell main info (usually name, version, current status) about the plugin
 pub fn (p Plugin) info() map[string]string {
 	return map{
 		'name':    p.name
 		'version': p.version
 		'status':  p.status.str()
+		'app':     if isnil(p.app) { 'not set'} else { 'set' }
 	}
 }
 

@@ -14,25 +14,37 @@ struct HelloPlugin {
 	version      string // semver string
 	dependencies []string = []
 mut:
-	app          voidptr // TODO: check if instance of &router.Router ... wip
+	app          voidptr // reference to the app // TODO: check if instance of &router.Router ... wip
+	// app          &server.Router = Router{} // reference to the app // TODO: check if instance of &router.Router ... wip
 	status       plugin.PluginStatus
 	info         map[string]string
 }
 
 // init initializes the plugin and add some routes as a sample
 pub fn (mut p HelloPlugin) init() {
-	// TODO: if already initialized, raise an error ...
-	// println(@FN + ' ${p.info()} ...')
+	// TODO: if already initialized, raise an error; check if use optional return type ...
+	// add some routes, via the reference to enclosing app
+	mut app := &router.Router(p.app) // cast to a router
+	println('DEBUG: typeof(app):${typeof(app).name} inside the plugin')
+	/*
+	// TODO: with this enabled, I get: RUNTIME ERROR: invalid memory access, fix ... wip
+	app.route(.get, '/hello-text', fn (req &ctx.Req, mut res ctx.Resp) {
+		res.send('Hello world!', 200)
+		res.headers['Content-Type'] = ['text/plain']
+	})
+	 */
 	/*
 	// TODO: check how to achieve this ... wip
 	// add some routes
 	p.app.route(.get, '/hello-text', fn (req &ctx.Req, mut res ctx.Resp) {
-		res.send('Hello world!', 200)
+		msg := p.greeting('Noname') // TODO: get from arguments, or 'Noname'
+		res.send(msg, 200)
 		res.headers['Content-Type'] = ['text/plain']
 	})
 	println('${p.info()}: registered route for ' + '/hello-text')
 	p.app.route(.get, '/hello-json', fn (req &ctx.Req, mut res ctx.Resp) {
-		res.send('{"Hello":"World"}', 200)
+		msg := p.greeting('Noname') // TODO: get from arguments, or 'Noname'
+		res.send('{"msg":"$msg"}', 200)
 		res.headers['Content-Type'] = ['application/json']
 	})
 	println('${p.info()}: registered route for ' + '/hello-json')
@@ -44,7 +56,7 @@ pub fn (mut p HelloPlugin) init() {
 
 // close closed the plugin (useful to close used resources, etc)
 pub fn (mut p HelloPlugin) close() {
-	// TODO: if not initialized, raise an error ...
+	// TODO: if not initialized, raise an error; check if use optional return type ...
 	p.status = .closed
 }
 
@@ -57,15 +69,13 @@ pub fn (p HelloPlugin) info() map[string]string {
 	}
 }
 
-// add a custom method to HelloPlugin, as a sample (to call later)
-
 // greeting return a greeting for the given name
 pub fn (p HelloPlugin) greeting(name string) string {
-	// return '${p.info()}: Hello $name !'
 	return 'Hello $name !'
 }
 
 // new_hello_plugin creates and return a new HelloPlugin that defines some routes
+// At least define same attributes and methods of server.Plugin
 fn new_hello_plugin() server.Plugin {
 	plugin := &HelloPlugin{
 		name:    'hello-plugin'
@@ -79,21 +89,30 @@ fn new_hello_plugin() server.Plugin {
 // retrieve_and_check_plugins get some plugins from the router, and do some check on them
 fn retrieve_and_check_plugins(mut rou router.Router) {
 	// TODO: remove mutable on Router if possible ...
-	/*
-	// TODO: enable and fix ...
+	println('DEBUG: ' + @FN + ' ...')
 	p_base := rou.get_plugin('empty-plugin') or {
-		eprintln('Error: $err')
+		eprintln('Error: $err.msg')
 		return
 	}
-	assert p_base is plugin.PluginBase
+	assert p_base is plugin.Plugin
 	match p_base {
-		plugin.PluginBase { println('PluginBase instance found') }
+		plugin.Plugin { println("Plugin instance found for '${p_base.name}'") }
 		else { eprintln('Other plugin found...') }
 	}
 	println('Plugin found: ${p_base.info()}')
-	// p_wrong := rou.get_plugin('not-present') or { return }  // expected failure
+	// the same even for HelloPlugin ... 
+	p_wrong := rou.get_plugin('not-present') or { return }  // expected failure
+	println('Plugin not found: expected for ${p_wrong.info()}') // never executed
+}
 
-	// TODO: retrieve HelloPlugin and check it, then call its additional method/s ... wip 
+fn 	call_plugin_method(p server.Plugin) {
+	println('DEBUG: ' + @FN + ' ...')
+	/*
+	// TODO: enable and fix ...
+	// msg := hello_plugin.greeting('Noname') // TODO: get from arguments, or 'Noname'
+	hp := HelloPlugin(p)
+	msg := hp.greeting('Noname') // TODO: get from arguments, or 'Noname'
+	println('DEBUG: $msg')
 	 */
 }
 
@@ -137,6 +156,9 @@ fn main() {
 	// TODO: add a route that always returns an error, both as text and as json ... wip
 
 	// TODO: other route/s ? ... wip
+
+	// sample usage of a plugin method
+	call_plugin_method(hello_plugin)
 
 	// sample to get some plugins and print some info, and execute specific methods on some plugins
 	retrieve_and_check_plugins(mut app)
