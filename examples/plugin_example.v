@@ -1,28 +1,29 @@
 module main
 
-import nedpals.vex.router
-import nedpals.vex.plugin
-// import nedpals.vex.router {Plugin, PluginBase, PluginStatus, Router}
-import nedpals.vex.server
 import nedpals.vex.ctx
+import nedpals.vex.plugin
+import nedpals.vex.router
+import nedpals.vex.server
 import time
 
 [heap]
 struct HelloPlugin {
-	// TODO: when possible, to simplify, use struct embedding here from PluginBase ... wip
+	// TODO: when available, use struct embedding here from plugin.Plugin ... wip
 	name         string
 	version      string // semver string
 	dependencies []string = []
 mut:
 	app          voidptr // reference to the app // TODO: check if instance of &router.Router ... wip
-	// app          &server.Router = Router{} // reference to the app // TODO: check if instance of &router.Router ... wip
 	status       plugin.PluginStatus
 	info         map[string]string
 }
 
 // init initializes the plugin and add some routes as a sample
 pub fn (mut p HelloPlugin) init() {
-	// TODO: if already initialized, raise an error; check if use optional return type ...
+	if p.status != .unknown {
+		eprintln("Plugin '$p.name' already initialized or in wrong status: '$p.status'")
+		return
+	}
 	// add some routes, via the reference to enclosing app
 	mut app := &router.Router(p.app) // cast to a router
 	println('DEBUG: typeof(app):${typeof(app).name} inside the plugin')
@@ -34,16 +35,23 @@ pub fn (mut p HelloPlugin) init() {
 	})
 	 */
 	/*
-	// TODO: check how to achieve this ... wip
+	// TODO: check how to make these routes work ... wip
 	// add some routes
-	p.app.route(.get, '/hello-text', fn (req &ctx.Req, mut res ctx.Resp) {
-		msg := p.greeting('Noname') // TODO: get from arguments, or 'Noname'
+	// at the moment it seems not possible to call plugin methods from route handlers,
+	// so define as normal functions outside plugins
+	// TODO: to be able to call plugin methods from route handlers, try to define even route handlers in plugin; then add an example for both ... wip
+	app.route(.get, '/hello-text', fn (req &ctx.Req, mut res ctx.Resp) {
+		msg := p.greeting('Noname')
+		// if not possible the previous one, enable the following:
+		// msg := greeting_fn('Noname')
 		res.send(msg, 200)
 		res.headers['Content-Type'] = ['text/plain']
 	})
 	println('${p.info()}: registered route for ' + '/hello-text')
-	p.app.route(.get, '/hello-json', fn (req &ctx.Req, mut res ctx.Resp) {
-		msg := p.greeting('Noname') // TODO: get from arguments, or 'Noname'
+	app.route(.get, '/hello-json', fn (req &ctx.Req, mut res ctx.Resp) {
+		msg := p.greeting('Noname')
+		// if not possible the previous one, enable the following:
+		// msg := greeting_fn('Noname')
 		res.send('{"msg":"$msg"}', 200)
 		res.headers['Content-Type'] = ['application/json']
 	})
@@ -56,7 +64,10 @@ pub fn (mut p HelloPlugin) init() {
 
 // close closed the plugin (useful to close used resources, etc)
 pub fn (mut p HelloPlugin) close() {
-	// TODO: if not initialized, raise an error; check if use optional return type ...
+	if p.status != .initialized {
+		eprintln("Plugin '$p.name' already closed or in unknown status: '$p.status'")
+		return
+	}
 	p.status = .closed
 }
 
@@ -69,10 +80,16 @@ pub fn (p HelloPlugin) info() map[string]string {
 	}
 }
 
-// greeting return a greeting for the given name
+// greeting return a greeting for the given name, as a plugin method
 pub fn (p HelloPlugin) greeting(name string) string {
 	return 'Hello $name !'
 }
+
+// greeting_fn return a greeting for the given name, as a normal function
+pub fn greeting_fn(name string) string {
+	return 'Hello $name !'
+}
+
 
 // new_hello_plugin creates and return a new HelloPlugin that defines some routes
 // At least define same attributes and methods of server.Plugin
@@ -155,7 +172,20 @@ fn main() {
 
 	// TODO: add a route that always returns an error, both as text and as json ... wip
 
-	// TODO: other route/s ? ... wip
+	// other route/s // TODO: remove once moved in a plugin ... wip
+	app.route(.get, '/hello-text-name-in-path/:name', fn (req &ctx.Req, mut res ctx.Resp) {
+		name := req.params['name'] or { 'Noname' } // get from path arguments
+		msg := greeting_fn(name)
+		res.send(msg, 200)
+		res.headers['Content-Type'] = ['text/plain']
+	})
+	app.route(.get, '/hello-text-name-in-query', fn (req &ctx.Req, mut res ctx.Resp) {
+		queries := req.parse_query() or { map[string]string{} } // get from URL arguments
+		name := queries['name'] or { 'Noname' }
+		msg := greeting_fn(name)
+		res.send(msg, 200)
+		res.headers['Content-Type'] = ['text/plain']
+	})
 
 	// sample usage of a plugin method
 	call_plugin_method(hello_plugin)
