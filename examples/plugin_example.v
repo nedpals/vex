@@ -7,13 +7,15 @@ import nedpals.vex.server
 import time
 
 [heap]
+// Sample Plugin that publish some greeting messages
+// At least define same attributes and methods of server.Plugin
 struct HelloPlugin {
-	// TODO: when available, use struct embedding here from plugin.Plugin ... wip
+	// TODO: when available, use struct embedding here from server.Plugin or plugin.Plugin ... wip
 	name         string
 	version      string // semver string
 	dependencies []string = []
 mut:
-	app          voidptr // reference to the app // TODO: check if instance of &router.Router ... wip
+	app          voidptr // reference to the app
 	status       plugin.PluginStatus
 	info         map[string]string
 }
@@ -26,40 +28,36 @@ pub fn (mut p HelloPlugin) init() {
 	}
 	// add some routes, via the reference to enclosing app
 	mut app := &router.Router(p.app) // cast to a router
-	println('DEBUG: typeof(app):${typeof(app).name} inside the plugin')
-	/*
-	// TODO: with this enabled, I get: RUNTIME ERROR: invalid memory access, fix ... wip
+	// println('DEBUG: typeof(app):${typeof(app).name} inside the plugin')
+/*
+	// TODO: with this enabled, I get: RUNTIME ERROR: invalid memory access, fix ... ok, now it works
 	app.route(.get, '/hello-text', fn (req &ctx.Req, mut res ctx.Resp) {
 		res.send('Hello world!', 200)
 		res.headers['Content-Type'] = ['text/plain']
 	})
-	 */
-	/*
-	// TODO: check how to make these routes work ... wip
+ */
 	// add some routes
 	// at the moment it seems not possible to call plugin methods from route handlers,
 	// so define as normal functions outside plugins
-	// TODO: to be able to call plugin methods from route handlers, try to define even route handlers in plugin; then add an example for both ... wip
 	app.route(.get, '/hello-text', fn (req &ctx.Req, mut res ctx.Resp) {
-		msg := p.greeting('Noname')
-		// if not possible the previous one, enable the following:
-		// msg := greeting_fn('Noname')
+		// msg := p.greeting('Noname') // if not possible now, enable the following line:
+		msg := greeting_fn('Noname')
 		res.send(msg, 200)
 		res.headers['Content-Type'] = ['text/plain']
 	})
-	println('${p.info()}: registered route for ' + '/hello-text')
+	println('$p.name: registered route for ' + '/hello-text')
 	app.route(.get, '/hello-json', fn (req &ctx.Req, mut res ctx.Resp) {
-		msg := p.greeting('Noname')
-		// if not possible the previous one, enable the following:
-		// msg := greeting_fn('Noname')
+		// msg := p.greeting('Noname') // if not possible now, enable the following line:
+		msg := greeting_fn('Noname')
 		res.send('{"msg":"$msg"}', 200)
 		res.headers['Content-Type'] = ['application/json']
 	})
-	println('${p.info()}: registered route for ' + '/hello-json')
-	 */
+	println('$p.name: registered route for ' + '/hello-json')
+	// TODO: to be able to call plugin methods from route handlers, try to define even route handlers in plugin, or as functions with the plugin as argument; then add an example for both ... wip
 
 	// end of plugin initialization
 	p.status = .initialized
+	println('$p.name: initialized')
 }
 
 // close closed the plugin (useful to close used resources, etc)
@@ -69,9 +67,10 @@ pub fn (mut p HelloPlugin) close() {
 		return
 	}
 	p.status = .closed
+	println('$p.name: closed')
 }
 
-// info tell name and version of the plugin
+// info return some info about the plugin, like: name, version, status, and maybe others
 pub fn (p HelloPlugin) info() map[string]string {
 	return map{
 		'name':    p.name
@@ -103,6 +102,8 @@ fn new_hello_plugin() server.Plugin {
 	return plugin
 }
 
+
+/*
 // retrieve_and_check_plugins get some plugins from the router, and do some check on them
 fn retrieve_and_check_plugins(mut rou router.Router) {
 	// TODO: remove mutable on Router if possible ...
@@ -111,7 +112,8 @@ fn retrieve_and_check_plugins(mut rou router.Router) {
 		eprintln('Error: $err.msg')
 		return
 	}
-	assert p_base is plugin.Plugin
+	// assert p_base is plugin.Plugin
+	assert p_base is server.Plugin
 	match p_base {
 		plugin.Plugin { println("Plugin instance found for '${p_base.name}'") }
 		else { eprintln('Other plugin found...') }
@@ -132,6 +134,8 @@ fn 	call_plugin_method(p server.Plugin) {
 	println('DEBUG: $msg')
 	 */
 }
+ */
+
 
 fn main() {
 	mut app := router.new()
@@ -141,15 +145,16 @@ fn main() {
 	// and application-specific routes could be splitted easily in its own modules
 
 	// add a sample empty plugin created directly
-	server.register(mut app, mut plugin.Plugin{
+	server.register(mut app, mut &server.Plugin(&plugin.Plugin{
 		name: 'empty-plugin'
 		version: '1.0.0'
-	})
+	}))
 	// add a sample hello plugin returned from a factory function
+	// but cast plugin instance in a server.Plugin, otherwise do in the factory function
 	mut hello_plugin := new_hello_plugin()
-	server.register(mut app, mut &hello_plugin)
+	server.register(mut app, mut &server.Plugin(&hello_plugin))
 	// try to add another time a plugin already added, should be skipped
-	server.register(mut app, mut &hello_plugin)
+	server.register(mut app, mut &server.Plugin(&hello_plugin))
 
 	// TODO: move into an home page plugin ...
 	app.route(.get, '/', fn (req &ctx.Req, mut res ctx.Resp) {
@@ -187,11 +192,13 @@ fn main() {
 		res.headers['Content-Type'] = ['text/plain']
 	})
 
+/*
 	// sample usage of a plugin method
 	call_plugin_method(hello_plugin)
 
 	// sample to get some plugins and print some info, and execute specific methods on some plugins
 	retrieve_and_check_plugins(mut app)
+ */
 
 	// start the server
 	server.serve(app, 8080)

@@ -12,29 +12,39 @@ const (
 	sep = '\r\n'
 )
 
+// Router interface for a generic Router
 pub interface Router {
 	respond_error(code int) []byte
 	receive(method string, path string, raw_headers []string, body []byte) (int, []byte, []byte)
-	add_plugin(plugin Plugin) int
+	add_plugin(plugin &Plugin) int
 }
 
+// Plugin interface of a generic Plugin
 pub interface Plugin {
 	name         string
 	version      string // semver string
 	init()
-	info() map[string]string
+	info()       map[string]string
 	close()
 	// dependencies() []string // dependency on other plugins (by name)
 	// status() PluginStatus
 mut:
-	app          voidptr // reference to the app // TODO: check if move in init ... wip
+	app          voidptr // reference to the app
 }
 
-// register add a plugin and load it
+// TODO: remove when related PR will be merged ... wip
+// str return a string representation (as summary) of the plugin
+pub fn (p &Plugin) str() string {
+	return 'Plugin{ name:$p.name, version:$p.version }'
+	// return 'server.Plugin{ ... }'
+}
+
+// register add a plugin and initializes it
 pub fn register(mut router Router, mut plugin Plugin) {
-	num := router.add_plugin(*plugin)
+	num := router.add_plugin(plugin)
 	if num >= 0 {
-		plugin.app = router // set a reference to the app, useful in some cases // TODO: check if good ...
+		// TODO: with this enabled, I get: RUNTIME ERROR: invalid memory access, fix ... in the meantime, keep it enabled in server ... wip
+		// plugin.app = router // set a reference to the app, useful in some cases // later check if enable here instead of the Router
 		plugin.init() // initializes the plugin
 		println(utils.green_log('Plugin registered and initialized: "$plugin.info()"'))
 	}

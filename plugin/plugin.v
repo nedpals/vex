@@ -7,7 +7,7 @@ pub struct Plugin {
 	version      string [required] // semver string
 	dependencies []string = []
 mut:
-	app          voidptr // TODO: check if instance of &router.Router ... wip
+	app          voidptr // reference to the app
 	status       PluginStatus
 }
 
@@ -22,6 +22,7 @@ pub enum PluginStatus {
 }
 
 // new factory function that returns a new Plugin instance using some default values
+// Force a cast to server.Plugin when called, to be aligned with the generic definition
 pub fn new() Plugin {
 	return Plugin{
 		name:    ''
@@ -50,6 +51,7 @@ pub fn (p Plugin) info() map[string]string {
 	}
 }
 
+// TODO: remove when related PR will be merged ... wip
 // str return a string representation (as summary) of the plugin
 pub fn (p Plugin) str() string {
 	return 'Plugin{ name:$p.name, version:$p.version, status:$p.status.str() }'

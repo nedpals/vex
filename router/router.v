@@ -22,7 +22,7 @@ pub mut:
 	on_error    ctx.HandlerFunc = ctx.error_route
 mut:
 	routes      map[string]&Route
-	plugins     []server.Plugin
+	plugins     []&server.Plugin
 	middlewares []ctx.MiddlewareFunc
 	ctx         voidptr
 }
@@ -121,9 +121,11 @@ pub fn (mut r Router) use(handlers ...ctx.MiddlewareFunc) {
 }
 
 // add_plugin add the given plugin as app-wide plugin, if not already added
-pub fn (mut r Router) add_plugin(plugin server.Plugin) int {
+// And set a reference to the Router inside it
+pub fn (mut r Router) add_plugin(mut plugin &server.Plugin) int {
 	// add a plugin only if not already added
 	_ := r.get_plugin(plugin.name) or {
+		plugin.app = r // TODO: keep it enabled here, temporarily (instead of in server) ... wip
 		r.plugins << plugin
 		return r.plugins.len
 	}
@@ -131,10 +133,10 @@ pub fn (mut r Router) add_plugin(plugin server.Plugin) int {
 }
 
 // plugin get a plugin by name
-pub fn (r Router) get_plugin(name string) ?server.Plugin {
+pub fn (r Router) get_plugin(name string) ?&server.Plugin {
 	// search by name ...
 	for plugin in r.plugins {
-		if plugin.name == name { return plugin }
+		if plugin.name == name { return &plugin }
 	}
 	return error("Plugin '$name' not found")
 }
