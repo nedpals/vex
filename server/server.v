@@ -32,13 +32,6 @@ mut:
 	app          voidptr // reference to the app
 }
 
-// TODO: remove when related PR will be merged ... wip
-// str return a string representation (as summary) of the plugin
-pub fn (p &Plugin) str() string {
-	return 'Plugin{ name:$p.name, version:$p.version }'
-	// return 'server.Plugin{ ... }'
-}
-
 // register add a plugin and initializes it
 pub fn register(mut router Router, mut plugin Plugin) {
 	num := router.add_plugin(plugin)

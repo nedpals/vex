@@ -163,11 +163,6 @@ mut:
 	middlewares []ctx.MiddlewareFunc
 }
 
-// empty str to avoid cgen error
-pub fn (r &Route) str() string {
-	return 'Route{ name: $r.name, middlewares: $r.middlewares.len, routes: $r.children }'
-}
-
 // identify route kind ( parameter, wildcard or regular )
 fn identify_kind(route_name string) Kind {
 	if route_name.len == 0 {

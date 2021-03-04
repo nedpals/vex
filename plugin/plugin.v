@@ -50,9 +50,3 @@ pub fn (p Plugin) info() map[string]string {
 		'app':     if isnil(p.app) { 'not set'} else { 'set' }
 	}
 }
-
-// TODO: remove when related PR will be merged ... wip
-// str return a string representation (as summary) of the plugin
-pub fn (p Plugin) str() string {
-	return 'Plugin{ name:$p.name, version:$p.version, status:$p.status.str() }'
-}
