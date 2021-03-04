@@ -28,15 +28,6 @@ pub fn (mut p HelloPlugin) init() {
 	}
 	// add some routes, via the reference to enclosing app
 	mut app := &router.Router(p.app) // cast to a router
-	// println('DEBUG: typeof(app):${typeof(app).name} inside the plugin')
-/*
-	// TODO: with this enabled, I get: RUNTIME ERROR: invalid memory access, fix ... ok, now it works
-	app.route(.get, '/hello-text', fn (req &ctx.Req, mut res ctx.Resp) {
-		res.send('Hello world!', 200)
-		res.headers['Content-Type'] = ['text/plain']
-	})
- */
-	// add some routes
 	// at the moment it seems not possible to call plugin methods from route handlers,
 	// so define as normal functions outside plugins
 	app.route(.get, '/hello-text', fn (req &ctx.Req, mut res ctx.Resp) {
