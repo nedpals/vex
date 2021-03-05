@@ -135,7 +135,8 @@ pub fn (req &Req) parse_files() ?map[string][]FormData {
 				filename = ''
 				content_type = 'vex/form'
 				form_name = ''
-				fields := str.all_after('Content-Disposition: ').split('; ')[1..]
+				fields_tmp := str.all_after('Content-Disposition: ').split('; ')
+				fields := fields_tmp[1..]
 				for field in fields {
 					vals := field.split('=')
 					val := vals[1].find_between('"', '"')
