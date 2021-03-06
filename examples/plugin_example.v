@@ -5,7 +5,6 @@ import nedpals.vex.plugin
 import nedpals.vex.router
 import nedpals.vex.server
 import plugins
-import time
 
 // as a sample, define some plugins inline here, and get others from other modules
 // for simplicity defined in this project, but could be somewhere)
@@ -19,6 +18,16 @@ fn new_hello_plugin() server.Plugin {
 	}
 	// do other stuff on it ...
 	// then return it
+	return plugin
+}
+
+// new_utility_plugin creates and return a new UtilityPlugin that defines some routes
+// At least define same attributes and methods of server.Plugin
+fn new_utility_plugin() server.Plugin {
+	plugin := &plugins.UtilityPlugin{
+		name:    'utility-plugin'
+		version: '1.0.0'
+	}
 	return plugin
 }
 
@@ -75,27 +84,15 @@ fn main() {
 	server.register(mut app, mut &server.Plugin(&hello_plugin))
 	// try to add another time a plugin already added, should be skipped
 	server.register(mut app, mut &server.Plugin(&hello_plugin))
+	// add a sample utility plugin returned from a factory function
+	// but in this case, do the in the factory function
+	mut utility_plugin := new_utility_plugin()
+	server.register(mut app, mut &utility_plugin)
 
 	// TODO: move into an home page plugin ...
 	app.route(.get, '/', fn (req &ctx.Req, mut res ctx.Resp) {
 		res.send_file('./plugin_example.html', 200)
 	})
-
-	// TODO: move generic routes here in a dedicated UtilityPlugin ... wip
-	app.route(.get, '/info', fn (req &ctx.Req, mut res ctx.Resp) {
-		res.send('{"msg":"Info"}', 200)
-		res.headers['Content-Type'] = ['application/json']
-	})
-
-	app.route(.get, '/time', fn (req &ctx.Req, mut res ctx.Resp) {
-		now := time.now()
-		res.send('{"timestamp":"$now.unix_time()", "time":"$now"}', 200)
-		res.headers['Content-Type'] = ['application/json']
-	})
-
-	// TODO: add a generic health check route ... wip
-
-	// TODO: add a route that always returns an error, both as text and as json ... wip
 
 /*
 	// sample usage of a plugin method
