@@ -1,5 +1,12 @@
-cache/
+.idea/
 _old/
+cache/
+# modules/
+/modules/
+public/
+
+.env
+.envrc
 
 *.bak
 *.exe
@@ -8,14 +15,8 @@ _old/
 *.sublime-project
 *.sublime-workspace
 *.vscode
-.idea/
 examples/*_example
 index.html
-modules/
-public/
 test
 test.v
 test.*
-
-.env
-.envrc
