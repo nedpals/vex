@@ -5,10 +5,10 @@ import nedpals.vex.plugin
 import nedpals.vex.router
 
 [heap]
-// Sample Plugin that publish some greeting messages
-// At least define same attributes and methods of server.Plugin
+// Sample Plugin that publish some greeting messages.
+// At least define same attributes and methods of server.Plugin.
 pub struct HelloPlugin {
-	// TODO: when available, use struct embedding here from server.Plugin or plugin.Plugin ... wip
+	// when available, use struct embedding here from server.Plugin or plugin.Plugin
 	name         string
 	version      string // semver string
 	dependencies []string = []
@@ -18,7 +18,7 @@ mut:
 	info         map[string]string
 }
 
-// init initializes the plugin and add some routes as a sample
+// init initializes the plugin and add some routes as a sample.
 pub fn (mut p HelloPlugin) init() {
 	if p.status != .unknown {
 		eprintln("Plugin '$p.name' already initialized or in wrong status: '$p.status'")
@@ -63,7 +63,7 @@ pub fn (mut p HelloPlugin) init() {
 	println('$p.name: initialized')
 }
 
-// close closed the plugin (useful to close used resources, etc)
+// close closes the plugin (useful to close used resources, etc).
 pub fn (mut p HelloPlugin) close() {
 	if p.status != .initialized {
 		eprintln("Plugin '$p.name' already closed or in unknown status: '$p.status'")
@@ -73,7 +73,7 @@ pub fn (mut p HelloPlugin) close() {
 	println('$p.name: closed')
 }
 
-// info return some info about the plugin, like: name, version, status, and maybe others
+// info return some info about the plugin, like: name, version, status, and maybe others.
 pub fn (p HelloPlugin) info() map[string]string {
 	return map{
 		'name':    p.name
@@ -82,12 +82,12 @@ pub fn (p HelloPlugin) info() map[string]string {
 	}
 }
 
-// greeting return a greeting for the given name, as a plugin method
+// greeting return a greeting for the given name, as a plugin method.
 pub fn (p HelloPlugin) greeting(name string) string {
 	return 'Hello $name !'
 }
 
-// greeting_fn return a greeting for the given name, as a normal function
+// greeting_fn return a greeting for the given name, as a normal function.
 pub fn greeting_fn(name string) string {
 	return 'Hello $name !'
 }
