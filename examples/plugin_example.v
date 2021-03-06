@@ -97,21 +97,6 @@ fn main() {
 
 	// TODO: add a route that always returns an error, both as text and as json ... wip
 
-	// other route/s // TODO: remove once moved in a plugin ... wip
-	app.route(.get, '/hello-text-name-in-path/:name', fn (req &ctx.Req, mut res ctx.Resp) {
-		name := req.params['name'] or { 'Noname' } // get from path arguments
-		msg := plugins.greeting_fn(name)
-		res.send(msg, 200)
-		res.headers['Content-Type'] = ['text/plain']
-	})
-	app.route(.get, '/hello-text-name-in-query', fn (req &ctx.Req, mut res ctx.Resp) {
-		queries := req.parse_query() or { map[string]string{} } // get from URL arguments
-		name := queries['name'] or { 'Noname' }
-		msg := plugins.greeting_fn(name)
-		res.send(msg, 200)
-		res.headers['Content-Type'] = ['text/plain']
-	})
-
 /*
 	// sample usage of a plugin method
 	call_plugin_method(hello_plugin)

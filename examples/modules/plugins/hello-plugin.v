@@ -29,20 +29,34 @@ pub fn (mut p HelloPlugin) init() {
 	// at the moment it seems not possible to call plugin methods from route handlers,
 	// so define as normal functions outside plugins
 	app.route(.get, '/hello-text', fn (req &ctx.Req, mut res ctx.Resp) {
-		// msg := p.greeting('Noname') // if not possible now, enable the following line:
+		// msg := p.greeting('Noname') // not possible now
 		msg := greeting_fn('Noname')
 		res.send(msg, 200)
 		res.headers['Content-Type'] = ['text/plain']
 	})
-	println('$p.name: registered route for ' + '/hello-text')
+	println('$p.name: registered route for /hello-text')
 	app.route(.get, '/hello-json', fn (req &ctx.Req, mut res ctx.Resp) {
-		// msg := p.greeting('Noname') // if not possible now, enable the following line:
+		// msg := p.greeting('Noname') // not possible now
 		msg := greeting_fn('Noname')
 		res.send('{"msg":"$msg"}', 200)
 		res.headers['Content-Type'] = ['application/json']
 	})
-	println('$p.name: registered route for ' + '/hello-json')
-	// TODO: to be able to call plugin methods from route handlers, try to define even route handlers in plugin, or as functions with the plugin as argument; then add an example for both ... wip
+	println('$p.name: registered route for /hello-json')
+	app.route(.get, '/hello-text-name-in-path/:name', fn (req &ctx.Req, mut res ctx.Resp) {
+		name := req.params['name'] or { 'Noname' } // get from path arguments
+		msg := greeting_fn(name)
+		res.send(msg, 200)
+		res.headers['Content-Type'] = ['text/plain']
+	})
+	println('$p.name: registered route for /hello-text-name-in-path/:name, and path argument name')
+	app.route(.get, '/hello-text-name-in-query', fn (req &ctx.Req, mut res ctx.Resp) {
+		queries := req.parse_query() or { map[string]string{} } // get from URL arguments
+		name := queries['name'] or { 'Noname' }
+		msg := greeting_fn(name)
+		res.send(msg, 200)
+		res.headers['Content-Type'] = ['text/plain']
+	})
+	println('$p.name: registered route for /hello-text-name-in-query, and query argument name' )
 
 	// end of plugin initialization
 	p.status = .initialized
