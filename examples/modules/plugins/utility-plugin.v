@@ -13,7 +13,6 @@ pub struct UtilityPlugin {
 	// when available, use struct embedding here from server.Plugin or plugin.Plugin
 	name         string
 	version      string // semver string
-	dependencies []string = []
 mut:
 	app          voidptr // reference to the app
 	status       plugin.PluginStatus
