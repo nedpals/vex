@@ -9,8 +9,8 @@ import plugins
 // as a sample, define some plugins inline here, and get others from other modules
 // for simplicity defined in this project, but could be somewhere)
 
-// new_hello_plugin creates and return a new HelloPlugin that defines some routes
-// At least define same attributes and methods of server.Plugin
+// new_hello_plugin creates and return a new HelloPlugin that defines some routes.
+// At least define same attributes and methods of server.Plugin.
 fn new_hello_plugin() server.Plugin {
 	plugin := &plugins.HelloPlugin{
 		name:    'hello-plugin'
@@ -21,12 +21,23 @@ fn new_hello_plugin() server.Plugin {
 	return plugin
 }
 
-// new_utility_plugin creates and return a new UtilityPlugin that defines some routes
-// At least define same attributes and methods of server.Plugin
+// new_utility_plugin creates and return a new UtilityPlugin that defines some routes.
+// At least define same attributes and methods of server.Plugin.
 fn new_utility_plugin() server.Plugin {
 	plugin := &plugins.UtilityPlugin{
 		name:    'utility-plugin'
 		version: '1.0.0'
+	}
+	return plugin
+}
+
+// new_favicon_plugin creates and return a new FaviconPlugin that defines some routes.
+// At least define same attributes and methods of server.Plugin.
+fn new_favicon_plugin() server.Plugin {
+	plugin := &plugins.FaviconPlugin{
+		name:    'favicon-plugin'
+		version: '1.0.0'
+		// favicon: 'plugin_example.ico' // override default value // future use
 	}
 	return plugin
 }
@@ -89,10 +100,15 @@ fn main() {
 	mut utility_plugin := new_utility_plugin()
 	server.register(mut app, mut &utility_plugin)
 
-	// TODO: move into an home page plugin ...
+	// add route for the home page
+	// could be moved into an home page plugin
 	app.route(.get, '/', fn (req &ctx.Req, mut res ctx.Resp) {
 		res.send_file('./plugin_example.html', 200)
 	})
+
+	// add a sample generic plugin for manage the favicon
+	mut favicon_plugin := new_favicon_plugin()
+	server.register(mut app, mut &favicon_plugin)
 
 /*
 	// sample usage of a plugin method
