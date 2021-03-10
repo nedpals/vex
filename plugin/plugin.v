@@ -23,8 +23,8 @@ pub enum PluginStatus {
 
 // new factory function that returns a new Plugin instance using some default values.
 // Force a cast to server.Plugin when called, to be aligned with the generic definition.
-pub fn new() Plugin {
-	return Plugin{
+pub fn new() &Plugin {
+	return &Plugin{
 		name:    ''
 		version: '0.0.0'
 		status:  .unknown

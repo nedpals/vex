@@ -27,7 +27,9 @@ pub fn (mut p UtilityPlugin) init() {
 	// so define as normal functions outside plugins
 
 	app.route(.get, '/info', fn (req &ctx.Req, mut res ctx.Resp) {
-		res.send('{"msg":"Info"}', 200)
+		// info := p.info() // not possible at the moment
+		info := 'UtilityPlugin info...'
+		res.send('{"info":"$info"}', 200)
 		res.headers['Content-Type'] = ['application/json']
 	})
 	println('$p.name: registered route for /info')

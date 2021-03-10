@@ -136,7 +136,7 @@ pub fn (mut r Router) add_plugin(mut plugin &server.Plugin) int {
 pub fn (r Router) get_plugin(name string) ?&server.Plugin {
 	// search by name ...
 	for plugin in r.plugins {
-		if plugin.name == name { return &plugin }
+		if plugin.name == name { return plugin }
 	}
 	return error("Plugin '$name' not found")
 }
