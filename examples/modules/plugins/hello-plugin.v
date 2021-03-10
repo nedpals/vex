@@ -26,6 +26,16 @@ pub fn (mut p HelloPlugin) init() {
 	}
 	// add some routes, via the reference to enclosing app
 	mut app := &router.Router(p.app) // cast to a router
+	// add as route handler a plugin function
+	app.route(.get, '/hello-text-plugin-function', handler_from_plugin_function)
+	println('$p.name: registered route for /hello-text-plugin-function')
+	/*
+	// add as route handler a plugin method
+	// not possible now
+	app.route(.get, '/hello-text-plugin-method', p.handler_from_plugin_method)
+	println('$p.name: registered route for /hello-text-plugin-method')
+	// otherwise
+	 */
 	// at the moment it seems not possible to call plugin methods from route handlers,
 	// so define as normal functions outside plugins
 	app.route(.get, '/hello-text', fn (req &ctx.Req, mut res ctx.Resp) {
@@ -90,4 +100,18 @@ pub fn (p HelloPlugin) greeting(name string) string {
 // greeting_fn return a greeting for the given name, as a normal function.
 pub fn greeting_fn(name string) string {
 	return 'Hello $name !'
+}
+
+// handler function from a plugin function
+fn handler_from_plugin_function(req &ctx.Req, mut res ctx.Resp) {
+	msg := greeting_fn('from ' + @FN)
+	res.send(msg, 200)
+	res.headers['Content-Type'] = ['text/plain']
+}
+
+// handler function from a plugin method
+fn (p HelloPlugin) handler_from_plugin_method(req &ctx.Req, mut res ctx.Resp) {
+	msg := p.greeting('from ' + @FN)
+	res.send(msg, 200)
+	res.headers['Content-Type'] = ['text/plain']
 }
