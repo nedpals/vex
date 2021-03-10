@@ -36,7 +36,6 @@ mut:
 pub fn register(mut router Router, mut plugin Plugin) {
 	num := router.add_plugin(plugin)
 	if num >= 0 {
-		// TODO: with this enabled, I get: RUNTIME ERROR: invalid memory access, fix ... in the meantime, keep it enabled in server ... wip
 		// plugin.app = router // set a reference to the app, useful in some cases // later check if enable here instead of the Router
 		plugin.init() // initializes the plugin
 		println(utils.green_log('Plugin registered and initialized: "$plugin.info()"'))

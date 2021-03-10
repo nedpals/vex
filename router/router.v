@@ -125,7 +125,7 @@ pub fn (mut r Router) use(handlers ...ctx.MiddlewareFunc) {
 pub fn (mut r Router) add_plugin(mut plugin &server.Plugin) int {
 	// add a plugin only if not already added
 	_ := r.get_plugin(plugin.name) or {
-		plugin.app = r // TODO: keep it enabled here, temporarily (instead of in server) ... wip
+		plugin.app = r // keep it enabled here, temporarily (instead of in server)
 		r.plugins << plugin
 		return r.plugins.len
 	}
