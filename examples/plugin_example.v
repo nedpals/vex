@@ -43,38 +43,46 @@ fn new_favicon_plugin() server.Plugin {
 }
 
 
-/*
+// call_plugin_method call a public method of an already instanced plugin, casting it to its known type
+fn 	call_plugin_method(p &server.Plugin) {
+	hp := unsafe { &plugins.HelloPlugin(p) }
+	msg := hp.greeting('Noname')
+	println('Call a Plugin method for greetings: ' + msg)
+}
+
 // retrieve_and_check_plugins get some plugins from the router, and do some check on them
-fn retrieve_and_check_plugins(mut rou router.Router) {
-	// TODO: remove mutable on Router if possible ...
-	println('DEBUG: ' + @FN + ' ...')
-	p_base := rou.get_plugin('empty-plugin') or {
+fn retrieve_and_check_plugins(rou router.Router) {
+	println('Retrieve and check some plugins...')
+	p_base_server := rou.get_plugin('empty-plugin') or {
 		eprintln('Error: $err.msg')
 		return
 	}
-	// assert p_base is plugin.Plugin
-	assert p_base is server.Plugin
+	println("Plugin instance (generic) with type ${typeof(p_base_server).name}")
+	println("Plugin instance (generic) info: ${p_base_server.info()}")
+	// cast to the right plugin concrete type
+	p_base := unsafe { &plugin.Plugin(p_base_server) }
+	println("Plugin instance (cast to the right type) with type ${typeof(p_base).name}")
+	println("Plugin instance (cast to the right type) info: ${p_base.info()}")
+	// /*
+	// TODO: fix the following code, or remove it ... wip
 	match p_base {
-		plugin.Plugin { println("Plugin instance found for '${p_base.name}'") }
-		else { eprintln('Other plugin found...') }
+		plugin.Plugin { println("Plugin instance found for '${p_base}'") } // not possible at the moment
+		// plugin.Plugin { println("Plugin instance found for '${p_base.name}'") } // not possible at the moment
+		// server.Plugin { println("Plugin instance found for '${p_base.name}'") } // not possible at the moment on an interface
+		else { eprintln('Other plugin found: ${typeof(p_base).name}') }
 	}
-	println('Plugin found: ${p_base.info()}')
+	// println('Plugin found: ${p_base.info()}') // not possible at the moment
+	// p_base_info := unsafe { plugin.plugin_info(p_base) }
+	// println('Plugin found: $p_base_info') // RUNTIME ERROR: invalid memory access
+	// */
 	// the same even for HelloPlugin ... 
-	p_wrong := rou.get_plugin('not-present') or { return }  // expected failure
-	println('Plugin not found: expected for ${p_wrong.info()}') // never executed
+	// ensure a not existing- plugin is not found and no error is raised
+	_ := rou.get_plugin('not-present') or {
+		println('Plugin not found: expected')
+		return
+	}  // expected failure
+	println('Retrieve and check some plugins end.') // never executed
 }
-
-fn 	call_plugin_method(p server.Plugin) {
-	println('DEBUG: ' + @FN + ' ...')
-	/*
-	// TODO: enable and fix ...
-	// msg := hello_plugin.greeting('Noname') // TODO: get from arguments, or 'Noname'
-	hp := HelloPlugin(p)
-	msg := hp.greeting('Noname') // TODO: get from arguments, or 'Noname'
-	println('DEBUG: $msg')
-	 */
-}
- */
 
 
 fn main() {
@@ -84,6 +92,8 @@ fn main() {
 	// note that generic routes could be bundled in its own modules/dependencies
 	// and application-specific routes could be splitted easily in its own modules
 
+	// add a default empty plugin created directly
+	server.register(mut app, mut plugin.new())
 	// add a sample empty plugin created directly
 	server.register(mut app, mut &server.Plugin(&plugin.Plugin{
 		name: 'empty-plugin'
@@ -110,13 +120,12 @@ fn main() {
 	mut favicon_plugin := new_favicon_plugin()
 	server.register(mut app, mut &favicon_plugin)
 
-/*
 	// sample usage of a plugin method
-	call_plugin_method(hello_plugin)
-
-	// sample to get some plugins and print some info, and execute specific methods on some plugins
-	retrieve_and_check_plugins(mut app)
- */
+	call_plugin_method(&hello_plugin)
+	$if debug {
+		// sample to get some plugins and print some info, and execute specific methods on some plugins
+		retrieve_and_check_plugins(app)
+	}
 
 	// start the server
 	server.serve(app, 8080)
