@@ -63,18 +63,6 @@ fn retrieve_and_check_plugins(rou router.Router) {
 	p_base := unsafe { &plugin.Plugin(p_base_server) }
 	println("Plugin instance (cast to the right type) with type ${typeof(p_base).name}")
 	println("Plugin instance (cast to the right type) info: ${p_base.info()}")
-	// /*
-	// TODO: fix the following code, or remove it ... wip
-	match p_base {
-		plugin.Plugin { println("Plugin instance found for '${p_base}'") } // not possible at the moment
-		// plugin.Plugin { println("Plugin instance found for '${p_base.name}'") } // not possible at the moment
-		// server.Plugin { println("Plugin instance found for '${p_base.name}'") } // not possible at the moment on an interface
-		else { eprintln('Other plugin found: ${typeof(p_base).name}') }
-	}
-	// println('Plugin found: ${p_base.info()}') // not possible at the moment
-	// p_base_info := unsafe { plugin.plugin_info(p_base) }
-	// println('Plugin found: $p_base_info') // RUNTIME ERROR: invalid memory access
-	// */
 	// the same even for HelloPlugin ... 
 	// ensure a not existing- plugin is not found and no error is raised
 	_ := rou.get_plugin('not-present') or {
