@@ -30,8 +30,9 @@ fn callback(mut server Server, req picohttpparser.Request, mut res picohttpparse
 	status_code, headers, body := server.router.receive(req.method, req.path, req_headers, req.body.bytes())
 	status_message := http.status_from_int(status_code)
 	res.write_string('HTTP/1.1 $status_code $status_message')
-	res.write_string(headers.bytestr())
+	unsafe {res.write_string('${sep}Date: ${tos(res.date, 29)}')}
 	res.write_string('${sep}Content-Length: $body.len')
+	res.write_string(headers.bytestr())
 	res.write_string(sep.repeat(2))
 	res.write_string(body.bytestr())
 	res.end()
@@ -40,8 +41,7 @@ fn callback(mut server Server, req picohttpparser.Request, mut res picohttpparse
 // serve starts the server at the give port
 pub fn serve(router Router, port int) {
 	println('Starting webserver on http://localhost:$port/ ...')
-	server := &Server{router: router}
-	mut loop := picoev.new(port, &callback)
-	loop.user_data = server
-	loop.serve()
+	mut pico := picoev.new(port, &callback)
+	pico.user_data = &Server{router: router}
+	pico.serve()
 }
