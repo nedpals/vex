@@ -38,7 +38,9 @@ fn callback(mut server Server, req picohttpparser.Request, mut res picohttpparse
 	res.end()
 }
 
-// serve starts the server at the give port
+// !!!Careful, this thing doesn't work with tcc, 
+// be sure to specify a different compiler via `-cc gcc` before running.  
+// Starts the server at the given port
 pub fn serve(router Router, port int) {
 	println('Starting webserver on http://localhost:$port/ ...')
 	mut pico := picoev.new(port, &callback)
