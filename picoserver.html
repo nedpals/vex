@@ -4,7 +4,7 @@
 		<meta charset="UTF-8">
 		<meta http-equiv="x-ua-compatible" content="IE=edge" />
 		<meta name="viewport" content="width=device-width, initial-scale=1.0">
-		<title>server | vdoc</title>
+		<title>picoserver | vdoc</title>
 		<link rel="preconnect" href="https://fonts.gstatic.com">
 		<link href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;500;700&display=swap" rel="stylesheet">
 		<link href="https://fonts.googleapis.com/css2?family=Work+Sans:wght@400;500;600&display=swap" rel="stylesheet">
@@ -42,25 +42,25 @@
 				<nav class="search hidden"></nav>
 				<nav class="content hidden">
 					<ul>
-						<li class="open"><div class="menu-row"><a href="./index.html">README</a></div></li><li class="open"><div class="menu-row"><a href="./ctx.html">ctx</a></div></li><li class="open"><div class="menu-row"><a href="./html.html">html</a></div></li><li class="open"><div class="menu-row"><a href="./mime.html">mime</a></div></li><li class="open"><div class="menu-row"><a href="./picoserver.html">picoserver</a></div></li><li class="open"><div class="menu-row"><a href="./router.html">router</a></div></li><li class="open active"><div class="menu-row"><a href="./server.html">server</a></div></li><li class="open"><div class="menu-row"><a href="./utils.html">utils</a></div></li>
+						<li class="open"><div class="menu-row"><a href="./index.html">README</a></div></li><li class="open"><div class="menu-row"><a href="./ctx.html">ctx</a></div></li><li class="open"><div class="menu-row"><a href="./html.html">html</a></div></li><li class="open"><div class="menu-row"><a href="./mime.html">mime</a></div></li><li class="open active"><div class="menu-row"><a href="./picoserver.html">picoserver</a></div></li><li class="open"><div class="menu-row"><a href="./router.html">router</a></div></li><li class="open"><div class="menu-row"><a href="./server.html">server</a></div></li><li class="open"><div class="menu-row"><a href="./utils.html">utils</a></div></li>
 					</ul>
 				</nav>
 			</header>
 			<div class="doc-scrollview">
 				<div class="doc-container">
 					<div class="doc-content">
-						<section id="readme_server" class="doc-node">
-							<div class="title"><h1> server <a href="#readme_server">#</a></h1></div>
+						<section id="readme_picoserver" class="doc-node">
+							<div class="title"><h1> picoserver <a href="#readme_picoserver">#</a></h1></div>
 
 </section>
 
 						<section id="serve" class="doc-node">
-							<div class="title"><h2>fn serve <a href="#serve">#</a></h2><a class="link" rel="noreferrer" target="_blank" href="https://github.com/nedpals/vex/blob/master/vex/server/server.v#L21"><svg xmlns="http://www.w3.org/2000/svg" height="24" viewBox="0 0 24 24" width="24"><path d="M0 0h24v24H0z" fill="none"/><path d="M3.9 12c0-1.71 1.39-3.1 3.1-3.1h4V7H7c-2.76 0-5 2.24-5 5s2.24 5 5 5h4v-1.9H7c-1.71 0-3.1-1.39-3.1-3.1zM8 13h8v-2H8v2zm9-6h-4v1.9h4c1.71 0 3.1 1.39 3.1 3.1s-1.39 3.1-3.1 3.1h-4V17h4c2.76 0 5-2.24 5-5s-2.24-5-5-5z"/></svg></a></div><pre class="signature"><code><span class="token keyword">fn</span> <span class="token function">serve</span><span class="token punctuation">(</span>router Router<span class="token punctuation">,</span> port <span class="token builtin">int</span><span class="token punctuation">)</span></code></pre>
-<p>serve starts the server at the give port</p>
+							<div class="title"><h2>fn serve <a href="#serve">#</a></h2><a class="link" rel="noreferrer" target="_blank" href="https://github.com/nedpals/vex/blob/master/vex/picoserver/server.v#L45"><svg xmlns="http://www.w3.org/2000/svg" height="24" viewBox="0 0 24 24" width="24"><path d="M0 0h24v24H0z" fill="none"/><path d="M3.9 12c0-1.71 1.39-3.1 3.1-3.1h4V7H7c-2.76 0-5 2.24-5 5s2.24 5 5 5h4v-1.9H7c-1.71 0-3.1-1.39-3.1-3.1zM8 13h8v-2H8v2zm9-6h-4v1.9h4c1.71 0 3.1 1.39 3.1 3.1s-1.39 3.1-3.1 3.1h-4V17h4c2.76 0 5-2.24 5-5s-2.24-5-5-5z"/></svg></a></div><pre class="signature"><code><span class="token keyword">fn</span> <span class="token function">serve</span><span class="token punctuation">(</span>router Router<span class="token punctuation">,</span> port <span class="token builtin">int</span><span class="token punctuation">)</span></code></pre>
+<p>!!!Careful, this thing doesn't work with tcc,  be sure to specify a different compiler via <code>-cc gcc</code> before running.  Starts the server at the given port</p>
 
 </section>
 						<section id="Router" class="doc-node">
-							<div class="title"><h2>interface Router <a href="#Router">#</a></h2><a class="link" rel="noreferrer" target="_blank" href="https://github.com/nedpals/vex/blob/master/vex/server/server.v#L15"><svg xmlns="http://www.w3.org/2000/svg" height="24" viewBox="0 0 24 24" width="24"><path d="M0 0h24v24H0z" fill="none"/><path d="M3.9 12c0-1.71 1.39-3.1 3.1-3.1h4V7H7c-2.76 0-5 2.24-5 5s2.24 5 5 5h4v-1.9H7c-1.71 0-3.1-1.39-3.1-3.1zM8 13h8v-2H8v2zm9-6h-4v1.9h4c1.71 0 3.1 1.39 3.1 3.1s-1.39 3.1-3.1 3.1h-4V17h4c2.76 0 5-2.24 5-5s-2.24-5-5-5z"/></svg></a></div><pre class="signature"><code><span class="token keyword">interface</span> <span class="token symbol">Router</span> <span class="token punctuation">{</span>
+							<div class="title"><h2>interface Router <a href="#Router">#</a></h2><a class="link" rel="noreferrer" target="_blank" href="https://github.com/nedpals/vex/blob/master/vex/picoserver/server.v#L12"><svg xmlns="http://www.w3.org/2000/svg" height="24" viewBox="0 0 24 24" width="24"><path d="M0 0h24v24H0z" fill="none"/><path d="M3.9 12c0-1.71 1.39-3.1 3.1-3.1h4V7H7c-2.76 0-5 2.24-5 5s2.24 5 5 5h4v-1.9H7c-1.71 0-3.1-1.39-3.1-3.1zM8 13h8v-2H8v2zm9-6h-4v1.9h4c1.71 0 3.1 1.39 3.1 3.1s-1.39 3.1-3.1 3.1h-4V17h4c2.76 0 5-2.24 5-5s-2.24-5-5-5z"/></svg></a></div><pre class="signature"><code><span class="token keyword">interface</span> <span class="token symbol">Router</span> <span class="token punctuation">{</span>
 	<span class="token function">respond_error</span><span class="token punctuation">(</span>code <span class="token builtin">int</span><span class="token punctuation">)</span> <span class="token punctuation">[</span><span class="token punctuation">]</span><span class="token builtin">byte</span>
 	<span class="token function">receive</span><span class="token punctuation">(</span>method <span class="token builtin">string</span><span class="token punctuation">,</span> path <span class="token builtin">string</span><span class="token punctuation">,</span> raw_headers <span class="token punctuation">[</span><span class="token punctuation">]</span><span class="token builtin">string</span><span class="token punctuation">,</span> body <span class="token punctuation">[</span><span class="token punctuation">]</span><span class="token builtin">byte</span><span class="token punctuation">)</span> <span class="token punctuation">(</span><span class="token builtin">int</span><span class="token punctuation">,</span> <span class="token punctuation">[</span><span class="token punctuation">]</span><span class="token builtin">byte</span><span class="token punctuation">,</span> <span class="token punctuation">[</span><span class="token punctuation">]</span><span class="token builtin">byte</span><span class="token punctuation">)</span>
 <span class="token punctuation">}</span></code></pre>
