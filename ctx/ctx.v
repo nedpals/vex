@@ -246,7 +246,7 @@ pub fn (res &Resp) headers_bytes() []byte {
 }
 
 pub fn error_route(req &Req, mut res Resp) {
-	code := int(req.ctx)
+	code := int(u64(req.ctx))
 	res.send_status(code)
 }
 
