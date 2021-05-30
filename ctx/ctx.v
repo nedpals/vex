@@ -212,7 +212,7 @@ pub fn (mut res Resp) send_status(status_code int) {
 	res.send('<h1>$status_code $msg</h1>', status_code)
 }
 
-// redirect writes a 301 response and redirects to the 
+// redirect writes a 301 response and redirects to the
 // specified url or location
 [inline]
 pub fn (mut res Resp) redirect(url string) {
@@ -240,7 +240,7 @@ pub fn (res &Resp) headers_bytes() []byte {
 			headers.write_string('\r\n$k: $v')
 		}
 	}
-	buf := headers.buf.clone()
+	buf := headers.clone()
 	unsafe { headers.free() }
 	return buf
 }
