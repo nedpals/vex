@@ -71,7 +71,7 @@ pub fn (r Router) receive(method string, path string, raw_headers []string, body
 
 pub fn (r Router) respond_error(code int) []byte {
 	req := ctx.Req{
-		ctx: code
+		ctx: voidptr(code)
 	}
 	mut resp := ctx.Resp{}
 	err_route := r.on_error
