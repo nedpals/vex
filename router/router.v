@@ -56,16 +56,35 @@ pub fn (r Router) receive(method string, path string, raw_headers []string, body
 		not_found_body := r.respond_error(404)
 		return 404, def_header, not_found_body
 	}
+
 	req.params = params.clone()
+
+	// Not good but would be cool to use
+	// an iterator for this instead
 	for app_middleware in r.middlewares {
+		if res.stopped {
+			break
+		}
+
 		app_middleware(mut req, mut res)
 	}
+
 	for route_middleware in route_middlewares {
+		if res.stopped {
+			break
+		}
+
 		route_middleware(mut req, mut res)
 	}
+
 	for route_handler in handlers {
+		if res.stopped {
+			break
+		}
+
 		route_handler(&req, mut res)
 	}
+	
 	return res.status_code, res.headers_bytes(), res.body
 }
 

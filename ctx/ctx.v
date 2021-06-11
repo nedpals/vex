@@ -173,6 +173,7 @@ pub mut:
 	body        []byte
 	status_code int = 200
 	headers     map[string][]string = ctx.default_headers
+	stopped 		bool
 }
 
 // send writes the body and status code to the response data.
@@ -243,6 +244,11 @@ pub fn (res &Resp) headers_bytes() []byte {
 	buf := headers.clone()
 	unsafe { headers.free() }
 	return buf
+}
+
+// stop terminates the response
+pub fn (mut res Resp) stop() {
+	res.stopped = true
 }
 
 pub fn error_route(req &Req, mut res Resp) {

@@ -410,3 +410,22 @@ fn test_respond_error() {
 	body := router.respond_error(404)
 	assert body == '<h1>404 Not Found</h1>'.bytes()
 }
+
+fn test_stop() {
+	mut router := Router{}
+	router.route(.get, '/login/:username', fn (req &ctx.Req, mut resp ctx.Resp) {
+		if req.params['username'] != 'bob' {
+			resp.send_status(400)
+			resp.stop()
+			return
+		}
+
+		// print passed
+	}, fn (req &ctx.Req, mut resp ctx.Resp) {
+		resp.send('Hello!', 200)
+	})	
+
+	status_code, headers, body := router.receive('GET', '/login/bobby', []string{}, []byte{})
+	assert status_code == 400
+	assert body.bytestr() == '<h1>400 Bad Request</h1>'
+}
