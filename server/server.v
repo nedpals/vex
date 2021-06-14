@@ -20,7 +20,7 @@ pub interface Router {
 // serve starts the server at the give port
 pub fn serve(router Router, port int) {
 	// Listen To Port
-	mut listener := net.listen_tcp(port) or {
+	mut listener := net.listen_tcp(.ip6, ':$port') or {
 		panic(utils.red_log('Failed to listen to port $port'))
 	}
 	println(utils.green_log('HTTP Server has started.'))
