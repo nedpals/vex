@@ -3,6 +3,7 @@ module router
 import ctx
 import utils
 import net.urllib
+import server
 
 const (
 	form_methods = ['POST', 'PATCH', 'PUT']
@@ -19,6 +20,7 @@ enum Kind {
 pub struct Router {
 mut:
 	routes      map[string]&Route
+	plugins     []&server.Plugin
 	middlewares []ctx.MiddlewareFunc
 	on_error    ctx.HandlerFunc = ctx.error_route
 	ctx         voidptr
@@ -117,6 +119,27 @@ pub fn (mut r Router) use(handlers ...ctx.MiddlewareFunc) {
 	r.middlewares << handlers
 }
 
+// add_plugin add the given plugin as app-wide plugin, if not already added
+// And set a reference to the Router inside it
+pub fn (mut r Router) add_plugin(mut plugin &server.Plugin) int {
+	// add a plugin only if not already added
+	_ := r.get_plugin(plugin.name) or {
+		plugin.app = r // keep it enabled here, temporarily (instead of in server)
+		r.plugins << plugin
+		return r.plugins.len
+	}
+	return -1
+}
+
+// plugin get a plugin by name
+pub fn (r Router) get_plugin(name string) ?&server.Plugin {
+	// search by name ...
+	for plugin in r.plugins {
+		if plugin.name == name { return plugin }
+	}
+	return error("Plugin '$name' not found")
+}
+
 // List of supported HTTP methods.
 pub enum Method {
 	get
@@ -137,11 +160,6 @@ mut:
 	children    map[string]&Route
 	methods     map[string][]ctx.HandlerFunc
 	middlewares []ctx.MiddlewareFunc
-}
-
-// empty str to avoid cgen error
-pub fn (r &Route) str() string {
-	return 'Route{ name: $r.name, middlewares: $r.middlewares.len, routes: $r.children }'
 }
 
 // identify route kind ( parameter, wildcard or regular )
