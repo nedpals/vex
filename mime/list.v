@@ -1,7 +1,7 @@
 module mime
 
 pub const (
-    db = {
+    db = map{
     'application/1d-interleaved-parityfec': MimeType{'iana',[],false,''}
     'application/3gpdash-qoe-report+xml': MimeType{'iana',[],true,''}
     'application/3gpp-ims+xml': MimeType{'iana',[],true,''}
