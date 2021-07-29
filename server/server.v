@@ -28,7 +28,7 @@ pub fn serve(router Router, port int) {
 	for {
 		mut conn := listener.accept() or {
 			listener.close() or { }
-			panic(utils.red_log('Failed to accept connection.'))
+			panic(utils.red_log('Failed to accept connection.\nErr Code: ${err.code}\nErr Message: ${err.msg}'))
 		}
 		handle_http_connection(router, mut conn)
 	}
