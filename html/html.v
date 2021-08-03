@@ -12,8 +12,9 @@ mut:
 }
 
 pub struct BlockTagConfig {
-	name string
-	attr map[string]string
+	name     string
+	attr     map[string]string
+	children []Tag
 }
 
 // return the tag to encoded JSON
@@ -33,11 +34,11 @@ pub fn html(children []Tag) Tag {
 
 // block is the same as `tag` but with Tag children
 [inline]
-pub fn block(tag BlockTagConfig, children []Tag) Tag {
+pub fn block(tag BlockTagConfig) Tag {
 	return Tag{
 		name: tag.name
 		attr: tag.attr
-		children: children
+		children: tag.children
 	}
 }
 

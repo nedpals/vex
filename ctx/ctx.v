@@ -9,7 +9,7 @@ import strings
 
 const (
 	vm              = vmod.decode(@VMOD_FILE) or { panic(err) }
-	default_headers = map{
+	default_headers = {
 		'Content-Type': ['text/html; charset=UTF-8']
 		'X-Powered-By': ['$vm.name/$vm.version']
 		'Server':       ['$vm.name']
@@ -173,7 +173,7 @@ pub mut:
 	body        []byte
 	status_code int = 200
 	headers     map[string][]string = ctx.default_headers
-	stopped 		bool
+	stopped     bool
 }
 
 // send writes the body and status code to the response data.

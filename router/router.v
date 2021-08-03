@@ -84,7 +84,7 @@ pub fn (r Router) receive(method string, path string, raw_headers []string, body
 
 		route_handler(&req, mut res)
 	}
-	
+
 	return res.status_code, res.headers_bytes(), res.body
 }
 

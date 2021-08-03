@@ -44,7 +44,12 @@ fn callback(mut server Server, req picohttpparser.Request, mut res picohttpparse
 // Starts the server at the given port
 pub fn serve(router Router, port int) {
 	println('Starting webserver on http://localhost:$port/ ...')
-	picoev.new(port: port, cb: &callback, user_data: &Server{
-		router: router
-	}).serve()
+
+	picoev.new(
+		port: port
+		cb: &callback
+		user_data: &Server{
+			router: router
+		}
+	).serve()
 }

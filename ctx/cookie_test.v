@@ -2,7 +2,7 @@ module ctx
 
 fn test_parse_cookies() {
 	req := Req{
-		headers: map{
+		headers: {
 			'Cookie': ['foo=bar; randomstring=sdasd9as0d90a']
 		}
 	}

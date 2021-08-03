@@ -27,8 +27,8 @@ pub fn serve(router Router, port int) {
 	println(utils.green_log('Running On http://localhost:$port'))
 	for {
 		mut conn := listener.accept() or {
-			listener.close() or { }
-			panic(utils.red_log('Failed to accept connection.\nErr Code: ${err.code}\nErr Message: ${err.msg}'))
+			listener.close() or {}
+			panic(utils.red_log('Failed to accept connection.\nErr Code: $err.code\nErr Message: $err.msg'))
 		}
 		handle_http_connection(router, mut conn)
 	}
@@ -43,7 +43,7 @@ fn write_body(code int, headers []byte, body []byte, mut conn net.TcpConn) {
 	response.write_string('${server.sep}Connection: close')
 	response.write_string(server.sep.repeat(2))
 	unsafe { response.write_ptr(body.data, body.len) }
-	conn.write(response) or { }
+	conn.write(response) or {}
 	unsafe { response.free() }
 }
 
@@ -51,7 +51,7 @@ fn write_body(code int, headers []byte, body []byte, mut conn net.TcpConn) {
 fn handle_http_connection(router Router, mut conn net.TcpConn) {
 	conn.set_read_timeout(1 * time.second)
 	defer {
-		conn.close() or { }
+		conn.close() or {}
 	}
 	mut reader := io.new_buffered_reader(reader: conn)
 	first_line := reader.read_line() or {
