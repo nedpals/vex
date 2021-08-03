@@ -6,7 +6,7 @@ import term
 pub const (
 	// HTTP Server Code Messages
 	// See: https://github.com/for-GET/know-your-http-well/blob/master/json/status-codes.json
-	status_code_msgs = map{
+	status_code_msgs = {
 		100: 'Continue'
 		101: 'Switching Protocols'
 		103: 'Early Hints'
@@ -58,7 +58,7 @@ pub const (
 		510: 'Not Extended'
 		511: 'Network Authentication Required'
 	}
-	log_name         = '[VEX]'
+	log_name = '[VEX]'
 )
 
 pub fn green_log(msg string) string {

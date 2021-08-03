@@ -13,7 +13,7 @@ fn test_tag_with_text() {
 fn test_tag_with_attr() {
 	div := tag(
 		name: 'div'
-		attr: map{
+		attr: {
 			'id':    'foo'
 			'class': 'bar'
 		}
@@ -24,7 +24,7 @@ fn test_tag_with_attr() {
 fn test_tag_with_text_and_attr() {
 	div := tag(
 		name: 'div'
-		attr: map{
+		attr: {
 			'id':    'foo'
 			'class': 'bar'
 		}
@@ -34,15 +34,16 @@ fn test_tag_with_text_and_attr() {
 }
 
 fn test_block() {
-	div := block({
+	div := block(
 		name: 'div'
-		attr: map{
+		attr: {
 			'id':    'foo'
 			'class': 'bar'
 		}
-	}, [
-		tag(text: 'This is another div'),
-	])
+		children: [
+			tag(text: 'This is another div'),
+		]
+	)
 	assert div.html() == '<div id="foo" class="bar">This is another div</div>'
 }
 
@@ -52,7 +53,7 @@ fn test_br() {
 }
 
 fn test_meta() {
-	metatg := meta(map{
+	metatg := meta({
 		'name':    'referrer'
 		'content': 'origin-when-cross-origin'
 	})
@@ -61,8 +62,8 @@ fn test_meta() {
 
 fn test_html() {
 	ht := html([
-		block({ name: 'head' }, []),
-		block({ name: 'body' }, []),
+		block(name: 'head', children: []),
+		block(name: 'body', children: []),
 	])
 	assert ht.html() == '<!DOCTYPE html><html><head></head><body></body></html>'
 }

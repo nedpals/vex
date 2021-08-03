@@ -8,12 +8,14 @@ import sqlite
 
 fn layout(title string, body []html.Tag) html.Tag {
 	template := html.html([
-		html.block({ name: 'head' }, [
-			html.meta(map{
+		html.block({
+			name: 'head'
+		}, [
+			html.meta({
 				'http-equiv': 'Content-Type'
 				'content':    'text/html;charset=UTF-8'
 			}),
-			html.meta(map{
+			html.meta({
 				'name':    'referrer'
 				'content': 'origin-when-cross-origin'
 			}),
@@ -29,7 +31,9 @@ fn layout(title string, body []html.Tag) html.Tag {
                 }
             '),
 		]),
-		html.block({ name: 'body' }, body),
+		html.block({
+			name: 'body'
+		}, body),
 	])
 	return template
 }
@@ -43,21 +47,25 @@ fn main() {
 	app.route(.get, '/', fn (req &ctx.Req, mut res ctx.Resp) {
 		page := layout('', [
 			html.tag(name: 'h1', text: 'It works!'),
-			html.block({ name: 'p' }, [
+			html.block({
+				name: 'p'
+			}, [
 				html.tag(name: 'text', text: 'For online documentation please refer to '),
 				html.tag(
 					name: 'a'
-					attr: map{
+					attr: {
 						'href': 'https://github.com/nedpals/vex'
 					}
 					text: 'vex'
 				),
 				html.br(),
-				html.block({ name: 'em' }, [
+				html.block({
+					name: 'em'
+				}, [
 					html.tag(name: 'text', text: "It's a web framework based on "),
 					html.tag(
 						name: 'a'
-						attr: map{
+						attr: {
 							'href': 'https://vlang.io'
 						}
 						text: 'V.'
@@ -66,7 +74,7 @@ fn main() {
 			]),
 			html.tag(
 				name: 'a'
-				attr: map{
+				attr: {
 					'href': '/users'
 				}
 				text: 'All users'
@@ -74,7 +82,7 @@ fn main() {
 			html.br(),
 			html.tag(
 				name: 'a'
-				attr: map{
+				attr: {
 					'href': '/users/add'
 				}
 				text: 'Add a user'
@@ -95,10 +103,12 @@ fn main() {
 		}
 		page := layout('Users', [
 			html.tag(name: 'h1', text: 'Users'),
-			html.block({ name: 'ul' }, users),
+			html.block({
+				name: 'ul'
+			}, users),
 			html.tag(
 				name: 'a'
-				attr: map{
+				attr: {
 					'href': '/'
 				}
 				text: 'Back to homepage'
@@ -110,7 +120,7 @@ fn main() {
 		page := layout('Add new User', [
 			html.tag(
 				name: 'a'
-				attr: map{
+				attr: {
 					'href': '/users'
 				}
 				text: 'All users'
@@ -118,7 +128,7 @@ fn main() {
 			html.tag(name: 'h1', text: 'Add user'),
 			html.block({
 				name: 'form'
-				attr: map{
+				attr: {
 					'id':     'form'
 					'method': 'post'
 					'action': '/users/new'
@@ -126,7 +136,7 @@ fn main() {
 			}, [
 				html.Tag{
 					name: 'input'
-					attr: map{
+					attr: {
 						'id':    'name'
 						'name':  'name'
 						'value': ''
@@ -134,7 +144,7 @@ fn main() {
 				},
 				html.Tag{
 					name: 'button'
-					attr: map{
+					attr: {
 						'type': 'submit'
 					}
 					text: 'Add'
@@ -145,7 +155,9 @@ fn main() {
 	})
 	app.route(.post, '/users/new', fn (req &ctx.Req, mut res ctx.Resp) {
 		db2 := &sqlite.DB(req.ctx)
-		form_data := req.parse_form() or { map[string]string{} }
+		form_data := req.parse_form() or {
+			map[string]string{}
+		}
 		name := form_data['name']
 		db2.exec('insert into users (name) values ("$name");')
 		res.permanent_redirect('/users')

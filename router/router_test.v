@@ -423,7 +423,7 @@ fn test_stop() {
 		// print passed
 	}, fn (req &ctx.Req, mut resp ctx.Resp) {
 		resp.send('Hello!', 200)
-	})	
+	})
 
 	status_code, headers, body := router.receive('GET', '/login/bobby', []string{}, []byte{})
 	assert status_code == 400
