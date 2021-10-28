@@ -8,9 +8,9 @@ import sqlite
 
 fn layout(title string, body []html.Tag) html.Tag {
 	template := html.html([
-		html.block({
+		html.block(
 			name: 'head'
-		}, [
+		, children: [
 			html.meta({
 				'http-equiv': 'Content-Type'
 				'content':    'text/html;charset=UTF-8'
@@ -31,9 +31,9 @@ fn layout(title string, body []html.Tag) html.Tag {
                 }
             '),
 		]),
-		html.block({
+		html.block(
 			name: 'body'
-		}, body),
+		, children: body),
 	])
 	return template
 }
@@ -47,9 +47,9 @@ fn main() {
 	app.route(.get, '/', fn (req &ctx.Req, mut res ctx.Resp) {
 		page := layout('', [
 			html.tag(name: 'h1', text: 'It works!'),
-			html.block({
+			html.block(
 				name: 'p'
-			}, [
+			, children: [
 				html.tag(name: 'text', text: 'For online documentation please refer to '),
 				html.tag(
 					name: 'a'
@@ -59,9 +59,9 @@ fn main() {
 					text: 'vex'
 				),
 				html.br(),
-				html.block({
+				html.block(
 					name: 'em'
-				}, [
+				, children: [
 					html.tag(name: 'text', text: "It's a web framework based on "),
 					html.tag(
 						name: 'a'
@@ -103,9 +103,9 @@ fn main() {
 		}
 		page := layout('Users', [
 			html.tag(name: 'h1', text: 'Users'),
-			html.block({
+			html.block(
 				name: 'ul'
-			}, users),
+			, children: users),
 			html.tag(
 				name: 'a'
 				attr: {
@@ -126,14 +126,14 @@ fn main() {
 				text: 'All users'
 			),
 			html.tag(name: 'h1', text: 'Add user'),
-			html.block({
+			html.block(
 				name: 'form'
 				attr: {
 					'id':     'form'
 					'method': 'post'
 					'action': '/users/new'
 				}
-			}, [
+			, children: [
 				html.Tag{
 					name: 'input'
 					attr: {
