@@ -5,9 +5,10 @@
 		<meta http-equiv="x-ua-compatible" content="IE=edge" />
 		<meta name="viewport" content="width=device-width, initial-scale=1.0">
 		<title>ctx | vdoc</title>
-		<link rel="preconnect" href="https://fonts.gstatic.com">
-		<link href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;500;700&display=swap" rel="stylesheet">
-		<link href="https://fonts.googleapis.com/css2?family=Work+Sans:wght@400;500;600&display=swap" rel="stylesheet">
+		<link rel="preconnect" href="https://fonts.googleapis.com">
+		<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+		<link href="https://fonts.googleapis.com/css2?family=Jost:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+		<link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono&display=swap" rel="stylesheet">
 		<link rel="apple-touch-icon" sizes="180x180" href="apple-touch-icon.png">
 		<link rel="icon" type="image/png" sizes="32x32" href="favicon-32x32.png">
 		<link rel="icon" type="image/png" sizes="16x16" href="favicon-16x16.png">
@@ -112,7 +113,8 @@
 </section>
 						<section id="Req.parse_cookies" class="doc-node">
 							<div class="title"><h2>fn (Req) parse_cookies <a href="#Req.parse_cookies">#</a></h2><a class="link" rel="noreferrer" target="_blank" href="https://github.com/nedpals/vex/blob/master/vex/ctx/cookie.v#L54"><svg xmlns="http://www.w3.org/2000/svg" height="24" viewBox="0 0 24 24" width="24"><path d="M0 0h24v24H0z" fill="none"/><path d="M3.9 12c0-1.71 1.39-3.1 3.1-3.1h4V7H7c-2.76 0-5 2.24-5 5s2.24 5 5 5h4v-1.9H7c-1.71 0-3.1-1.39-3.1-3.1zM8 13h8v-2H8v2zm9-6h-4v1.9h4c1.71 0 3.1 1.39 3.1 3.1s-1.39 3.1-3.1 3.1h-4V17h4c2.76 0 5-2.24 5-5s-2.24-5-5-5z"/></svg></a></div><pre class="signature"><code><span class="token keyword">fn</span> <span class="token punctuation">(</span>req <span class="token operator">&</span>Req<span class="token punctuation">)</span> <span class="token function">parse_cookies</span><span class="token punctuation">(</span><span class="token punctuation">)</span> ?<span class="token builtin">map</span><span class="token punctuation">[</span><span class="token builtin">string</span><span class="token punctuation">]</span>Cookie</code></pre>
-<p>parse_cookies parses the Cookie header content and returns the  content. Returns an error if the header is not present.</p>
+<p>parse_cookies parses the Cookie header content and returns the
+content. Returns an error if the header is not present.</p>
 
 </section>
 						<section id="Req.parse_files" class="doc-node">
@@ -122,17 +124,19 @@
 </section>
 						<section id="Req.parse_form" class="doc-node">
 							<div class="title"><h2>fn (Req) parse_form <a href="#Req.parse_form">#</a></h2><a class="link" rel="noreferrer" target="_blank" href="https://github.com/nedpals/vex/blob/master/vex/ctx/ctx.v#L62"><svg xmlns="http://www.w3.org/2000/svg" height="24" viewBox="0 0 24 24" width="24"><path d="M0 0h24v24H0z" fill="none"/><path d="M3.9 12c0-1.71 1.39-3.1 3.1-3.1h4V7H7c-2.76 0-5 2.24-5 5s2.24 5 5 5h4v-1.9H7c-1.71 0-3.1-1.39-3.1-3.1zM8 13h8v-2H8v2zm9-6h-4v1.9h4c1.71 0 3.1 1.39 3.1 3.1s-1.39 3.1-3.1 3.1h-4V17h4c2.76 0 5-2.24 5-5s-2.24-5-5-5z"/></svg></a></div><pre class="signature"><code><span class="token keyword">fn</span> <span class="token punctuation">(</span>req <span class="token operator">&</span>Req<span class="token punctuation">)</span> <span class="token function">parse_form</span><span class="token punctuation">(</span><span class="token punctuation">)</span> ?<span class="token builtin">map</span><span class="token punctuation">[</span><span class="token builtin">string</span><span class="token punctuation">]</span><span class="token builtin">string</span></code></pre>
-<p>parse_form parses the body based on its provided content-type  and returns the output of it. Supports <code>application/x-www-form-urlencoded</code>  and <code>application/json</code> content types. Returns an error if the body is blank,  the &quot;Content-Type&quot; header is not present, or the content type header  is not supported.</p>
+<p>parse_form parses the body based on its provided content-type and returns the output of it. Supports <code>application/x-www-form-urlencoded</code> and <code>application/json</code> content types. Returns an error if the body is blank, the &quot;Content-Type&quot; header is not present, or the content type header
+is not supported.</p>
 
 </section>
 						<section id="Req.parse_headers" class="doc-node">
 							<div class="title"><h2>fn (Req) parse_headers <a href="#Req.parse_headers">#</a></h2><a class="link" rel="noreferrer" target="_blank" href="https://github.com/nedpals/vex/blob/master/vex/ctx/ctx.v#L38"><svg xmlns="http://www.w3.org/2000/svg" height="24" viewBox="0 0 24 24" width="24"><path d="M0 0h24v24H0z" fill="none"/><path d="M3.9 12c0-1.71 1.39-3.1 3.1-3.1h4V7H7c-2.76 0-5 2.24-5 5s2.24 5 5 5h4v-1.9H7c-1.71 0-3.1-1.39-3.1-3.1zM8 13h8v-2H8v2zm9-6h-4v1.9h4c1.71 0 3.1 1.39 3.1 3.1s-1.39 3.1-3.1 3.1h-4V17h4c2.76 0 5-2.24 5-5s-2.24-5-5-5z"/></svg></a></div><pre class="signature"><code><span class="token keyword">fn</span> <span class="token punctuation">(</span><span class="token keyword">mut</span> req Req<span class="token punctuation">)</span> <span class="token function">parse_headers</span><span class="token punctuation">(</span>raw_headers <span class="token punctuation">[</span><span class="token punctuation">]</span><span class="token builtin">string</span><span class="token punctuation">)</span></code></pre>
-<p>parse_headers parses and injects the raw_headers into  the request struct. Used internally by the router.</p>
+<p>parse_headers parses and injects the raw_headers into
+the request struct. Used internally by the router.</p>
 
 </section>
 						<section id="Req.parse_query" class="doc-node">
 							<div class="title"><h2>fn (Req) parse_query <a href="#Req.parse_query">#</a></h2><a class="link" rel="noreferrer" target="_blank" href="https://github.com/nedpals/vex/blob/master/vex/ctx/ctx.v#L47"><svg xmlns="http://www.w3.org/2000/svg" height="24" viewBox="0 0 24 24" width="24"><path d="M0 0h24v24H0z" fill="none"/><path d="M3.9 12c0-1.71 1.39-3.1 3.1-3.1h4V7H7c-2.76 0-5 2.24-5 5s2.24 5 5 5h4v-1.9H7c-1.71 0-3.1-1.39-3.1-3.1zM8 13h8v-2H8v2zm9-6h-4v1.9h4c1.71 0 3.1 1.39 3.1 3.1s-1.39 3.1-3.1 3.1h-4V17h4c2.76 0 5-2.24 5-5s-2.24-5-5-5z"/></svg></a></div><pre class="signature"><code><span class="token keyword">fn</span> <span class="token punctuation">(</span>req <span class="token operator">&</span>Req<span class="token punctuation">)</span> <span class="token function">parse_query</span><span class="token punctuation">(</span><span class="token punctuation">)</span> ?<span class="token builtin">map</span><span class="token punctuation">[</span><span class="token builtin">string</span><span class="token punctuation">]</span><span class="token builtin">string</span></code></pre>
-<p>parse_query parses the raw query string from the request  and returns a map of strings</p>
+<p>parse_query parses the raw query string from the request and returns a map of strings</p>
 
 </section>
 						<section id="Resp" class="doc-node">
@@ -158,7 +162,7 @@
 </section>
 						<section id="Resp.redirect" class="doc-node">
 							<div class="title"><h2>fn (Resp) redirect <a href="#Resp.redirect">#</a></h2><a class="link" rel="noreferrer" target="_blank" href="https://github.com/nedpals/vex/blob/master/vex/ctx/ctx.v#L219"><svg xmlns="http://www.w3.org/2000/svg" height="24" viewBox="0 0 24 24" width="24"><path d="M0 0h24v24H0z" fill="none"/><path d="M3.9 12c0-1.71 1.39-3.1 3.1-3.1h4V7H7c-2.76 0-5 2.24-5 5s2.24 5 5 5h4v-1.9H7c-1.71 0-3.1-1.39-3.1-3.1zM8 13h8v-2H8v2zm9-6h-4v1.9h4c1.71 0 3.1 1.39 3.1 3.1s-1.39 3.1-3.1 3.1h-4V17h4c2.76 0 5-2.24 5-5s-2.24-5-5-5z"/></svg></a></div><pre class="signature"><code><span class="token keyword">fn</span> <span class="token punctuation">(</span><span class="token keyword">mut</span> res Resp<span class="token punctuation">)</span> <span class="token function">redirect</span><span class="token punctuation">(</span>url <span class="token builtin">string</span><span class="token punctuation">)</span></code></pre>
-<p>redirect writes a 301 response and redirects to the  specified url or location</p>
+<p>redirect writes a 301 response and redirects to the specified url or location</p>
 
 </section>
 						<section id="Resp.send" class="doc-node">
@@ -178,7 +182,8 @@
 </section>
 						<section id="Resp.send_json" class="doc-node">
 							<div class="title"><h2>fn (Resp) send_json <a href="#Resp.send_json">#</a></h2><a class="link" rel="noreferrer" target="_blank" href="https://github.com/nedpals/vex/blob/master/vex/ctx/ctx.v#L202"><svg xmlns="http://www.w3.org/2000/svg" height="24" viewBox="0 0 24 24" width="24"><path d="M0 0h24v24H0z" fill="none"/><path d="M3.9 12c0-1.71 1.39-3.1 3.1-3.1h4V7H7c-2.76 0-5 2.24-5 5s2.24 5 5 5h4v-1.9H7c-1.71 0-3.1-1.39-3.1-3.1zM8 13h8v-2H8v2zm9-6h-4v1.9h4c1.71 0 3.1 1.39 3.1 3.1s-1.39 3.1-3.1 3.1h-4V17h4c2.76 0 5-2.24 5-5s-2.24-5-5-5z"/></svg></a></div><pre class="signature"><code><span class="token keyword">fn</span> <span class="token punctuation">(</span><span class="token keyword">mut</span> res Resp<span class="token punctuation">)</span> send_json<span class="token operator"><</span><span class="token builtin">T</span><span class="token operator">></span><span class="token punctuation">(</span>payload <span class="token builtin">T</span><span class="token punctuation">,</span> status_code <span class="token builtin">int</span><span class="token punctuation">)</span></code></pre>
-<p>send_json is a generic function that encodes the payload and  writes the JSON string to the response data.</p>
+<p>send_json is a generic function that encodes the payload and
+writes the JSON string to the response data.</p>
 
 </section>
 						<section id="Resp.send_status" class="doc-node">
@@ -198,7 +203,7 @@
 </section>
 
 						<div class="footer">
-							Powered by vdoc. Generated on: 3 Aug 2021 23:03:26
+							Powered by vdoc. Generated on: 4 Nov 2021 12:38:18
 						</div>
 					</div>
 					<div class="doc-toc"><ul><li class="open"><a href="#error_route">fn error_route</a>        <ul>

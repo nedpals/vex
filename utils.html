@@ -5,9 +5,10 @@
 		<meta http-equiv="x-ua-compatible" content="IE=edge" />
 		<meta name="viewport" content="width=device-width, initial-scale=1.0">
 		<title>utils | vdoc</title>
-		<link rel="preconnect" href="https://fonts.gstatic.com">
-		<link href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;500;700&display=swap" rel="stylesheet">
-		<link href="https://fonts.googleapis.com/css2?family=Work+Sans:wght@400;500;600&display=swap" rel="stylesheet">
+		<link rel="preconnect" href="https://fonts.googleapis.com">
+		<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+		<link href="https://fonts.googleapis.com/css2?family=Jost:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+		<link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono&display=swap" rel="stylesheet">
 		<link rel="apple-touch-icon" sizes="180x180" href="apple-touch-icon.png">
 		<link rel="icon" type="image/png" sizes="32x32" href="favicon-32x32.png">
 		<link rel="icon" type="image/png" sizes="16x16" href="favicon-16x16.png">
@@ -60,7 +61,7 @@
 </section>
 						<section id="" class="doc-node const">
 <pre class="signature"><code><span class="token keyword">const</span> <span class="token punctuation">(</span>
-	status_code_msgs <span class="token operator">=</span> <span class="token builtin">map</span><span class="token punctuation">{</span>
+	status_code_msgs <span class="token operator">=</span> <span class="token punctuation">{</span>
 		<span class="token number">100</span><span class="token punctuation">:</span> <span class="token string">'Continue'</span>
 		<span class="token number">101</span><span class="token punctuation">:</span> <span class="token string">'Switching Protocols'</span>
 		<span class="token number">103</span><span class="token punctuation">:</span> <span class="token string">'Early Hints'</span>
@@ -134,7 +135,8 @@
 </section>
 						<section id="status_code_msg" class="doc-node">
 							<div class="title"><h2>fn status_code_msg <a href="#status_code_msg">#</a></h2><a class="link" rel="noreferrer" target="_blank" href="https://github.com/nedpals/vex/blob/master/vex/utils/utils.v#L78"><svg xmlns="http://www.w3.org/2000/svg" height="24" viewBox="0 0 24 24" width="24"><path d="M0 0h24v24H0z" fill="none"/><path d="M3.9 12c0-1.71 1.39-3.1 3.1-3.1h4V7H7c-2.76 0-5 2.24-5 5s2.24 5 5 5h4v-1.9H7c-1.71 0-3.1-1.39-3.1-3.1zM8 13h8v-2H8v2zm9-6h-4v1.9h4c1.71 0 3.1 1.39 3.1 3.1s-1.39 3.1-3.1 3.1h-4V17h4c2.76 0 5-2.24 5-5s-2.24-5-5-5z"/></svg></a></div><pre class="signature"><code><span class="token keyword">fn</span> <span class="token function">status_code_msg</span><span class="token punctuation">(</span>code <span class="token builtin">int</span><span class="token punctuation">)</span> <span class="token builtin">string</span></code></pre>
-<p>status_code_msg returns the message of the given status code.  returns &quot;Internal Server Error&quot; if status is unknown.</p>
+<p>status_code_msg returns the message of the given status code.<br>
+returns &quot;Internal Server Error&quot; if status is unknown.</p>
 
 </section>
 						<section id="yellow_log" class="doc-node">
@@ -144,7 +146,7 @@
 </section>
 
 						<div class="footer">
-							Powered by vdoc. Generated on: 3 Aug 2021 23:03:27
+							Powered by vdoc. Generated on: 4 Nov 2021 12:38:18
 						</div>
 					</div>
 					<div class="doc-toc"><ul><li class="open"><a href="#Constants">Constants</a></li>
