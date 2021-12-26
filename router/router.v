@@ -17,10 +17,11 @@ enum Kind {
 }
 
 pub struct Router {
+pub mut:
+	on_error    ctx.HandlerFunc = ctx.error_route
 mut:
 	routes      map[string]&Route
 	middlewares []ctx.MiddlewareFunc
-	on_error    ctx.HandlerFunc = ctx.error_route
 	ctx         voidptr
 }
 
