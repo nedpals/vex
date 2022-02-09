@@ -3,10 +3,10 @@ name: CI
 on:
   push:
     branches:
-    - master
+      - master
   pull_request:
     branches:
-    - master
+      - master
 
 jobs:
   build-docs:
@@ -35,46 +35,51 @@ jobs:
     runs-on: ubuntu-latest
     timeout-minutes: 30
     steps:
-    - name: Checkout V
-      uses: actions/checkout@v2
-      with:
-        repository: vlang/v
-    - uses: actions/checkout@v2
-      with:
-        path: vex
-    - name: Build local v
-      run: make
-    - name: Run tests
-      run: ./v test vex
+      - name: Checkout V
+        uses: actions/checkout@v2
+        with:
+          repository: vlang/v
+      - uses: actions/checkout@v2
+        with:
+          path: vex
+      - name: Build local v
+        run: make
+      - name: Run tests
+        run: ./v test vex
+      - name: Compile examples
+        run: for e in $(find vex/examples/ -type f -name *_example.v); do echo $e; ./v $e; done
+
 
   macos-clang:
     runs-on: macOS-latest
     timeout-minutes: 30
     steps:
-    - name: Checkout V
-      uses: actions/checkout@v2
-      with:
-        repository: vlang/v
-    - uses: actions/checkout@v2
-      with:
-        path: vex
-    - name: Build local v
-      run: make
-    - name: Run tests
-      run: ./v test vex
-  
+      - name: Checkout V
+        uses: actions/checkout@v2
+        with:
+          repository: vlang/v
+      - uses: actions/checkout@v2
+        with:
+          path: vex
+      - name: Build local v
+        run: make
+      - name: Run tests
+        run: ./v test vex
+      - name: Compile examples
+        run: for e in $(find vex/examples/ -type f -name *_example.v); do echo $e; ./v $e; done
+
   windows-msvc:
     runs-on: windows-2019
     timeout-minutes: 30
     steps:
-    - name: Checkout V
-      uses: actions/checkout@v2
-      with:
-        repository: vlang/v
-    - uses: actions/checkout@v2
-      with:
-        path: vex
-    - name: Build local v
-      run: .\make.bat
-    - name: Run tests
-      run: .\v.exe test vex
+      - name: Checkout V
+        uses: actions/checkout@v2
+        with:
+          repository: vlang/v
+      - uses: actions/checkout@v2
+        with:
+          path: vex
+      - name: Build local v
+        run: .\make.bat
+      - name: Run tests
+        run: .\v.exe test vex
