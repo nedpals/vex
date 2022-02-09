@@ -3,7 +3,6 @@ module main
 import nedpals.vex.router
 import nedpals.vex.server
 import nedpals.vex.ctx
-import json
 
 struct Person {
 	name  string
@@ -22,9 +21,12 @@ fn main() {
 	mut app := router.new()
 	app.use(do_stuff, print_req_info)
 	app.route(.get, '/', fn (req &ctx.Req, mut res ctx.Resp) {
+		q := req.parse_query() or {
+			map[string]string{}
+		}
 		res.send_json(Person{
-			name: req.query['name']
-			doing: req.query['doing']
+			name: q['name']
+			doing: q['doing']
 		}, 200)
 	})
 	app.route(.get, '/hello', fn (req &ctx.Req, mut res ctx.Resp) {
