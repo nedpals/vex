@@ -46,9 +46,10 @@ pub fn (mut req Req) parse_headers(raw_headers []string) {
 // and returns a map of strings
 pub fn (req &Req) parse_query() ?map[string]string {
 	mut queries := map[string]string{}
-	if query_map := urllib.parse_query(req.raw_query) {
-		for name, _ in query_map.data {
-			queries[name] = query_map.data[name].data[0]
+	if qvalues := urllib.parse_query(req.raw_query) {
+		query_map := qvalues.to_map()
+		for name, values in query_map {
+			queries[name] = values[0]
 		}
 	}
 	return queries
