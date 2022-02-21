@@ -16,30 +16,6 @@ const (
 pub interface Router {
 	respond_error(code int) []byte
 	receive(method string, path string, raw_headers []string, body []byte) (int, []byte, []byte)
-	add_plugin(plugin &Plugin) int
-}
-
-// Plugin interface of a generic Plugin
-pub interface Plugin {
-	name         string
-	version      string // semver string
-	init()
-	info()       map[string]string
-	close()
-	// dependencies() []string // dependency on other plugins (by name)
-	// status() PluginStatus
-mut:
-	app          voidptr // reference to the app
-}
-
-// register add a plugin and initializes it
-pub fn register(mut router Router, mut plugin Plugin) {
-	num := router.add_plugin(plugin)
-	if num >= 0 {
-		// plugin.app = router // set a reference to the app, useful in some cases // later check if enable here instead of the Router
-		plugin.init() // initializes the plugin
-		println(utils.green_log('Plugin registered and initialized: "$plugin.info()"'))
-	}
 }
 
 // serve starts the server at the give port

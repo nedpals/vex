@@ -1,9 +1,8 @@
 module router
 
 import ctx
-import utils
 import net.urllib
-import server
+import utils
 
 const (
 	form_methods = ['POST', 'PATCH', 'PUT']
@@ -22,7 +21,7 @@ pub mut:
 	on_error    ctx.HandlerFunc = ctx.error_route
 mut:
 	routes      map[string]&Route
-	plugins     []&server.Plugin
+	plugins     []Plugin
 	middlewares []ctx.MiddlewareFunc
 	ctx         voidptr
 }
@@ -120,23 +119,37 @@ pub fn (mut r Router) use(handlers ...ctx.MiddlewareFunc) {
 	r.middlewares << handlers
 }
 
-// add_plugin add the given plugin as app-wide plugin, if not already added
-// And set a reference to the Router inside it
-pub fn (mut r Router) add_plugin(mut plugin &server.Plugin) int {
-	// add a plugin only if not already added
-	_ := r.get_plugin(plugin.name) or {
-		plugin.app = r // keep it enabled here, temporarily (instead of in server)
-		r.plugins << plugin
-		return r.plugins.len
+// register add a plugin and initializes it
+pub fn (mut r Router) register(plugin Plugin, options voidptr) {
+	r.add_plugin(plugin) or {
+		println(utils.yellow_log('Plugin was already registered: "$plugin.name()"'))
+		return
 	}
-	return -1
+	// initializes the plugin
+	plugin.impl(mut r, options)
+	println(utils.green_log('Plugin registered and initialized: "$plugin.name()"'))
+}
+
+// add_plugin add the given plugin as app-wide plugin, if not already added.
+fn (mut r Router) add_plugin(plugin Plugin) ? {
+	// add a plugin only if not already added
+	_ := r.get_plugin(plugin.name()) or {
+		r.plugins << plugin
+		return
+	}
+	return error("Plugin '$plugin.name()' already registered")
 }
 
 // plugin get a plugin by name
-pub fn (r Router) get_plugin(name string) ?&server.Plugin {
+pub fn (r Router) get_plugin(name string) ?&Plugin {
 	// search by name ...
 	for plugin in r.plugins {
-		if plugin.name == name { return plugin }
+		if plugin.name() == name { 
+			println('DEBUG: plugin $name found...')
+			break
+			// TODO: ...
+			// return &plugin
+		}
 	}
 	return error("Plugin '$name' not found")
 }
@@ -303,4 +316,13 @@ pub fn (mut routes map[string]&Route) use(middlewares ...ctx.MiddlewareFunc) {
 	for name, _ in routes {
 		routes[name].middlewares << middlewares
 	}
+}
+
+
+pub interface Plugin {
+	impl         fn (mut router Router, options voidptr)
+	name()       string
+	// version()    string // semver string
+// mut:
+// 	app          voidptr // reference to the app
 }

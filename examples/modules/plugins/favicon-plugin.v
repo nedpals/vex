@@ -53,7 +53,7 @@ pub fn (mut p FaviconPlugin) close() {
 
 // info return some info about the plugin, like: name, version, status, and maybe others.
 pub fn (p FaviconPlugin) info() map[string]string {
-	return map{
+	return {
 		'name':         p.name
 		'version':      p.version
 		'status':       p.status.str()

@@ -1,14 +1,20 @@
 module plugin
 
+import router
+
+pub type PluginImplementationFn = fn (mut router router.Router, options voidptr)
+
 // Plugin empty plugin with some additions but almost empty methods.
 // At least define same attributes and methods of server.Plugin.
+[heap]
 pub struct Plugin {
 	name         string [required]
 	version      string [required] // semver string
 	dependencies []string = []
+	impl         fn (mut router router.Router, options voidptr) // PluginImplementationFn
 mut:
-	app          voidptr // reference to the app
-	status       PluginStatus
+	// app          voidptr // reference to the app
+	status       PluginStatus // TODO: check if remove (and re-introduce later if/when needed) ...
 }
 
 // PluginStatus list of plugin statuses.
@@ -21,14 +27,20 @@ pub enum PluginStatus {
 	closed 
 }
 
-// new factory function that returns a new Plugin instance using some default values.
-// Force a cast to server.Plugin when called, to be aligned with the generic definition.
-pub fn new() &Plugin {
+// new factory function that returns a new Plugin instance 
+// using given arguments for mandatory parameters and some default values fot others.
+pub fn new(name string, version string, implementation PluginImplementationFn) &Plugin {
 	return &Plugin{
-		name:    ''
-		version: '0.0.0'
+		name:    name
+		version: version
+		impl:    implementation
 		status:  .unknown
 	}
+}
+
+// name return plugin name.
+pub fn (p Plugin) name() string {
+	return p.name
 }
 
 // init plugin initialization, by default set only its status flag.
@@ -49,10 +61,11 @@ pub fn (p Plugin) info() map[string]string {
 // plugin_info return main info (usually name, version, current status) on the given plugin.
 // Useful to be called by other plugins if no other info need to be shown.
 pub fn plugin_info(p Plugin) map[string]string {
-	return map{
+	return {
 		'name':    p.name
 		'version': p.version
 		'status':  p.status.str()
-		'app':     if isnil(p.app) { 'not set'} else { 'set' }
+		'impl':    if isnil(p.impl) { 'not set'} else { 'set' }
+		// 'app':     if isnil(p.app) { 'not set'} else { 'set' }
 	}
 }

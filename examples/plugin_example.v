@@ -4,11 +4,13 @@ import nedpals.vex.ctx
 import nedpals.vex.plugin
 import nedpals.vex.router
 import nedpals.vex.server
-import plugins
+import plugins // example plugins
 
 // as a sample, define some plugins inline here, and get others from other modules
-// for simplicity defined in this project, but could be somewhere)
+// for simplicity defined in this project, but could be somewhere.
 
+/*
+// TODO: ...
 // new_hello_plugin creates and return a new HelloPlugin that defines some routes.
 // At least define same attributes and methods of server.Plugin.
 fn new_hello_plugin() server.Plugin {
@@ -58,7 +60,9 @@ fn retrieve_and_check_plugins(rou router.Router) {
 		return
 	}
 	println("Plugin instance (generic) with type ${typeof(p_base_server).name}")
-	println("Plugin instance (generic) info: ${p_base_server.info()}")
+	// println("Plugin instance (generic) info: ${p_base_server.info()}")
+	// TODO: ...
+	println("Plugin instance (generic) info: ${p_base_server.name()}")
 	// cast to the right plugin concrete type
 	p_base := unsafe { &plugin.Plugin(p_base_server) }
 	println("Plugin instance (cast to the right type) with type ${typeof(p_base).name}")
@@ -71,7 +75,7 @@ fn retrieve_and_check_plugins(rou router.Router) {
 	}  // expected failure
 	println('Retrieve and check some plugins end.') // never executed
 }
-
+*/
 
 fn main() {
 	mut app := router.new()
@@ -80,23 +84,32 @@ fn main() {
 	// note that generic routes could be bundled in its own modules/dependencies
 	// and application-specific routes could be splitted easily in its own modules
 
+	// add a sample plugin created directly, with no plugin options (voidptr set as 0)
+	app.register(plugin.new('inline plugin', '0.0.0', fn (mut router router.Router, options voidptr) {
+		// println('DEBUG - ' + @FN)
+	}), 0)
+
+	// TODO: ...
+	/*
+	// TODO: ...
 	// add a default empty plugin created directly
-	server.register(mut app, mut plugin.new())
+	server.register(mut app, plugin.new())
 	// add a sample empty plugin created directly
-	server.register(mut app, mut &server.Plugin(&plugin.Plugin{
+	server.register(mut app, &server.Plugin(&plugin.Plugin{
 		name: 'empty-plugin'
 		version: '1.0.0'
 	}))
 	// add a sample hello plugin returned from a factory function
 	// but cast plugin instance in a server.Plugin, otherwise do in the factory function
 	mut hello_plugin := new_hello_plugin()
-	server.register(mut app, mut &server.Plugin(&hello_plugin))
+	server.register(mut app, &server.Plugin(&hello_plugin))
 	// try to add another time a plugin already added, should be skipped
-	server.register(mut app, mut &server.Plugin(&hello_plugin))
+	server.register(mut app, &server.Plugin(&hello_plugin))
 	// add a sample utility plugin returned from a factory function
 	// but in this case, do the in the factory function
 	mut utility_plugin := new_utility_plugin()
-	server.register(mut app, mut &utility_plugin)
+	server.register(mut app, &utility_plugin)
+	*/
 
 	// add route for the home page
 	// could be moved into an home page plugin
@@ -104,9 +117,11 @@ fn main() {
 		res.send_file('./plugin_example.html', 200)
 	})
 
+	/*
+	// TODO: ...
 	// add a sample generic plugin for manage the favicon
 	mut favicon_plugin := new_favicon_plugin()
-	server.register(mut app, mut &favicon_plugin)
+	server.register(mut app, &favicon_plugin)
 
 	// sample usage of a plugin method
 	call_plugin_method(&hello_plugin)
@@ -114,6 +129,7 @@ fn main() {
 		// sample to get some plugins and print some info, and execute specific methods on some plugins
 		retrieve_and_check_plugins(app)
 	}
+	*/
 
 	// start the server
 	server.serve(app, 8080)
