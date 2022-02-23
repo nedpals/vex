@@ -13,8 +13,7 @@ pub struct Plugin {
 	dependencies []string = []
 	impl         fn (mut router router.Router, options voidptr) // PluginImplementationFn
 mut:
-	// app          voidptr // reference to the app
-	status       PluginStatus // TODO: check if remove (and re-introduce later if/when needed) ...
+	status       PluginStatus = .unknown // TODO: check if remove (and re-introduce later if/when needed) ...
 }
 
 // PluginStatus list of plugin statuses.
@@ -34,7 +33,6 @@ pub fn new(name string, version string, implementation PluginImplementationFn) &
 		name:    name
 		version: version
 		impl:    implementation
-		status:  .unknown
 	}
 }
 
@@ -66,6 +64,5 @@ pub fn plugin_info(p Plugin) map[string]string {
 		'version': p.version
 		'status':  p.status.str()
 		'impl':    if isnil(p.impl) { 'not set'} else { 'set' }
-		// 'app':     if isnil(p.app) { 'not set'} else { 'set' }
 	}
 }

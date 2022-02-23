@@ -122,33 +122,32 @@ pub fn (mut r Router) use(handlers ...ctx.MiddlewareFunc) {
 // register add a plugin and initializes it
 pub fn (mut r Router) register(plugin Plugin, options voidptr) {
 	r.add_plugin(plugin) or {
-		println(utils.yellow_log('Plugin was already registered: "$plugin.name()"'))
+		$if debug {
+			println(utils.yellow_log('Plugin was already registered: "$plugin.name()", skip'))
+		}
 		return
 	}
 	// initializes the plugin
 	plugin.impl(mut r, options)
-	println(utils.green_log('Plugin registered and initialized: "$plugin.name()"'))
+	$if debug {
+		println(utils.green_log('Plugin registered and initialized: "$plugin.name()"'))
+	}
 }
 
 // add_plugin add the given plugin as app-wide plugin, if not already added.
 fn (mut r Router) add_plugin(plugin Plugin) ? {
-	// add a plugin only if not already added
 	_ := r.get_plugin(plugin.name()) or {
 		r.plugins << plugin
 		return
 	}
-	return error("Plugin '$plugin.name()' already registered")
+	return error('Plugin "$plugin.name()" already registered')
 }
 
 // plugin get a plugin by name
-pub fn (r Router) get_plugin(name string) ?&Plugin {
-	// search by name ...
+pub fn (r Router) get_plugin(name string) ?Plugin {
 	for plugin in r.plugins {
 		if plugin.name() == name { 
-			println('DEBUG: plugin $name found...')
-			break
-			// TODO: ...
-			// return &plugin
+			return plugin
 		}
 	}
 	return error("Plugin '$name' not found")
