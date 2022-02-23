@@ -6,20 +6,20 @@ import nedpals.vex.router
 
 // sample plugin without a specific struct
 
-const plugin_name    = @MOD + '.hello-plugin'
-const plugin_version = '1.0.0'
+const hello_plugin_name    = @MOD + '.hello-plugin'
+const hello_plugin_version = '1.0.0'
 
 // new_hello_plugin creates and return a new HelloPlugin that defines some routes.
 pub fn new_hello_plugin() &plugin.Plugin {
 	return &plugin.Plugin{
-		name:    plugin_name
-		version: plugin_version
-		impl:    implementation
+		name:    hello_plugin_name
+		version: hello_plugin_version
+		impl:    hello_implementation
 	}
 }
 
-fn implementation(mut r router.Router, opts voidptr) {
-	println('$plugin_name: ' + @FN + ' start...')
+fn hello_implementation(mut r router.Router, opts voidptr) {
+	println('$hello_plugin_name: ' + @FN + ' start...')
 
 	// at the moment it seems not possible to call plugin methods from route handlers,
 	// so define as normal functions inside or outside plugins or as inline functions
@@ -28,7 +28,7 @@ fn implementation(mut r router.Router, opts voidptr) {
 	// add as route handler a plugin function
 	r11 := '/hello-text-plugin-function'
 	r.route(.get, r11, handler_from_plugin_function)
-	println('$plugin_name: registered route for $r11')
+	println('$hello_plugin_name: registered route for $r11')
 	// add as route handler as inline function
 	r21 := '/hello-text'
 	r.route(.get, r21, fn (req &ctx.Req, mut res ctx.Resp) {
@@ -37,7 +37,7 @@ fn implementation(mut r router.Router, opts voidptr) {
 		res.send(msg, 200)
 		res.headers['Content-Type'] = ['text/plain']
 	})
-	println('$plugin_name: registered route for $r21')
+	println('$hello_plugin_name: registered route for $r21')
 	r22 := '/hello-json'
 	r.route(.get, r22, fn (req &ctx.Req, mut res ctx.Resp) {
 		// msg := p.greeting('Noname') // future
@@ -45,7 +45,7 @@ fn implementation(mut r router.Router, opts voidptr) {
 		res.send('{"msg":"$msg"}', 200)
 		res.headers['Content-Type'] = ['application/json']
 	})
-	println('$plugin_name: registered route for $r22')
+	println('$hello_plugin_name: registered route for $r22')
 	r31 := '/hello-text-name-in-path/:name'
 	r.route(.get, r31, fn (req &ctx.Req, mut res ctx.Resp) {
 		name := req.params['name'] or { 'Noname' } // get from path arguments
@@ -53,7 +53,7 @@ fn implementation(mut r router.Router, opts voidptr) {
 		res.send(msg, 200)
 		res.headers['Content-Type'] = ['text/plain']
 	})
-	println('$plugin_name: registered route for $r31, and path argument name')
+	println('$hello_plugin_name: registered route for $r31, and path argument name')
 	r32 := '/hello-text-name-in-query'
 	r.route(.get, r32, fn (req &ctx.Req, mut res ctx.Resp) {
 		queries := req.parse_query() or { map[string]string{} } // get from URL arguments
@@ -62,9 +62,9 @@ fn implementation(mut r router.Router, opts voidptr) {
 		res.send(msg, 200)
 		res.headers['Content-Type'] = ['text/plain']
 	})
-	println('$plugin_name: registered route for $r32, and query argument name' )
+	println('$hello_plugin_name: registered route for $r32, and query argument name' )
 
-	println('$plugin_name: ' + @FN + ' end.')
+	println('$hello_plugin_name: ' + @FN + ' end.')
 }
 
 // greeting_fn return a greeting for the given name, as a normal function.

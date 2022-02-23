@@ -5,50 +5,66 @@ import nedpals.vex.plugin
 import nedpals.vex.router
 
 const (
-	favicon_default_path = './modules/plugins'
-	favicon_default_name = 'favicon.ico'
+	favicon_plugin_name    = @MOD + '.favicon-plugin'
+	favicon_plugin_version = '1.0.0'
+	favicon_default_path   = './modules/plugins'
+	favicon_default_name   = 'favicon.ico'
 )
 
 [heap]
 // Sample Plugin that publish favicon related routes and methods.
-// At least define same attributes and methods of server.Plugin.
-// As a sample, some methods here are simpler than in other plugins in the same module.
+// At least define same attributes and methods of plugin.Plugin.
 pub struct FaviconPlugin {
-	// when available, use struct embedding here from server.Plugin or plugin.Plugin
-	name         string
-	version      string // semver string
-	path         string = favicon_default_path
-	favicon      string = favicon_default_name
-mut:
-	app          voidptr // reference to the app
-	status       plugin.PluginStatus
-	info         map[string]string
-	// image        []byte // future use
+	plugin.Plugin
+	FaviconPluginOptions
 }
 
-// init initializes the plugin and add some routes as a sample.
-pub fn (mut p FaviconPlugin) init() {
-	// add some routes, via the reference to enclosing app
-	mut app := &router.Router(p.app) // cast to a router
-	// at the moment it seems not possible to call plugin methods and fields from route handlers,
-	// so define as normal functions outside plugins
+[heap]
+// Plugin specific options.
+pub struct FaviconPluginOptions {
+	path    string = favicon_default_path
+	favicon string = favicon_default_name
+	// image   []byte // future use, maybe using $embed
+}
 
-	// in future, cache file content or set plugin status in .error ... wip
-	// p.image := read_image('$p.path/$.p.favicon')
+// new_favicon_plugin creates and return a new Plugin.
+pub fn new_favicon_plugin() &plugin.Plugin {
+	return &plugin.Plugin{
+		name:    favicon_plugin_name
+		version: favicon_plugin_version
+		impl:    favicon_implementation
+	}
+}
 
-	app.route(.get, '/$p.favicon', fn (req &ctx.Req, mut res ctx.Resp) {
-		res.send_file('$favicon_default_path/$favicon_default_name', 200)
+// new_favicon_plugin_with_options creates and return a new FaviconPlugin that defines some routes.
+pub fn new_favicon_plugin_with_options(options FaviconPluginOptions) &FaviconPlugin {
+	return &FaviconPlugin{
+		name:    favicon_plugin_name
+		version: favicon_plugin_version
+		impl:    favicon_implementation
+		path:    options.path
+		favicon: options.favicon
+	}
+}
+
+fn favicon_implementation(mut r router.Router, opts &FaviconPluginOptions) {
+	println('$favicon_plugin_name: ' + @FN + ' start...')
+
+	if isnil(opts) {
+		println('$favicon_plugin_name: error: plugin config options needed, skip')
+		return
+	}
+	// get overrides from the given plugin config options
+	// println('set: $opts.path, $opts.favicon')
+
+	// use opts in the handler function, with a closure
+	r.route(.get, '/$opts.favicon', fn [opts] (req &ctx.Req, mut res ctx.Resp) {
+		res.send_file('$opts.path/$opts.favicon', 200)
 		// res.headers['Content-Type'] = ['image/x-icon'] // not needed with send_file
 	})
-	println('$p.name: registered route for /$p.favicon')
+	println('$favicon_plugin_name: registered route for /$opts.favicon')
 
-	// end of plugin initialization
-	p.status = .initialized
-}
-
-// close closes the plugin (useful to close used resources, etc).
-pub fn (mut p FaviconPlugin) close() {
-	p.status = .closed
+	println('$favicon_plugin_name: ' + @FN + ' end.')
 }
 
 // info return some info about the plugin, like: name, version, status, and maybe others.
