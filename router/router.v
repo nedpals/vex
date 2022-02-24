@@ -321,7 +321,4 @@ pub fn (mut routes map[string]&Route) use(middlewares ...ctx.MiddlewareFunc) {
 pub interface Plugin {
 	impl         fn (mut router Router, options voidptr)
 	name()       string
-	// version()    string // semver string
-// mut:
-// 	app          voidptr // reference to the app
 }
