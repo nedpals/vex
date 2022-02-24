@@ -50,16 +50,13 @@ fn main() {
 	// app.register(favicon_plugin_specific, voidptr(0)) // sample, to show error for the missing config
 	app.register(favicon_plugin_specific, favicon_options)
 	$if debug {
-		// get some more info by running a plugin method
+		// get some more info by running a specific plugin method
 		println(favicon_plugin_specific.info())
 	}
 
-	/*
-	// TODO: ...
 	// add a plugin for some generic but useful routes
 	mut utility_plugin := plugins.new_utility_plugin()
 	app.register(utility_plugin, voidptr(0))
-	*/
 
 	// start the server
 	server.serve(app, 8080)
