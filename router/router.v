@@ -317,7 +317,7 @@ pub fn (mut routes map[string]&Route) use(middlewares ...ctx.MiddlewareFunc) {
 	}
 }
 
-
+// Plugin interface for a generic Plugin
 pub interface Plugin {
 	impl         fn (mut router Router, options voidptr)
 	name()       string
