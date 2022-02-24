@@ -72,7 +72,6 @@ pub fn (p FaviconPlugin) info() map[string]string {
 	return {
 		'name':         p.name
 		'version':      p.version
-		'status':       p.status.str()
 		'favicon_path': p.path
 		'favicon_name': p.favicon
 	}
