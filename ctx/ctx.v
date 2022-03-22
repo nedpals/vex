@@ -253,8 +253,20 @@ pub fn (mut res Resp) stop() {
 	res.stopped = true
 }
 
+// used internally in router
+pub const err_code_ctx_key = context.Key('status_code')
+
+pub fn get_error_status_code(req &Req) int {
+	if code := req.ctx.value(ctx.err_code_ctx_key) {
+		if code is int {
+			return *code
+		}
+	}
+	return 500
+}
+
 pub fn error_route(req &Req, mut res Resp) {
-	code := int(u64(req.ctx))
+	code := get_error_status_code(req)
 	res.send_status(code)
 }
 

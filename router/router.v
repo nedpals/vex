@@ -19,7 +19,7 @@ enum Kind {
 
 pub struct Router {
 pub mut:
-	on_error    ctx.HandlerFunc = ctx.error_route
+	on_error ctx.HandlerFunc = ctx.error_route
 mut:
 	routes      map[string]&Route
 	middlewares []ctx.MiddlewareFunc
@@ -92,7 +92,7 @@ pub fn (r Router) receive(method string, path string, raw_headers []string, body
 
 pub fn (r Router) respond_error(code int) []byte {
 	req := ctx.Req{
-		ctx: voidptr(code)
+		ctx: context.with_value(context.todo(), ctx.err_code_ctx_key, code)
 	}
 	mut resp := ctx.Resp{}
 	err_route := r.on_error
