@@ -19,6 +19,17 @@ pub interface Router {
 
 // serve starts the server at the give port
 pub fn serve(router Router, port int) {
+	serve_with_threads(router, port, limit: 10)
+}
+
+// serve starts the server at the give port
+pub fn serve_with_threads(router Router, port int, params ThreadManager) {
+	// Create a thread manager
+	mut manager := ThreadManager{
+		limit: params.limit
+		channel: chan bool{cap: params.limit}
+	}
+
 	// Listen To Port
 	mut listener := net.listen_tcp(.ip6, ':$port') or {
 		panic(utils.red_log('Failed to listen to port $port'))
@@ -30,7 +41,12 @@ pub fn serve(router Router, port int) {
 			listener.close() or {}
 			panic(utils.red_log('Failed to accept connection.\nErr Code: $err.code\nErr Message: $err.msg'))
 		}
-		handle_http_connection(router, mut conn)
+		if manager.add() {
+			go handle_http_connection(router, mut conn, manager.channel)
+		} else {
+			manager.skip += 1
+			handle_http_connection(router, mut conn, manager.channel)
+		}
 	}
 }
 
@@ -48,7 +64,10 @@ fn write_body(code int, headers []byte, body []byte, mut conn net.TcpConn) {
 }
 
 // Handle All HTTP Connections
-fn handle_http_connection(router Router, mut conn net.TcpConn) {
+fn handle_http_connection(router Router, mut conn net.TcpConn, ch chan bool) {
+	defer {
+		ch <- true
+	}
 	conn.set_read_timeout(1 * time.second)
 	defer {
 		conn.close() or {}

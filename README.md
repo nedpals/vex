@@ -81,3 +81,4 @@ Examples can be found at the [`/examples`](/examples) directory.
 ## Contributors
 
 - [Ned Palacios](https://github.com/nedpals) - creator and maintainer
+- [Benjamin Stigsen](https://github.com/BenStigsen) - multi-thread work
