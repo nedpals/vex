@@ -3,6 +3,7 @@ module router
 import ctx
 import utils
 import net.urllib
+import context
 
 const (
 	form_methods = ['POST', 'PATCH', 'PUT']
@@ -22,7 +23,7 @@ pub mut:
 mut:
 	routes      map[string]&Route
 	middlewares []ctx.MiddlewareFunc
-	ctx         voidptr
+	ctx         context.Context = context.todo() // TODO: remove in the near future
 }
 
 pub fn new() Router {
@@ -99,8 +100,28 @@ pub fn (r Router) respond_error(code int) []byte {
 	return resp.body
 }
 
+const global_ctx_key = context.Key('__vex')
+
+// get_ctx accesses the global context
+pub fn get_ctx(r &ctx.Req) voidptr {
+	if global_ctx := r.ctx.value(router.global_ctx_key) {
+		if global_ctx is voidptr {
+			return global_ctx
+		}
+	}
+	return 0
+}
+
+[deprecated: 'use Router.inject_context() or Req.ctx instead to inject value. As for accessing value, use router.get_ctx() instead of accessing r.ctx directly.']
 pub fn (mut r Router) inject(data voidptr) {
-	r.ctx = data
+	r.inject_context(context.with_value(context.todo(), router.global_ctx_key, data))
+}
+
+// inject_context injects the context to the handler context.
+// TODO: to be removed in the future. must be in a form of
+// a middleware instead.
+pub fn (mut r Router) inject_context(ctx context.Context) {
+	r.ctx = ctx
 }
 
 // route is a shortcut method to `r.routes.route` method

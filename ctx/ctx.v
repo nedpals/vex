@@ -6,6 +6,7 @@ import os
 import utils
 import v.vmod
 import strings
+import context
 
 const (
 	vm              = vmod.decode(@VMOD_FILE) or { panic(err) }
@@ -30,7 +31,7 @@ pub mut:
 	headers   map[string][]string
 	raw_query string
 	boundary  string
-	ctx       voidptr
+	ctx       context.Context
 }
 
 // parse_headers parses and injects the raw_headers into
