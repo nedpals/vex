@@ -255,6 +255,7 @@ pub fn (mut res Resp) stop() {
 
 // used internally in router
 pub const err_code_ctx_key = context.Key('status_code')
+
 pub fn get_error_status_code(req &Req) int {
 	if code := req.ctx.value(ctx.err_code_ctx_key) {
 		if code is int {
