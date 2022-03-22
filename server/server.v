@@ -36,15 +36,23 @@ pub fn serve_with_threads(router Router, port int, params ThreadManager) {
 	}
 	println(utils.green_log('HTTP Server has started.'))
 	println(utils.green_log('Running On http://localhost:$port'))
-	for {
-		mut conn := listener.accept() or {
-			listener.close() or {}
-			panic(utils.red_log('Failed to accept connection.\nErr Code: $err.code\nErr Message: $err.msg'))
+	if manager.limit > 0 {
+		for {
+			mut conn := listener.accept() or {
+				listener.close() or {}
+				panic(utils.red_log('Failed to accept connection.\nErr Code: $err.code\nErr Message: $err.msg'))
+			}
+			if manager.add() {
+				go handle_http_connection(router, mut conn, manager.channel)
+			}
 		}
-		if manager.add() {
-			go handle_http_connection(router, mut conn, manager.channel)
-		} else {
-			manager.skip += 1
+	} else {
+		manager.channel.close()
+		for {
+			mut conn := listener.accept() or {
+				listener.close() or {}
+				panic(utils.red_log('Failed to accept connection.\nErr Code: $err.code\nErr Message: $err.msg'))
+			}
 			handle_http_connection(router, mut conn, manager.channel)
 		}
 	}
