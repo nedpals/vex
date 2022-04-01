@@ -6,7 +6,6 @@ import os
 import utils
 import v.vmod
 import strings
-import context
 
 const (
 	vm              = vmod.decode(@VMOD_FILE) or { panic(err) }
@@ -31,7 +30,8 @@ pub mut:
 	headers   map[string][]string
 	raw_query string
 	boundary  string
-	ctx       context.Context
+	ctx       voidptr
+	cookies   map[string]Cookie
 }
 
 // parse_headers parses and injects the raw_headers into
@@ -253,20 +253,8 @@ pub fn (mut res Resp) stop() {
 	res.stopped = true
 }
 
-// used internally in router
-pub const err_code_ctx_key = context.Key('status_code')
-
-pub fn get_error_status_code(req &Req) int {
-	if code := req.ctx.value(ctx.err_code_ctx_key) {
-		if code is int {
-			return *code
-		}
-	}
-	return 500
-}
-
 pub fn error_route(req &Req, mut res Resp) {
-	code := get_error_status_code(req)
+	code := int(u64(req.ctx))
 	res.send_status(code)
 }
 

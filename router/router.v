@@ -3,7 +3,6 @@ module router
 import ctx
 import utils
 import net.urllib
-import context
 
 const (
 	form_methods = ['POST', 'PATCH', 'PUT']
@@ -19,11 +18,11 @@ enum Kind {
 
 pub struct Router {
 pub mut:
-	on_error ctx.HandlerFunc = ctx.error_route
+	on_error    ctx.HandlerFunc = ctx.error_route
 mut:
 	routes      map[string]&Route
 	middlewares []ctx.MiddlewareFunc
-	ctx         context.Context = context.todo() // TODO: remove in the near future
+	ctx         voidptr
 }
 
 pub fn new() Router {
@@ -63,6 +62,7 @@ pub fn (r Router) receive(method string, path string, raw_headers []string, body
 	}
 
 	req.params = params.clone()
+	req.cookies = req.parse_cookies() or { map[string]ctx.Cookie }
 
 	// Not good but would be cool to use
 	// an iterator for this instead
@@ -95,7 +95,7 @@ pub fn (r Router) receive(method string, path string, raw_headers []string, body
 
 pub fn (r Router) respond_error(code int) []byte {
 	req := ctx.Req{
-		ctx: context.with_value(context.todo(), ctx.err_code_ctx_key, code)
+		ctx: voidptr(code)
 	}
 	mut resp := ctx.Resp{}
 	err_route := r.on_error
@@ -103,28 +103,8 @@ pub fn (r Router) respond_error(code int) []byte {
 	return resp.body
 }
 
-const global_ctx_key = context.Key('__vex')
-
-// get_ctx accesses the global context
-pub fn get_ctx(r &ctx.Req) voidptr {
-	if global_ctx := r.ctx.value(router.global_ctx_key) {
-		if global_ctx is voidptr {
-			return global_ctx
-		}
-	}
-	return 0
-}
-
-[deprecated: 'use Router.inject_context() or Req.ctx instead to inject value. As for accessing value, use router.get_ctx() instead of accessing r.ctx directly.']
 pub fn (mut r Router) inject(data voidptr) {
-	r.inject_context(context.with_value(context.todo(), router.global_ctx_key, data))
-}
-
-// inject_context injects the context to the handler context.
-// TODO: to be removed in the future. must be in a form of
-// a middleware instead.
-pub fn (mut r Router) inject_context(ctx context.Context) {
-	r.ctx = ctx
+	r.ctx = data
 }
 
 // route is a shortcut method to `r.routes.route` method
