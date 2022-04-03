@@ -1,6 +1,8 @@
-module ctx
+module session
 
 import crypto.sha1
+import ctx
+import net.urllib
 import rand
 import time
 import utils
@@ -10,22 +12,25 @@ pub const default_session_name = 'VEXSESID'
 
 // Session contains user data, the session Store, and cookie information
 struct Session {
-	Cookie
+	ctx.Cookie
 mut:
 	data map[string]string
 pub mut:
 	name string = 'default_' + default_session_name
 	id string = new_session_id()
 	expires time.Time = time.now().add_days(1)
-	store Store = SqliteStore{}
-	res Resp
+	store Store = LocalStore{}
+	res ctx.Resp
 __global:
 	auto_write bool = true
 }
 
 // set sets a value in the session data
 pub fn (mut s Session) set(key string, val string) {
-	s.data[key] = val
+	s.data[key] = urllib.query_unescape(val) or {
+		println(utils.yellow_log('Query unescape failed on "$val" setting to raw, escaped value.'))
+		val
+	}
 	if s.auto_write {
 		s.write()
 	}
@@ -114,7 +119,7 @@ pub fn (mut s Session) regenerate() {
 [inline]
 pub fn (mut s Session) write() bool {
 	s.store.write(s.id, s.data) or {
-		eprintln(utils.red_log('Failed to write session: $err.msg'))
+		println(utils.red_log('Failed to write session: $err.msg'))
 		return false
 	}
 	return true
@@ -136,8 +141,8 @@ pub fn (mut s Session) delete() {
 
 // cookie returns the Session as a `ctx.Cookie` instance.
 [inline]
-pub fn (s Session) cookie() Cookie {
-	return Cookie{
+pub fn (s Session) cookie() ctx.Cookie {
+	return ctx.Cookie{
 		name: s.name
 		value: s.id
 		expires: s.expires
@@ -192,27 +197,29 @@ pub fn new_session_from_id(id string, mut store Store) ?Session {
 [params]
 pub struct SessionOptions {
 mut:
-	name string
+	name string = 'default_'
 	expires time.Time = time.now().add_days(1)
 	max_age int
 	path string = '/'
 	http_only bool
 	secure bool
-	same_site SameSite = .lax
-	store Store = SqliteStore{}
+	same_site ctx.SameSite = .lax
+	store Store = LocalStore{}
 }
 
-// start_session checks to see if existing session ID exists in cookies based off of
+// start checks to see if existing session ID exists in cookies based off of
 // of the `SessionOptions.name` field. Leaving this field empty will result in default
 // session. It's highly suggested not to use the default for production builds. If
 // no session ID exists, then an error will be printed to the console and a new
 // session is instantiated and returned.
-pub fn (mut res Resp) start_session(req &Req, opts SessionOptions) Session {
+pub fn start(req &ctx.Req, mut res ctx.Resp, opts SessionOptions) Session {
+	cookies := req.parse_cookies() or { map[string]ctx.Cookie{} }
+	
 	mut ses := Session{}
 	// check if session exists
-	if (opts.name + default_session_name) in req.cookies.keys() {
-		sesid := req.cookies[ctx.default_session_name].value
-		ses = ctx.new_session_from_id(sesid, mut ses.store) or {
+	if (opts.name + default_session_name) in cookies.keys() {
+		sesid := cookies[opts.name + default_session_name].value
+		ses = new_session_from_id(sesid, mut ses.store) or {
 			Session{}
 		}
 		

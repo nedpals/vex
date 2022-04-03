@@ -1,4 +1,4 @@
-module ctx
+module session
 
 // Store is the interface that Session accepts to store data.
 // Using an interface allows the user to create their own Store

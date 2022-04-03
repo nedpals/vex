@@ -31,7 +31,6 @@ pub mut:
 	raw_query string
 	boundary  string
 	ctx       voidptr
-	cookies   map[string]Cookie
 }
 
 // parse_headers parses and injects the raw_headers into

@@ -4,7 +4,7 @@ module ctx
 import time
 import net.urllib
 
-enum SameSite {
+pub enum SameSite {
 	@none
 	strict
 	lax

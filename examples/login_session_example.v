@@ -1,15 +1,16 @@
 import nedpals.vex.ctx
 import nedpals.vex.html
 import nedpals.vex.server
+import nedpals.vex.session
 import nedpals.vex.router
 
 fn main() {
 	// handles the login page
 	login := fn (req &ctx.Req, mut res ctx.Resp) {
-		mut session := res.start_session(req)
+		mut ses := session.start(req, mut res)
 		
 		// if there is already a session set, then redirect to the profile page
-		if !session.is_empty() {
+		if !ses.is_empty() {
 			res.redirect('/profile')
 			return
 		}
@@ -70,17 +71,17 @@ fn main() {
 			return
 		}
 		
-		mut session := res.start_session(req)
-		session.set('email', post_data['email'])
-		session.set('password', post_data['password'])
+		mut ses := session.start(req, mut res)
+		ses.set('email', post_data['email'])
+		ses.set('password', post_data['password'])
 		
 		res.redirect('/profile')
 		return  // VEX redirects to /login if the return isn't here :/
 	}
 	
 	profile := fn (req &ctx.Req, mut res ctx.Resp) {
-		mut session := res.start_session(req)
-		if session.is_empty() {
+		mut ses := session.start(req, mut res)
+		if ses.is_empty() {
 			res.redirect('/login')
 			return
 		}
@@ -112,7 +113,7 @@ fn main() {
 				},
 				html.Tag{
 					name: 'span'
-					text: session.get('email')
+					text: ses.get('email')
 				},
 				html.br(),
 				html.Tag{
@@ -121,7 +122,7 @@ fn main() {
 				},
 				html.Tag{
 					name: 'span'
-					text: session.get('password')
+					text: ses.get('password')
 				},
 				html.br(),
 				html.Tag{
@@ -146,8 +147,8 @@ fn main() {
 	}
 	
 	logout_post := fn (req &ctx.Req, mut res ctx.Resp) {
-		mut session := res.start_session(req)
-		session.delete()
+		mut ses := session.start(req, mut res)
+		ses.delete()
 		res.redirect('/login')
 		return
 	}

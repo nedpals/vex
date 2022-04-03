@@ -62,7 +62,6 @@ pub fn (r Router) receive(method string, path string, raw_headers []string, body
 	}
 
 	req.params = params.clone()
-	req.cookies = req.parse_cookies() or { map[string]ctx.Cookie }
 
 	// Not good but would be cool to use
 	// an iterator for this instead
