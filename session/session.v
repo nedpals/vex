@@ -1,11 +1,11 @@
 module session
 
 import crypto.sha1
-import ctx
+import nedpals.vex.ctx
 import net.urllib
 import rand
 import time
-import utils
+import nedpals.vex.utils
 
 // the default session name :P
 pub const default_session_name = 'VEXSESID'
@@ -16,11 +16,11 @@ struct Session {
 mut:
 	data map[string]string
 pub mut:
-	name string = 'default_' + default_session_name
-	id string = new_session_id()
+	name    string    = 'default_' + session.default_session_name
+	id      string    = new_session_id()
 	expires time.Time = time.now().add_days(1)
-	store Store = LocalStore{}
-	res ctx.Resp
+	store   Store     = LocalStore{}
+	res     ctx.Resp
 __global:
 	auto_write bool = true
 }
@@ -51,11 +51,7 @@ pub fn (mut s Session) set_many(keyval ...string) ? {
 // has checks if a value exists in the session data
 [inline]
 pub fn (mut s Session) has(key string) bool {
-	return if s.get(key) == '' {
-		false
-	} else {
-		true
-	}
+	return if s.get(key) == '' { false } else { true }
 }
 
 // pop reads a values from the session data to return, then deletes
@@ -82,11 +78,7 @@ pub fn (s Session) get(key string) string {
 // provided does not match any, then `none` will be returned.
 pub fn (s Session) must_get(key string) ?string {
 	val := s.get(key)
-	return if val == '' {
-		none
-	} else {
-		val
-	}
+	return if val == '' { none } else { val }
 }
 
 // remove deletes a key-value-pair from the session data.
@@ -99,11 +91,7 @@ pub fn (mut s Session) remove(key string) {
 
 // is_empty returns whether or not the session has any data stored in it.
 pub fn (s Session) is_empty() bool {
-	return if s.data.len == 0 {
-		true
-	} else {
-		false
-	}
+	return if s.data.len == 0 { true } else { false }
 }
 
 // regenereate replaces the ID of the session, but leaves the data
@@ -159,7 +147,9 @@ pub fn (s Session) cookie() ctx.Cookie {
 // the current Session
 [inline]
 pub fn (mut s Session) set_header() {
-	s.res.set_cookies({s.id: s.cookie()})
+	s.res.set_cookies({
+		s.id: s.cookie()
+	})
 }
 
 // remove_header removes the corresponding `Set-Cookie` header in
@@ -197,14 +187,14 @@ pub fn new_session_from_id(id string, mut store Store) ?Session {
 [params]
 pub struct SessionOptions {
 mut:
-	name string = 'default_'
-	expires time.Time = time.now().add_days(1)
-	max_age int
-	path string = '/'
+	name      string    = 'default_'
+	expires   time.Time = time.now().add_days(1)
+	max_age   int
+	path      string = '/'
 	http_only bool
-	secure bool
+	secure    bool
 	same_site ctx.SameSite = .lax
-	store Store = LocalStore{}
+	store     Store        = LocalStore{}
 }
 
 // start checks to see if existing session ID exists in cookies based off of
@@ -213,18 +203,18 @@ mut:
 // no session ID exists, then an error will be printed to the console and a new
 // session is instantiated and returned.
 pub fn start(req &ctx.Req, mut res ctx.Resp, opts SessionOptions) Session {
-	cookies := req.parse_cookies() or { map[string]ctx.Cookie{} }
-	
+	cookies := req.parse_cookies() or {
+		map[string]ctx.Cookie{}
+	}
+
 	mut ses := Session{}
 	// check if session exists
-	if (opts.name + default_session_name) in cookies.keys() {
-		sesid := cookies[opts.name + default_session_name].value
-		ses = new_session_from_id(sesid, mut ses.store) or {
-			Session{}
-		}
-		
+	if (opts.name + session.default_session_name) in cookies.keys() {
+		sesid := cookies[opts.name + session.default_session_name].value
+		ses = new_session_from_id(sesid, mut ses.store) or { Session{} }
+
 		ses.store = opts.store
-		ses.name = opts.name + default_session_name
+		ses.name = opts.name + session.default_session_name
 		ses.expires = opts.expires
 		ses.max_age = opts.max_age
 		ses.path = opts.path
@@ -233,9 +223,11 @@ pub fn start(req &ctx.Req, mut res ctx.Resp, opts SessionOptions) Session {
 		ses.same_site = opts.same_site
 		ses.res = res
 	}
-	
+
 	ses.write()
-	res.set_cookies({ses.id: ses.cookie()})
-	
+	res.set_cookies({
+		ses.id: ses.cookie()
+	})
+
 	return ses
 }
