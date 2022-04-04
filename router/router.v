@@ -51,7 +51,10 @@ pub fn (r Router) receive(method string, path string, raw_headers []string, body
 			&& req.headers['Content-Type'][0].starts_with('multipart/form-data')
 			&& req.headers['Content-Type'][0].all_after('; boundary=').len > 0 {
 			req.boundary = '--' + req.headers['Content-Type'][0].all_after('; boundary=')
-			req.headers['Content-Type'][0] = 'multipart/form-data'
+
+			// These parenthesis wrapping workaround fixes the issue when compiliting it with `-prod`
+			// NOTE: Remove this workaround when https://github.com/vlang/v/issues/13431 is closed.
+			(req.headers['Content-Type'])[0] = 'multipart/form-data'
 		}
 	}
 	params, route_middlewares, handlers := r.routes.find(req.method.to_lower(), req.path) or {
