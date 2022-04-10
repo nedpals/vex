@@ -1,11 +1,11 @@
 module session
 
 import crypto.sha1
-import nedpals.vex.ctx
+import ctx
 import net.urllib
 import rand
 import time
-import nedpals.vex.utils
+import utils
 
 // the default session name :P
 pub const default_session_name = 'VEXSESID'
