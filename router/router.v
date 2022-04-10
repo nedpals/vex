@@ -117,7 +117,7 @@ pub fn get_ctx(r &ctx.Req) voidptr {
 
 [deprecated: 'use Router.inject_context() or Req.ctx instead to inject value. As for accessing value, use router.get_ctx() instead of accessing r.ctx directly.']
 pub fn (mut r Router) inject(data voidptr) {
-	r.inject_context(context.width_value(context.todo(), router.global_ctx_key, data))
+	r.inject_context(context.with_value(context.todo(), router.global_ctx_key, data))
 }
 
 pub fn (mut r Router) inject_context(ctx context.Context) {
