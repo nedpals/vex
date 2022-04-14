@@ -107,7 +107,7 @@ pub fn (mut s Session) regenerate() {
 [inline]
 pub fn (mut s Session) write() bool {
 	s.store.write(s.id, s.data) or {
-		println(utils.red_log('Failed to write session: $err.msg'))
+		println(utils.red_log('Failed to write session: $err.msg()'))
 		return false
 	}
 	return true
@@ -123,7 +123,7 @@ pub fn (mut s Session) restore() ? {
 [inline]
 pub fn (mut s Session) delete() {
 	s.store.delete(s.id) or {
-		println(utils.yellow_log('Failed to delete session from store: $err.msg'))
+		println(utils.yellow_log('Failed to delete session from store: $err.msg()'))
 	}
 }
 
