@@ -36,7 +36,7 @@ fn test_parse_body_content_type_not_present() {
 		body: '{"test":"123"}'.bytes()
 	}
 	_ := req.parse_form() or {
-		assert err.msg == '`Content-Type` header is not present.'
+		assert err.msg() == '`Content-Type` header is not present.'
 		return
 	}
 	assert false
@@ -50,7 +50,7 @@ fn test_parse_body_invalid() {
 		}
 	}
 	_ := req.parse_form() or {
-		assert err.msg == 'No appropriate content type header for body found.'
+		assert err.msg() == 'No appropriate content type header for body found.'
 		return
 	}
 	assert false
@@ -59,7 +59,7 @@ fn test_parse_body_invalid() {
 fn test_parse_body_empty() {
 	req := Req{}
 	_ := req.parse_form() or {
-		assert err.msg == 'Form body is empty.'
+		assert err.msg() == 'Form body is empty.'
 		return
 	}
 	assert false

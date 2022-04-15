@@ -284,7 +284,7 @@ pub fn (mut routes map[string]&Route) group(path string, callback GroupCallbackF
 	mut prev_routes := unsafe { routes }
 
 	for children.len > 0 {
-		new_name, _, new_children := extract_route_path(children) or { panic(err.msg) }
+		new_name, _, new_children := extract_route_path(children) or { panic(err.msg()) }
 		children = new_children
 		name = new_name
 		prev_routes = unsafe { cur_routes }
