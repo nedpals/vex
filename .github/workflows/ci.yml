@@ -47,7 +47,11 @@ jobs:
       - name: Run tests
         run: ./v test vex
       - name: Compile examples
-        run: for e in $(find vex/examples/ -type f -name *_example.v); do echo $e; ./v $e; done
+        run: |
+          mkdir ~/.vmodules
+          mkdir ~/.vmodules/nedpals
+          cp vex ~/.vmodules/nedpals/vex
+          for e in $(find vex/examples/ -type f -name *_example.v); do echo $e; ./v $e; done
 
 
   macos-clang:
@@ -66,7 +70,11 @@ jobs:
       - name: Run tests
         run: ./v test vex
       - name: Compile examples
-        run: for e in $(find vex/examples/ -type f -name *_example.v); do echo $e; ./v $e; done
+        run: |
+          mkdir ~/.vmodules
+          mkdir ~/.vmodules/nedpals
+          cp vex ~/.vmodules/nedpals/vex
+          for e in $(find vex/examples/ -type f -name *_example.v); do echo $e; ./v $e; done
 
   windows-msvc:
     runs-on: windows-2019
