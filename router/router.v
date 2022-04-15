@@ -30,7 +30,7 @@ pub fn new() Router {
 	return Router{}
 }
 
-pub fn (r Router) receive(method string, path string, raw_headers []string, body []byte) (int, []byte, []byte) {
+pub fn (r Router) receive(method string, path string, raw_headers []string, body []u8) (int, []u8, []u8) {
 	def_header := ('\r\n' + raw_headers.join('\r\n')).bytes()
 	req_path := urllib.parse(path) or {
 		internal_err_body := r.respond_error(500)
@@ -93,7 +93,7 @@ pub fn (r Router) receive(method string, path string, raw_headers []string, body
 	return res.status_code, res.headers_bytes(), res.body
 }
 
-pub fn (r Router) respond_error(code int) []byte {
+pub fn (r Router) respond_error(code int) []u8 {
 	req := ctx.Req{
 		ctx: context.with_value(context.todo(), ctx.err_code_ctx_key, code)
 	}

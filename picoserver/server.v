@@ -10,8 +10,8 @@ const (
 )
 
 pub interface Router {
-	respond_error(code int) []byte
-	receive(method string, path string, raw_headers []string, body []byte) (int, []byte, []byte)
+	respond_error(code int) []u8
+	receive(method string, path string, raw_headers []string, body []u8) (int, []u8, []u8)
 }
 
 struct Server {
