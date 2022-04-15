@@ -19,7 +19,7 @@ enum Kind {
 
 pub struct Router {
 pub mut:
-	on_error    ctx.HandlerFunc = ctx.error_route
+	on_error ctx.HandlerFunc = ctx.error_route
 mut:
 	routes      map[string]&Route
 	middlewares []ctx.MiddlewareFunc
@@ -120,6 +120,9 @@ pub fn (mut r Router) inject(data voidptr) {
 	r.inject_context(context.with_value(context.todo(), router.global_ctx_key, data))
 }
 
+// inject_context injects the context to the handler context.
+// TODO: to be removed in the future. must be in a form of
+// a middleware instead.
 pub fn (mut r Router) inject_context(ctx context.Context) {
 	r.ctx = ctx
 }
