@@ -48,9 +48,8 @@ jobs:
         run: ./v test vex
       - name: Compile examples
         run: |
-          mkdir ~/.vmodules
           mkdir ~/.vmodules/nedpals
-          cp vex ~/.vmodules/nedpals/vex
+          cp -r vex ~/.vmodules/nedpals/vex
           for e in $(find vex/examples/ -type f -name *_example.v); do echo $e; ./v $e; done
 
 
@@ -71,9 +70,8 @@ jobs:
         run: ./v test vex
       - name: Compile examples
         run: |
-          mkdir ~/.vmodules
           mkdir ~/.vmodules/nedpals
-          cp vex ~/.vmodules/nedpals/vex
+          cp -r vex ~/.vmodules/nedpals/vex
           for e in $(find vex/examples/ -type f -name *_example.v); do echo $e; ./v $e; done
 
   windows-msvc:
