@@ -4,14 +4,14 @@ module ctx
 import time
 import net.urllib
 
-enum SameSite {
+pub enum SameSite {
 	@none
 	strict
 	lax
 }
 
 pub struct Cookie {
-pub:
+pub mut:
 	name      string
 	value     string
 	expires   time.Time
