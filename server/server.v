@@ -13,8 +13,8 @@ const (
 )
 
 pub interface Router {
-	respond_error(code int) []byte
-	receive(method string, path string, raw_headers []string, body []byte) (int, []byte, []byte)
+	respond_error(code int) []u8
+	receive(method string, path string, raw_headers []string, body []u8) (int, []u8, []u8)
 }
 
 // serve starts the server at the give port
@@ -28,14 +28,14 @@ pub fn serve(router Router, port int) {
 	for {
 		mut conn := listener.accept() or {
 			listener.close() or {}
-			panic(utils.red_log('Failed to accept connection.\nErr Code: $err.code\nErr Message: $err.msg()'))
+			panic(utils.red_log('Failed to accept connection.\nErr Code: $err.code()\nErr Message: $err.msg()'))
 		}
 		handle_http_connection(router, mut conn)
 	}
 }
 
 // write_body Writes The Response Body into the TCP server
-fn write_body(code int, headers []byte, body []byte, mut conn net.TcpConn) {
+fn write_body(code int, headers []u8, body []u8, mut conn net.TcpConn) {
 	mut response := strings.new_builder(body.len)
 	response.write_string('HTTP/1.1 $code ' + utils.status_code_msg(code))
 	unsafe { response.write_ptr(headers.data, headers.len) }
@@ -63,17 +63,17 @@ fn handle_http_connection(router Router, mut conn net.TcpConn) {
 	data := first_line.split(' ')
 	if data.len < 2 {
 		bad_req_body := router.respond_error(400)
-		write_body(400, []byte{}, bad_req_body, mut conn)
+		write_body(400, [], bad_req_body, mut conn)
 		return
 	}
 	mut raw_headers := []string{}
 	mut conlen := 0
-	mut rbody := []byte{}
+	mut rbody := []u8{}
 	// encode headers
 	for {
 		header_line := reader.read_line() or {
 			internal_err_body := router.respond_error(500)
-			write_body(500, []byte{}, internal_err_body, mut conn)
+			write_body(500, [], internal_err_body, mut conn)
 			return
 		}
 		if header_line.starts_with('Content-Length: ') {
@@ -85,7 +85,7 @@ fn handle_http_connection(router Router, mut conn net.TcpConn) {
 		raw_headers << header_line
 	}
 	if conlen > 0 {
-		rbody = io.read_all(reader: reader) or { []byte{} }
+		rbody = io.read_all(reader: reader) or { [] }
 	}
 	status_code, enc_header, body := router.receive(data[0], data[1], raw_headers, rbody)
 	write_body(status_code, enc_header, body, mut conn)

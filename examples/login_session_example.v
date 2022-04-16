@@ -8,22 +8,22 @@ fn main() {
 	// handles the login page
 	login := fn (req &ctx.Req, mut res ctx.Resp) {
 		mut ses := session.start(req, mut res)
-		
+
 		// if there is already a session set, then redirect to the profile page
 		if !ses.is_empty() {
 			res.redirect('/profile')
 			return
 		}
-		
+
 		/*
-		 *  The following html.Tag is the same as follows:
+		*  The following html.Tag is the same as follows:
 		 *
 		 *  <form action="/login" method="post">
 		 *      <input type="email" name="email" placeholder="Email"><br><br>
 		 *      <input type="password" name="password" placeholder="Password"><br><br>
 		 *      <button type="submit">Login</button>
 		 *  </form>
-		 */
+		*/
 		doc := html.Tag{
 			name: 'form'
 			attr: {
@@ -34,8 +34,8 @@ fn main() {
 				html.Tag{
 					name: 'input'
 					attr: {
-						'name': 'email'
-						'type': 'email'
+						'name':        'email'
+						'type':        'email'
 						'placeholder': 'Email'
 					}
 				},
@@ -44,8 +44,8 @@ fn main() {
 				html.Tag{
 					name: 'input'
 					attr: {
-						'name': 'password'
-						'type': 'password'
+						'name':        'password'
+						'type':        'password'
 						'placeholder': 'Password'
 					}
 				},
@@ -57,37 +57,38 @@ fn main() {
 					attr: {
 						'type': 'submit'
 					}
-				}
+				},
 			]
 		}
-		
+
 		res.send_html(doc.html(), 200)
 	}
-	
+
 	// on login post
 	login_post := fn (req &ctx.Req, mut res ctx.Resp) {
 		post_data := req.parse_form() or {
 			eprintln('Failed to parse form data.')
 			return
 		}
-		
+
 		mut ses := session.start(req, mut res)
 		ses.set('email', post_data['email'])
 		ses.set('password', post_data['password'])
-		
+
 		res.redirect('/profile')
-		return  // VEX redirects to /login if the return isn't here :/
+		// VEX redirects to /login if the return isn't here :/
+		return
 	}
-	
+
 	profile := fn (req &ctx.Req, mut res ctx.Resp) {
 		mut ses := session.start(req, mut res)
 		if ses.is_empty() {
 			res.redirect('/login')
 			return
 		}
-		
+
 		/*
-		 *  The following html.Tag is the same as follows:
+		*  The following html.Tag is the same as follows:
 		 *
 		 *  <body>
 		 *      <h2>PROFILE</h2>
@@ -99,7 +100,7 @@ fn main() {
 		 *          <button type="submit">Logout</button>
 		 *      </form>
 		 *  </body>
-		 */
+		*/
 		doc := html.Tag{
 			name: 'body'
 			children: [
@@ -128,7 +129,7 @@ fn main() {
 				html.Tag{
 					name: 'form'
 					attr: {
-						'method': 'post',
+						'method': 'post'
 						'action': '/logout'
 					}
 					children: [
@@ -138,21 +139,21 @@ fn main() {
 							attr: {
 								'type': 'submit'
 							}
-						}
+						},
 					]
-				}
+				},
 			]
 		}
 		res.send_html(doc.html(), 200)
 	}
-	
+
 	logout_post := fn (req &ctx.Req, mut res ctx.Resp) {
 		mut ses := session.start(req, mut res)
 		ses.delete()
 		res.redirect('/login')
 		return
 	}
-	
+
 	mut router := router.new()
 	router.route(.get, '/profile', profile)
 	router.route(.get, '/login', login)

@@ -24,7 +24,7 @@ pub type MiddlewareFunc = fn (mut req Req, mut res Resp)
 // Server request data
 pub struct Req {
 pub mut:
-	body      []byte
+	body      []u8
 	method    string
 	path      string
 	params    map[string]string
@@ -172,7 +172,7 @@ pub fn (req &Req) parse_files() ?map[string][]FormData {
 // Server response data
 pub struct Resp {
 pub mut:
-	body        []byte
+	body        []u8
 	status_code int = 200
 	headers     map[string][]string = ctx.default_headers
 	stopped     bool
@@ -236,7 +236,7 @@ pub fn (mut res Resp) send_html(ht string, status_code int) {
 	res.send(ht, status_code)
 }
 
-pub fn (res &Resp) headers_bytes() []byte {
+pub fn (res &Resp) headers_bytes() []u8 {
 	mut headers := strings.new_builder(res.headers.len * 10)
 	for k, values in res.headers {
 		for v in values {
@@ -274,5 +274,5 @@ pub struct FormData {
 pub mut:
 	filename     string
 	content_type string
-	content      []byte
+	content      []u8
 }

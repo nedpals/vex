@@ -425,7 +425,7 @@ fn test_stop() {
 		resp.send('Hello!', 200)
 	})
 
-	status_code, headers, body := router.receive('GET', '/login/bobby', []string{}, []byte{})
+	status_code, headers, body := router.receive('GET', '/login/bobby', [], [])
 	assert status_code == 400
 	assert body.bytestr() == '<h1>400 Bad Request</h1>'
 }
