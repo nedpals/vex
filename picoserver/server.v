@@ -4,15 +4,11 @@ import net
 import net.http
 import picoev
 import picohttpparser
+import server { Router }
 
 const (
 	sep = '\r\n'
 )
-
-pub interface Router {
-	respond_error(code int) []u8
-	receive(method string, path string, raw_headers []string, body []u8) (int, []u8, []u8)
-}
 
 struct Server {
 	router Router
