@@ -28,7 +28,7 @@ fn main() {
     app.route(.get, '/', fn (req &ctx.Req, mut res ctx.Resp) {
         res.send_file('index.html', 200)
     })
-    
+
     app.route(.get, '/public/*path', fn (req &ctx.Req, mut res ctx.Resp) {
         res.send_file('public/' + req.params['path'], 200)
     })
@@ -58,7 +58,7 @@ Learn how to setup and use VEX by reading the [Wiki](https://github.com/nedpals/
 - [x] Params and query parsing
 - [x] Middleware support
 - [x] Cookie parsing (basic support)
-- [ ] Cookie manipulation / Session support
+- [x] Cookie manipulation / Session support
 - [ ] Websocket Server
 - [x] Body parsing
   - [x] `application/x-www-form-urlencoded` support
