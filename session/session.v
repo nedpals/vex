@@ -11,7 +11,7 @@ import utils
 pub const default_session_name = 'VEXSESID'
 
 // Session contains user data, the session Store, and cookie information
-struct Session {
+pub struct Session {
 	ctx.Cookie
 mut:
 	data map[string]string
@@ -36,6 +36,7 @@ pub fn (mut s Session) set(key string, val string) {
 	}
 }
 
+// set_many sets multiple keys and values in the session data
 pub fn (mut s Session) set_many(keyval ...string) ? {
 	if keyval.len % 2 != 0 {
 		return error('Mismatched key-value pairs.')
