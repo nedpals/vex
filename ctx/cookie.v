@@ -60,7 +60,7 @@ pub fn (req &Req) parse_cookies() ?map[string]Cookie {
 		cookies_arr := cookie.split('; ')
 		for cookie_data in cookies_arr {
 			ck := cookie_data.split('=')
-			ck_val := urllib.query_unescape(ck[1]) ?
+			ck_val := urllib.query_unescape(ck[1]) or { return err }
 			cookies[ck[0]] = Cookie{
 				name: ck[0]
 				value: ck_val
