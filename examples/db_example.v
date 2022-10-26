@@ -53,7 +53,7 @@ fn get_db(req &ctx.Req) ?&sqlite.DB {
 
 fn main() {
 	mut app := router.new()
-	db := sqlite.connect(':memory:') ?
+	db := sqlite.connect(':memory:') !
 	db.exec('drop table if exists users;')
 	db.exec('create table users (id integer primary key, name text default "");')
 	app_ctx := context.with_value(context.todo(), db_ctx_key, db)
