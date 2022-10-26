@@ -79,7 +79,7 @@ pub fn (req &Req) parse_form() ?map[string]string {
 			return form_data_map
 		}
 		'application/json' {
-			form_data_map := json.decode(map[string]string, body) ?
+			form_data_map := json.decode(map[string]string, body) or { return err }
 			return form_data_map
 		}
 		'multipart/form-data' {
