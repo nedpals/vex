@@ -50,7 +50,7 @@ jobs:
         run: |
           mkdir ~/.vmodules/nedpals
           cp -r vex ~/.vmodules/nedpals/vex
-          for e in $(find vex/examples/ -type f -name *_example.v); do echo $e; ./v $e; done
+          ./v should-compile-all ~/.vmodules/nedpals/vex/examples
 
 
   macos-clang:
@@ -72,7 +72,7 @@ jobs:
         run: |
           mkdir ~/.vmodules/nedpals
           cp -r vex ~/.vmodules/nedpals/vex
-          for e in $(find vex/examples/ -type f -name *_example.v); do echo $e; ./v $e; done
+          ./v should-compile-all ~/.vmodules/nedpals/vex/examples
 
   windows-msvc:
     runs-on: windows-2019
