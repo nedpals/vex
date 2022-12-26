@@ -56,6 +56,9 @@ pub fn (mdb map[string]MimeType) extension(text string) string {
 // lookup searches and returns the content-type associated with the provided file path
 pub fn (mdb map[string]MimeType) lookup(path string) string {
 	path_ext := os.file_ext('x.$path').to_lower()
+	if path_ext.len == 0 {
+		return ''
+	}
 	extension := path_ext[1..path_ext.len]
 	if extension.len == 0 {
 		return ''
