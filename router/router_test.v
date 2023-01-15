@@ -429,3 +429,28 @@ fn test_stop() {
 	assert status_code == 400
 	assert body.bytestr() == '<h1>400 Bad Request</h1>'
 }
+
+fn test_param_route_with_multiple_methods() ? {
+	mut routes := map[string]&Route{}
+	routes.add(.get, '/todo/:id', fn (req &ctx.Req, mut resp ctx.Resp) {
+		resp.send_json({'title': 'Todo'}, 200)
+	})?
+
+	routes.add(.patch, '/todo/:id', fn (req &ctx.Req, mut resp ctx.Resp) {
+		resp.send_json({'message': 'todo updated'}, 200)
+	})?
+
+	assert routes.len == 1
+	assert 'todo' in routes
+	assert routes['todo'].children.len == 1
+	assert ':' in routes['todo'].children
+	assert routes['todo'].children[':'].methods.len == 2
+	assert 'get' in routes['todo'].children[':'].methods
+	assert 'patch' in routes['todo'].children[':'].methods
+
+	routes.add(.get, '/todo/:hash', fn (req &ctx.Req, mut resp ctx.Resp) {
+		resp.send_json({'todo': []string{}}, 200)
+	}) or {
+		assert err.msg() == 'Only one wildcard OR param route in a route list is allowed.'
+	}
+}

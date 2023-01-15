@@ -212,10 +212,10 @@ pub fn extract_route_path(path string) ?(string, string, string) {
 // add creates a new route based on the given method, path, and the handlers.
 // See `router.Method` for the list of available methods.
 fn (mut routes map[string]&Route) add(method Method, path string, handlers ...ctx.HandlerFunc) ? {
-	if '*' in routes || ':' in routes {
+	name, param_name, children := extract_route_path(path) ?
+	if '*' in routes || (':' in routes && (routes[':'].param_name != param_name || method.str() in routes[':'].methods)) {
 		return error('Only one wildcard OR param route in a route list is allowed.')
 	}
-	name, param_name, children := extract_route_path(path) ?
 	if name !in routes {
 		routes[name] = &Route{
 			method: method
