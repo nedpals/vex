@@ -4,7 +4,7 @@ import nedpals.vex.router
 import nedpals.vex.server
 import nedpals.vex.html
 import nedpals.vex.ctx
-import sqlite
+import db.sqlite
 import context
 
 fn layout(title string, body []html.Tag) html.Tag {
