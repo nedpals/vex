@@ -14,7 +14,7 @@ struct Server {
 	router Router
 }
 
-fn callback(mut server Server, req picohttpparser.Request, mut res picohttpparser.Response) {
+fn callback(mut server_ Server, req picohttpparser.Request, mut res picohttpparser.Response) {
 	mut req_headers := []string{}
 	for i in 0 .. req.num_headers {
 		unsafe {
@@ -23,7 +23,7 @@ fn callback(mut server Server, req picohttpparser.Request, mut res picohttpparse
 			req_headers << '$name: $value'
 		}
 	}
-	status_code, headers, body := server.router.receive(req.method, req.path, req_headers,
+	status_code, headers, body := server_.router.receive(req.method, req.path, req_headers,
 		req.body.bytes())
 	status_message := http.status_from_int(status_code)
 	res.write_string('HTTP/1.1 $status_code $status_message')

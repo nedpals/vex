@@ -154,10 +154,10 @@ fn main() {
 		return
 	}
 
-	mut router := router.new()
-	router.route(.get, '/profile', profile)
-	router.route(.get, '/login', login)
-	router.route(.post, '/login', login_post)
-	router.route(.post, '/logout', logout_post)
-	server.serve(router, 8080)
+	mut router_ := router.new()
+	router_.route(.get, '/profile', profile)
+	router_.route(.get, '/login', login)
+	router_.route(.post, '/login', login_post)
+	router_.route(.post, '/logout', logout_post)
+	server.serve(router_, 8080)
 }
