@@ -123,8 +123,8 @@ pub fn (mut r Router) inject(data voidptr) {
 // inject_context injects the context to the handler context.
 // TODO: to be removed in the future. must be in a form of
 // a middleware instead.
-pub fn (mut r Router) inject_context(ctx context.Context) {
-	r.ctx = ctx
+pub fn (mut r Router) inject_context(ctx_ context.Context) {
+	r.ctx = ctx_
 }
 
 // route is a shortcut method to `r.routes.route` method
