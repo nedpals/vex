@@ -183,7 +183,7 @@ fn identify_kind(route_name string) Kind {
 
 // extract_route_path returns the name, the parameter name (if present),
 // and the remaining children route paths
-pub fn extract_route_path(path string) ?(string, string, string) {
+pub fn extract_route_path(path string) !(string, string, string) {
 	if !path.starts_with('/') {
 		return error('Route path must start with a slash (/)')
 	}
@@ -211,9 +211,9 @@ pub fn extract_route_path(path string) ?(string, string, string) {
 
 // add creates a new route based on the given method, path, and the handlers.
 // See `router.Method` for the list of available methods.
-fn (mut routes map[string]&Route) add(method Method, path string, handlers ...ctx.HandlerFunc) ? {
-	name, param_name, children := extract_route_path(path) ?
-	if '*' in routes || (':' in routes && (routes[':'].param_name != param_name || method.str() in routes[':'].methods)) {
+fn (mut routes map[string]&Route) add(method Method, path string, handlers ...ctx.HandlerFunc) ! {
+	name, param_name, children := extract_route_path(path) !
+	if '*' in routes || (':' in routes && (unsafe { routes[':'].param_name } != param_name || method.str() in unsafe { routes[':'].methods })) {
 		return error('Only one wildcard OR param route in a route list is allowed.')
 	}
 	if name !in routes {
@@ -225,7 +225,9 @@ fn (mut routes map[string]&Route) add(method Method, path string, handlers ...ct
 		}
 	}
 	if children.len > 0 {
-		routes[name].children.add(method, children, ...handlers) ?
+		unsafe {
+			routes[name].children.add(method, children, ...handlers) !
+		}
 		return
 	} else if handlers.len == 0 {
 		return error('Provided route handlers are empty.')
@@ -235,14 +237,16 @@ fn (mut routes map[string]&Route) add(method Method, path string, handlers ...ct
 }
 
 // find searches the matching route and returns the injected params data and the route handlers.
-pub fn (routes map[string]&Route) find(method string, path string) ?(map[string]string, []ctx.MiddlewareFunc, []ctx.HandlerFunc) {
-	mut r_name, mut param_name, children := extract_route_path(path) ?
+pub fn (routes map[string]&Route) find(method string, path string) !(map[string]string, []ctx.MiddlewareFunc, []ctx.HandlerFunc) {
+	mut r_name, mut param_name, children := extract_route_path(path) !
 	mut params := map[string]string{}
 	param_value := r_name
 	if r_name !in routes {
 		if ':' in routes || '*' in routes {
 			r_name = if '*' in routes { '*' } else { ':' }
-			param_name = routes[r_name].param_name
+			unsafe {
+				param_name = routes[r_name].param_name
+			}
 		} else {
 			return error('Route not foun.')
 		}
@@ -252,10 +256,10 @@ pub fn (routes map[string]&Route) find(method string, path string) ?(map[string]
 		'*' { params[param_name] = param_value + children }
 		else {}
 	}
-	route := routes[r_name]
+	route := unsafe { routes[r_name] }
 	if r_name != '*' && children.len > 0 {
 		child_params, child_route_middlewares, handlers := route.children.find(method,
-			children) ?
+			children) !
 		for name, value in child_params {
 			params[name] = value
 		}
@@ -307,6 +311,8 @@ pub fn (mut routes map[string]&Route) use(middlewares ...ctx.MiddlewareFunc) {
 		panic(utils.red_log('Endpoint/route middlewares can only be added after creating a route.'))
 	}
 	for name, _ in routes {
-		routes[name].middlewares << middlewares
+		unsafe {
+			routes[name].middlewares << middlewares
+		}
 	}
 }

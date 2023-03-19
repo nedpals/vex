@@ -51,7 +51,7 @@ fn (c Cookie) header_str() string {
 
 // parse_cookies parses the Cookie header content and returns the
 // content. Returns an error if the header is not present.
-pub fn (req &Req) parse_cookies() ?map[string]Cookie {
+pub fn (req &Req) parse_cookies() !map[string]Cookie {
 	if 'Cookie' !in req.headers {
 		return error('Cookies not found.')
 	}
