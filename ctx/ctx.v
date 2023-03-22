@@ -61,7 +61,7 @@ pub fn (req &Req) parse_query() ?map[string]string {
 // and `application/json` content types. Returns an error if the body is blank,
 // the "Content-Type" header is not present, or the content type header
 // is not supported.
-pub fn (req &Req) parse_form() ?map[string]string {
+pub fn (req &Req) parse_form() !map[string]string {
 	if req.body.len == 0 {
 		return error('Form body is empty.')
 	} else if 'Content-Type' !in req.headers {
@@ -83,7 +83,7 @@ pub fn (req &Req) parse_form() ?map[string]string {
 			return form_data_map
 		}
 		'multipart/form-data' {
-			multipart_form_data := req.parse_files() ?
+			multipart_form_data := req.parse_files() !
 			mut form_data_map := map[string]string{}
 			for key, datum in multipart_form_data {
 				for i, data in datum {
@@ -103,7 +103,7 @@ pub fn (req &Req) parse_form() ?map[string]string {
 }
 
 // parse_files parses the `multipart/form-data` content-type
-pub fn (req &Req) parse_files() ?map[string][]FormData {
+pub fn (req &Req) parse_files() !map[string][]FormData {
 	if req.headers['Content-Type'][0] != 'multipart/form-data' {
 		return error('Content type must be `multipart/form-data`.')
 	}
