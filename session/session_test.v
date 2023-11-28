@@ -64,5 +64,7 @@ fn test_session_storage() {
 		// produce an error
 		return
 	}
-	if !session.is_empty() { assert false }
+	if !session.is_empty() {
+		assert false
+	}
 }

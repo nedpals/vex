@@ -10,7 +10,7 @@ struct Person {
 }
 
 fn print_req_info(mut req ctx.Req, mut res ctx.Resp) {
-	println('$req.method $req.path')
+	println('${req.method} ${req.path}')
 }
 
 fn do_stuff(mut req ctx.Req, mut res ctx.Resp) {

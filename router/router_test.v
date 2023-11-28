@@ -433,11 +433,15 @@ fn test_stop() {
 fn test_param_route_with_multiple_methods() ? {
 	mut routes := map[string]&Route{}
 	routes.add(.get, '/todo/:id', fn (req &ctx.Req, mut resp ctx.Resp) {
-		resp.send_json({'title': 'Todo'}, 200)
+		resp.send_json({
+			'title': 'Todo'
+		}, 200)
 	})?
 
 	routes.add(.patch, '/todo/:id', fn (req &ctx.Req, mut resp ctx.Resp) {
-		resp.send_json({'message': 'todo updated'}, 200)
+		resp.send_json({
+			'message': 'todo updated'
+		}, 200)
 	})?
 
 	assert routes.len == 1
@@ -449,8 +453,8 @@ fn test_param_route_with_multiple_methods() ? {
 	assert 'patch' in routes['todo'].children[':'].methods
 
 	routes.add(.get, '/todo/:hash', fn (req &ctx.Req, mut resp ctx.Resp) {
-		resp.send_json({'todo': []string{}}, 200)
-	}) or {
-		assert err.msg() == 'Only one wildcard OR param route in a route list is allowed.'
-	}
+		resp.send_json({
+			'todo': []string{}
+		}, 200)
+	}) or { assert err.msg() == 'Only one wildcard OR param route in a route list is allowed.' }
 }

@@ -8,14 +8,12 @@ import v.vmod
 import strings
 import context
 
-const (
-	vm              = vmod.decode(@VMOD_FILE) or { panic(err) }
-	default_headers = {
-		'Content-Type': ['text/html; charset=UTF-8']
-		'X-Powered-By': ['$vm.name/$vm.version']
-		'Server':       ['$vm.name']
-	}
-)
+const vm = vmod.decode(@VMOD_FILE) or { panic(err) }
+const default_headers = {
+	'Content-Type': ['text/html; charset=UTF-8']
+	'X-Powered-By': ['${vm.name}/${vm.version}']
+	'Server':       ['${vm.name}']
+}
 
 pub type HandlerFunc = fn (req &Req, mut res Resp)
 
@@ -83,7 +81,7 @@ pub fn (req &Req) parse_form() !map[string]string {
 			return form_data_map
 		}
 		'multipart/form-data' {
-			multipart_form_data := req.parse_files() !
+			multipart_form_data := req.parse_files()!
 			mut form_data_map := map[string]string{}
 			for key, datum in multipart_form_data {
 				for i, data in datum {
@@ -179,16 +177,16 @@ pub mut:
 }
 
 // send writes the body and status code to the response data.
-[inline]
+@[inline]
 pub fn (mut res Resp) send(body string, status_code int) {
 	res.body = body.bytes()
 	res.status_code = status_code
 }
 
 // send_file writes the contents of the file to the response data.
-[inline]
+@[inline]
 pub fn (mut res Resp) send_file(filename string, status_code int) {
-	fl := os.read_bytes(os.join_path(os.getwd(), '/$filename')) or {
+	fl := os.read_bytes(os.join_path(os.getwd(), '/${filename}')) or {
 		res.send_status(404)
 		return
 	}
@@ -200,37 +198,37 @@ pub fn (mut res Resp) send_file(filename string, status_code int) {
 
 // send_json is a generic function that encodes the payload and
 // writes the JSON string to the response data.
-[inline]
-pub fn (mut res Resp) send_json<T>(payload T, status_code int) {
+@[inline]
+pub fn (mut res Resp) send_json[T](payload T, status_code int) {
 	json_string := json.encode(payload)
 	res.send(json_string, status_code)
 	res.headers['Content-Type'] = ['application/json']
 }
 
 // send_status sends an HTML response of the status code
-[inline]
+@[inline]
 pub fn (mut res Resp) send_status(status_code int) {
 	msg := utils.status_code_msg(status_code)
 	res.headers['Content-Type'] = ['text/html']
-	res.send('<h1>$status_code $msg</h1>', status_code)
+	res.send('<h1>${status_code} ${msg}</h1>', status_code)
 }
 
 // redirect writes a 301 response and redirects to the
 // specified url or location
-[inline]
+@[inline]
 pub fn (mut res Resp) redirect(url string) {
 	res.status_code = 302
 	res.headers['Location'] = [url]
 }
 
-[inline]
+@[inline]
 pub fn (mut res Resp) permanent_redirect(url string) {
 	res.status_code = 301
 	res.headers['Location'] = [url]
 }
 
 // send_html writes the body to the response data as an HTML content
-[inline]
+@[inline]
 pub fn (mut res Resp) send_html(ht string, status_code int) {
 	res.headers['Content-Type'] = ['text/html']
 	res.send(ht, status_code)
@@ -240,7 +238,7 @@ pub fn (res &Resp) headers_bytes() []u8 {
 	mut headers := strings.new_builder(res.headers.len * 10)
 	for k, values in res.headers {
 		for v in values {
-			headers.write_string('\r\n$k: $v')
+			headers.write_string('\r\n${k}: ${v}')
 		}
 	}
 	buf := headers.clone()

@@ -6,8 +6,8 @@ pub struct MimeType {
 pub:
 	source       string
 	extensions   []string
-	compressible bool     [skip]
-	charset      string   [skip]
+	compressible bool     @[skip]
+	charset      string   @[skip]
 }
 
 fn is_mime(text string) bool {
@@ -38,7 +38,7 @@ pub fn (mdb map[string]MimeType) content_type(text string) string {
 	if mdb[mime].charset.len != 0 {
 		chrst := mdb.charset(mime)
 		if chrst.len != 0 {
-			return '$mime; charset=$chrst.to_lower()'
+			return '${mime}; charset=${chrst.to_lower()}'
 		}
 	}
 	return mime
@@ -55,7 +55,7 @@ pub fn (mdb map[string]MimeType) extension(text string) string {
 
 // lookup searches and returns the content-type associated with the provided file path
 pub fn (mdb map[string]MimeType) lookup(path string) string {
-	path_ext := os.file_ext('x.$path').to_lower()
+	path_ext := os.file_ext('x.${path}').to_lower()
 	if path_ext.len == 0 {
 		return ''
 	}

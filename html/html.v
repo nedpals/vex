@@ -18,13 +18,13 @@ pub struct BlockTagConfig {
 }
 
 // return the tag to encoded JSON
-[inline]
+@[inline]
 pub fn (tag Tag) str() string {
-	return '{name: $tag.name, children: $tag.children.len}'
+	return '{name: ${tag.name}, children: ${tag.children.len}}'
 }
 
 // html returns a Tag equivalent to `<!DOCTYPE html><html>...</html>`
-[inline]
+@[inline]
 pub fn html(children []Tag) Tag {
 	return Tag{
 		name: 'html'
@@ -33,7 +33,7 @@ pub fn html(children []Tag) Tag {
 }
 
 // block is the same as `tag` but with Tag children
-[inline]
+@[inline]
 pub fn block(tag BlockTagConfig) Tag {
 	return Tag{
 		name: tag.name
@@ -43,7 +43,7 @@ pub fn block(tag BlockTagConfig) Tag {
 }
 
 // meta returns a Tag equivalent to `<meta />`
-[inline]
+@[inline]
 pub fn meta(attr map[string]string) Tag {
 	return Tag{
 		name: 'meta'
@@ -53,7 +53,7 @@ pub fn meta(attr map[string]string) Tag {
 }
 
 // link returns a Tag equivalent to `<link />`
-[inline]
+@[inline]
 pub fn link(attr map[string]string) Tag {
 	return Tag{
 		name: 'link'
@@ -63,7 +63,7 @@ pub fn link(attr map[string]string) Tag {
 }
 
 // style returns a Tag equivalent to `<style>...</style>`
-[inline]
+@[inline]
 pub fn style(style string) Tag {
 	return Tag{
 		name: 'style'
@@ -72,13 +72,13 @@ pub fn style(style string) Tag {
 }
 
 // tag returns itself for uniformity when using function-based DSL
-[inline]
+@[inline]
 pub fn tag(tag Tag) Tag {
 	return tag
 }
 
 // br returns a Tag equivalent to `<br />`
-[inline]
+@[inline]
 pub fn br() Tag {
 	return Tag{
 		name: 'br'
@@ -99,9 +99,9 @@ pub fn (tag Tag) html() string {
 		if tag.name == 'html' {
 			sb.write_string('<!DOCTYPE html>')
 		}
-		sb.write_string('<$tag.name')
+		sb.write_string('<${tag.name}')
 		for prop_name, prop in tag.attr {
-			sb.write_string(' $prop_name="$prop"')
+			sb.write_string(' ${prop_name}="${prop}"')
 		}
 		if !tag.empty {
 			sb.write_string('>')
@@ -115,7 +115,7 @@ pub fn (tag Tag) html() string {
 			sb.write_string(child.html())
 		}
 		if !is_text {
-			sb.write_string('</$tag.name>')
+			sb.write_string('</${tag.name}>')
 		}
 	}
 	return sb.str()

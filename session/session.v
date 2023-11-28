@@ -28,7 +28,7 @@ __global:
 // set sets a value in the session data
 pub fn (mut s Session) set(key string, val string) {
 	s.data[key] = urllib.query_unescape(val) or {
-		println(utils.yellow_log('Query unescape failed on "$val" setting to raw, escaped value.'))
+		println(utils.yellow_log('Query unescape failed on "${val}" setting to raw, escaped value.'))
 		val
 	}
 	if s.auto_write {
@@ -50,7 +50,7 @@ pub fn (mut s Session) set_many(keyval ...string) ? {
 }
 
 // has checks if a value exists in the session data
-[inline]
+@[inline]
 pub fn (mut s Session) has(key string) bool {
 	return if s.get(key) == '' { false } else { true }
 }
@@ -58,7 +58,7 @@ pub fn (mut s Session) has(key string) bool {
 // pop reads a values from the session data to return, then deletes
 // the key-value-pair from the data.
 pub fn (mut s Session) pop(key string) ?string {
-	val := s.must_get(key) ?
+	val := s.must_get(key)?
 	s.remove(key)
 	if s.auto_write {
 		s.write()
@@ -105,31 +105,31 @@ pub fn (mut s Session) regenerate() {
 }
 
 // write saves the session data to the Store of the session
-[inline]
+@[inline]
 pub fn (mut s Session) write() bool {
 	s.store.write(s.id, s.data) or {
-		println(utils.red_log('Failed to write session: $err.msg()'))
+		println(utils.red_log('Failed to write session: ${err.msg()}'))
 		return false
 	}
 	return true
 }
 
 // restore fetches the data from the Store of the session using the ID of the session
-[inline]
+@[inline]
 pub fn (mut s Session) restore() ? {
-	s.data = s.store.read(s.id) ?
+	s.data = s.store.read(s.id)?
 }
 
 // delete deletes the session data from Store.
-[inline]
+@[inline]
 pub fn (mut s Session) delete() {
 	s.store.delete(s.id) or {
-		println(utils.yellow_log('Failed to delete session from store: $err.msg()'))
+		println(utils.yellow_log('Failed to delete session from store: ${err.msg()}'))
 	}
 }
 
 // cookie returns the Session as a `ctx.Cookie` instance.
-[inline]
+@[inline]
 pub fn (s Session) cookie() ctx.Cookie {
 	return ctx.Cookie{
 		name: s.name
@@ -146,7 +146,7 @@ pub fn (s Session) cookie() ctx.Cookie {
 
 // set_header sets a `Set-Cookie` on Session.res that represents
 // the current Session
-[inline]
+@[inline]
 pub fn (mut s Session) set_header() {
 	s.res.set_cookies({
 		s.id: s.cookie()
@@ -155,19 +155,19 @@ pub fn (mut s Session) set_header() {
 
 // remove_header removes the corresponding `Set-Cookie` header in
 // `Session.res.headers`.
-[inline]
+@[inline]
 pub fn (mut s Session) remove_header() {
 	s.res.headers.delete(s.id)
 }
 
 // get_header is a passthrough for `Cookie.header_str`.
-[inline]
+@[inline]
 pub fn (mut s Session) get_header() []string {
 	return s.res.headers[s.id]
 }
 
 // new_session_id generates a new sesssion id.
-[inline]
+@[inline]
 pub fn new_session_id() string {
 	return sha1.hexhash(rand.uuid_v4())
 }
@@ -178,14 +178,14 @@ pub fn new_session_from_id(id string, mut store Store) ?Session {
 		id: id
 		store: store
 	}
-	s.restore() ?
+	s.restore()?
 	return s
 }
 
 // SessionOptions are used to customize the 'Set-Cookie' header that will be sent with
 // the response to the user when starting a session. It also contains the Store of a
 // session.
-[params]
+@[params]
 pub struct SessionOptions {
 mut:
 	name      string    = 'default_'

@@ -15,7 +15,7 @@ fn (ls LocalStore) read_all() ?map[string]map[string]string {
 	file_check(ls.path)?
 	contents := os.read_file(ls.path) or { return err }
 	sessions := json.decode(map[string]map[string]string, contents) or {
-		return error('Session data decode failed. This probably means your "$ls.path" file is malformatted.')
+		return error('Session data decode failed. This probably means your "${ls.path}" file is malformatted.')
 	}
 	return sessions
 }
@@ -23,7 +23,7 @@ fn (ls LocalStore) read_all() ?map[string]map[string]string {
 // read reads an individual session from the local session data.
 pub fn (ls LocalStore) read(id string) ?map[string]string {
 	sessions := ls.read_all() or {
-		return error('No entry in local session data with id of "$id".')
+		return error('No entry in local session data with id of "${id}".')
 	}
 	return sessions[id]
 }
@@ -39,7 +39,7 @@ pub fn (mut ls LocalStore) delete(id string) ? {
 			os.write_file(ls.path, json.encode(sessions)) or { return err }
 		}
 	} else {
-		return error('Failed to delete session data. No entry with id of "$id" exists.')
+		return error('Failed to delete session data. No entry with id of "${id}" exists.')
 	}
 }
 
@@ -59,9 +59,9 @@ pub fn (mut ls LocalStore) write(id string, data map[string]string) ? {
 fn file_check(path string) ? {
 	if !os.is_file(path) {
 		$if windows {
-			os.execute('type $path')
+			os.execute('type ${path}')
 		} $else {
-			os.execute('touch $path')
+			os.execute('touch ${path}')
 		}
 		os.write_file(path, '{}') or { return err }
 	}
