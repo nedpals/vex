@@ -400,20 +400,20 @@ fn test_routes_group_simple_with_middleware() {
 }
 
 fn test_router_use_simple() {
-	mut router := Router{}
-	router.use(dummy_middleware, dummy_middleware)
-	assert router.middlewares.len == 2
+	mut routr := Router{}
+	routr.use(dummy_middleware, dummy_middleware)
+	assert routr.middlewares.len == 2
 }
 
 fn test_respond_error() {
-	mut router := Router{}
-	body := router.respond_error(404)
+	mut routr := Router{}
+	body := routr.respond_error(404)
 	assert body == '<h1>404 Not Found</h1>'.bytes()
 }
 
 fn test_stop() {
-	mut router := Router{}
-	router.route(.get, '/login/:username', fn (req &ctx.Req, mut resp ctx.Resp) {
+	mut routr := Router{}
+	routr.route(.get, '/login/:username', fn (req &ctx.Req, mut resp ctx.Resp) {
 		if req.params['username'] != 'bob' {
 			resp.send_status(400)
 			resp.stop()
@@ -425,20 +425,24 @@ fn test_stop() {
 		resp.send('Hello!', 200)
 	})
 
-	status_code, headers, body := router.receive('GET', '/login/bobby', [], [])
+	status_code, headers, body := routr.receive('GET', '/login/bobby', [], [])
 	assert status_code == 400
 	assert body.bytestr() == '<h1>400 Bad Request</h1>'
 }
 
-fn test_param_route_with_multiple_methods() ? {
+fn test_param_route_with_multiple_methods() ! {
 	mut routes := map[string]&Route{}
 	routes.add(.get, '/todo/:id', fn (req &ctx.Req, mut resp ctx.Resp) {
-		resp.send_json({'title': 'Todo'}, 200)
-	})?
+		resp.send_json({
+			'title': 'Todo'
+		}, 200)
+	})!
 
 	routes.add(.patch, '/todo/:id', fn (req &ctx.Req, mut resp ctx.Resp) {
-		resp.send_json({'message': 'todo updated'}, 200)
-	})?
+		resp.send_json({
+			'message': 'todo updated'
+		}, 200)
+	})!
 
 	assert routes.len == 1
 	assert 'todo' in routes
@@ -449,8 +453,8 @@ fn test_param_route_with_multiple_methods() ? {
 	assert 'patch' in routes['todo'].children[':'].methods
 
 	routes.add(.get, '/todo/:hash', fn (req &ctx.Req, mut resp ctx.Resp) {
-		resp.send_json({'todo': []string{}}, 200)
-	}) or {
-		assert err.msg() == 'Only one wildcard OR param route in a route list is allowed.'
-	}
+		resp.send_json({
+			'todo': []string{}
+		}, 200)
+	}) or { assert err.msg() == 'Only one wildcard OR param route in a route list is allowed.' }
 }

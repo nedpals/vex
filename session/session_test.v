@@ -1,24 +1,24 @@
 module session
 
 fn test_session_manip() {
-	mut session := Session{}
-	session.set('test', 'value')
-	assert session.data['test'] == 'value'
-	assert session.has('test')
-	assert session.get('test') == 'value'
-	popped := session.pop('test') or { 'null' }
+	mut s := Session{}
+	s.set('test', 'value')
+	assert s.data['test'] == 'value'
+	assert s.has('test')
+	assert s.get('test') == 'value'
+	popped := s.pop('test') or { 'null' }
 	assert popped in ['value', 'null']
-	assert session.is_empty()
-	session.set('test', 'value')
-	must_get := session.must_get('test') or { 'null' }
+	assert s.is_empty()
+	s.set('test', 'value')
+	must_get := s.must_get('test') or { 'null' }
 	assert must_get in ['value', 'null']
-	session.remove('test')
-	assert session.has('test') == false
+	s.remove('test')
+	assert s.has('test') == false
 
-	session.set_many('one', 'oneval', 'two', 'twoval') or { assert false }
-	assert session.get('one') == 'oneval'
-	assert session.get('two') == 'twoval'
-	session.set_many('mis', 'matched', 'values') or {
+	s.set_many('one', 'oneval', 'two', 'twoval') or { assert false }
+	assert s.get('one') == 'oneval'
+	assert s.get('two') == 'twoval'
+	s.set_many('mis', 'matched', 'values') or {
 		// odd values should error, should be formatted as
 		// set_many(key, val, key, val...)
 		return
@@ -27,42 +27,44 @@ fn test_session_manip() {
 }
 
 fn test_session_id_manip() {
-	mut session := Session{
+	mut s := Session{
 		id: 'test_id'
 	}
-	session.set_header()
-	session.set('test', 'value')
-	session.regenerate()
-	assert session.id != 'test_id'
+	s.set_header()
+	s.set('test', 'value')
+	s.regenerate()
+	assert s.id != 'test_id'
 }
 
 fn test_session_storage() {
-	mut session := Session{
+	mut s := Session{
 		id: 'test_id'
 		auto_write: false
 	}
-	assert session.write()
+	assert s.write()
 
 	mut ls := LocalStore{}
-	// new_session_from_id is basically a wrapper for session.restore().
-	// And session.restore() is a wrapper for session.read(). So we don't
+	// new_session_from_id is basically a wrapper for s.restore().
+	// And s.restore() is a wrapper for s.read(). So we don't
 	// need to test either of those function indiviually.
-	session = new_session_from_id('test_id', mut ls) or {
-		// since we just used session.write()
+	s = new_session_from_id('test_id', mut ls) or {
+		// since we just used s.write()
 		// this should never error
 		assert false
 		Session{}
 	}
 
-	session = Session{
+	s = Session{
 		id: 'test_id'
 	}
-	session.set('test', 'value')
-	session.delete()
-	session = new_session_from_id('test_id', mut ls) or {
-		// since we just deleted the session this should
+	s.set('test', 'value')
+	s.delete()
+	s = new_session_from_id('test_id', mut ls) or {
+		// since we just deleted the s this should
 		// produce an error
 		return
 	}
-	if !session.is_empty() { assert false }
+	if !s.is_empty() {
+		assert false
+	}
 }

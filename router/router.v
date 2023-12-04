@@ -5,9 +5,7 @@ import utils
 import net.urllib
 import context
 
-const (
-	form_methods = ['POST', 'PATCH', 'PUT']
-)
+const form_methods = ['POST', 'PATCH', 'PUT']
 
 pub type GroupCallbackFn = fn (mut group map[string]&Route)
 
@@ -115,7 +113,7 @@ pub fn get_ctx(r &ctx.Req) voidptr {
 	return 0
 }
 
-[deprecated: 'use Router.inject_context() or Req.ctx instead to inject value. As for accessing value, use router.get_ctx() instead of accessing r.ctx directly.']
+@[deprecated: 'use Router.inject_context() or Req.ctx instead to inject value. As for accessing value, use router.get_ctx() instead of accessing r.ctx directly.']
 pub fn (mut r Router) inject(data voidptr) {
 	r.inject_context(context.with_value(context.todo(), router.global_ctx_key, data))
 }
@@ -152,7 +150,7 @@ pub enum Method {
 	options
 }
 
-[heap]
+@[heap]
 pub struct Route {
 	name       string
 	param_name string
@@ -166,7 +164,7 @@ mut:
 
 // empty str to avoid cgen error
 pub fn (r &Route) str() string {
-	return 'Route{ name: $r.name, middlewares: $r.middlewares.len, routes: $r.children }'
+	return 'Route{ name: ${r.name}, middlewares: ${r.middlewares.len}, routes: ${r.children} }'
 }
 
 // identify route kind ( parameter, wildcard or regular )
@@ -204,7 +202,7 @@ pub fn extract_route_path(path string) !(string, string, string) {
 		children = '/' + paths[1..].join('/')
 	}
 	$if debug {
-		println('name: $name | param_name: $param_name | children: $children')
+		println('name: ${name} | param_name: ${param_name} | children: ${children}')
 	}
 	return name, param_name, children
 }
@@ -212,8 +210,9 @@ pub fn extract_route_path(path string) !(string, string, string) {
 // add creates a new route based on the given method, path, and the handlers.
 // See `router.Method` for the list of available methods.
 fn (mut routes map[string]&Route) add(method Method, path string, handlers ...ctx.HandlerFunc) ! {
-	name, param_name, children := extract_route_path(path) !
-	if '*' in routes || (':' in routes && (unsafe { routes[':'].param_name } != param_name || method.str() in unsafe { routes[':'].methods })) {
+	name, param_name, children := extract_route_path(path)!
+	if '*' in routes || (':' in routes && (unsafe { routes[':'].param_name } != param_name
+		|| method.str() in unsafe { routes[':'].methods })) {
 		return error('Only one wildcard OR param route in a route list is allowed.')
 	}
 	if name !in routes {
@@ -226,7 +225,7 @@ fn (mut routes map[string]&Route) add(method Method, path string, handlers ...ct
 	}
 	if children.len > 0 {
 		unsafe {
-			routes[name].children.add(method, children, ...handlers) !
+			routes[name].children.add(method, children, ...handlers)!
 		}
 		return
 	} else if handlers.len == 0 {
@@ -238,7 +237,7 @@ fn (mut routes map[string]&Route) add(method Method, path string, handlers ...ct
 
 // find searches the matching route and returns the injected params data and the route handlers.
 pub fn (routes map[string]&Route) find(method string, path string) !(map[string]string, []ctx.MiddlewareFunc, []ctx.HandlerFunc) {
-	mut r_name, mut param_name, children := extract_route_path(path) !
+	mut r_name, mut param_name, children := extract_route_path(path)!
 	mut params := map[string]string{}
 	param_value := r_name
 	if r_name !in routes {
@@ -259,7 +258,7 @@ pub fn (routes map[string]&Route) find(method string, path string) !(map[string]
 	route := unsafe { routes[r_name] }
 	if r_name != '*' && children.len > 0 {
 		child_params, child_route_middlewares, handlers := route.children.find(method,
-			children) !
+			children)!
 		for name, value in child_params {
 			params[name] = value
 		}
@@ -275,7 +274,7 @@ pub fn (routes map[string]&Route) find(method string, path string) !(map[string]
 // See `router.Method` for the list of available methods.
 pub fn (mut routes map[string]&Route) route(method Method, path string, handlers ...ctx.HandlerFunc) {
 	routes.add(method, path, ...handlers) or {
-		panic(utils.red_log('Failed to add route `$path`. Reason: $err'))
+		panic(utils.red_log('Failed to add route `${path}`. Reason: ${err}'))
 	}
 }
 

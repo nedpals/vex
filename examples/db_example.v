@@ -20,7 +20,7 @@ fn layout(title string, body []html.Tag) html.Tag {
 					'name':    'referrer'
 					'content': 'origin-when-cross-origin'
 				}),
-				html.tag(name: 'title', text: '$title | Vex SQLite Test'),
+				html.tag(name: 'title', text: '${title} | Vex SQLite Test'),
 				html.style('
                 body {
                     width: 36rem;
@@ -44,7 +44,7 @@ fn layout(title string, body []html.Tag) html.Tag {
 const db_ctx_key = 'db'
 
 fn get_db(req &ctx.Req) ?&sqlite.DB {
-	raw_db := req.ctx.value(db_ctx_key) ?
+	raw_db := req.ctx.value(db_ctx_key)?
 	if raw_db is sqlite.DB {
 		return raw_db
 	}
@@ -53,9 +53,9 @@ fn get_db(req &ctx.Req) ?&sqlite.DB {
 
 fn main() {
 	mut app := router.new()
-	db := sqlite.connect(':memory:') !
-	db.exec('drop table if exists users;')
-	db.exec('create table users (id integer primary key, name text default "");')
+	db := sqlite.connect(':memory:')!
+	db.exec('drop table if exists users;')!
+	db.exec('create table users (id integer primary key, name text default "");')!
 	app_ctx := context.with_value(context.todo(), db_ctx_key, db)
 	app.inject_context(app_ctx)
 	app.route(.get, '/', fn (req &ctx.Req, mut res ctx.Resp) {
@@ -111,7 +111,7 @@ fn main() {
 			res.send_status(500)
 			return
 		}
-		users_from_db, _ := db2.exec('select * from users;')
+		users_from_db := db2.exec('select * from users;') or { panic(err) }
 		mut users := []html.Tag{}
 		for row in users_from_db {
 			tag := html.Tag{
@@ -184,7 +184,7 @@ fn main() {
 			map[string]string{}
 		}
 		name := form_data['name']
-		db2.exec('insert into users (name) values ("$name");')
+		db2.exec('insert into users (name) values ("${name}");') or { panic(err) }
 		res.permanent_redirect('/users')
 	})
 	server.serve(app, 8080)

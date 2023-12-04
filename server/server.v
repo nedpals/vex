@@ -8,9 +8,7 @@ import strings
 import utils
 import time
 
-const (
-	sep = '\r\n'
-)
+const sep = '\r\n'
 
 pub interface Router {
 	respond_error(code int) []u8
@@ -20,15 +18,15 @@ pub interface Router {
 // serve starts the server at the give port
 pub fn serve(router Router, port int) {
 	// Listen To Port
-	mut listener := net.listen_tcp(.ip6, ':$port') or {
-		panic(utils.red_log('Failed to listen to port $port'))
+	mut listener := net.listen_tcp(.ip6, ':${port}') or {
+		panic(utils.red_log('Failed to listen to port ${port}'))
 	}
 	println(utils.green_log('HTTP Server has started.'))
-	println(utils.green_log('Running On http://localhost:$port'))
+	println(utils.green_log('Running On http://localhost:${port}'))
 	for {
 		mut conn := listener.accept() or {
 			listener.close() or {}
-			panic(utils.red_log('Failed to accept connection.\nErr Code: $err.code()\nErr Message: $err.msg()'))
+			panic(utils.red_log('Failed to accept connection.\nErr Code: ${err.code()}\nErr Message: ${err.msg()}'))
 		}
 		handle_http_connection(router, mut conn)
 	}
@@ -37,9 +35,9 @@ pub fn serve(router Router, port int) {
 // write_body Writes The Response Body into the TCP server
 fn write_body(code int, headers []u8, body []u8, mut conn net.TcpConn) {
 	mut response := strings.new_builder(body.len)
-	response.write_string('HTTP/1.1 $code ' + utils.status_code_msg(code))
+	response.write_string('HTTP/1.1 ${code} ' + utils.status_code_msg(code))
 	unsafe { response.write_ptr(headers.data, headers.len) }
-	response.write_string('${server.sep}Content-Length: $body.len')
+	response.write_string('${server.sep}Content-Length: ${body.len}')
 	response.write_string('${server.sep}Connection: close')
 	response.write_string(server.sep.repeat(2))
 	unsafe { response.write_ptr(body.data, body.len) }
