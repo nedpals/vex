@@ -34,14 +34,14 @@ pub fn (mdb map[string]MimeType) charset(text string) string {
 // content-type does not already have a `charset` parameter, `mime.db.charset`
 // is used to get the default charset and add to the returned content-type.
 pub fn (mdb map[string]MimeType) content_type(text string) string {
-	mime := if !is_mime(text) { mdb.lookup(text) } else { text }
-	if mdb[mime].charset.len != 0 {
-		chrst := mdb.charset(mime)
+	mime_ := if !is_mime(text) { mdb.lookup(text) } else { text }
+	if mdb[mime_].charset.len != 0 {
+		chrst := mdb.charset(mime_)
 		if chrst.len != 0 {
-			return '${mime}; charset=${chrst.to_lower()}'
+			return '${mime_}; charset=${chrst.to_lower()}'
 		}
 	}
-	return mime
+	return mime_
 }
 
 // extension returns the default extension of a specific content-type

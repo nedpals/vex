@@ -6,7 +6,7 @@ module session
 // exist.
 pub interface Store {
 mut:
-	read(string) ?map[string]string
-	write(string, map[string]string) ?
-	delete(string) ?
+	read(string) !map[string]string
+	write(string, map[string]string) !
+	delete(string) !
 }

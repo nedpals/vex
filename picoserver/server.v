@@ -5,6 +5,7 @@ import net.http
 import picoev
 import picohttpparser
 import server { Router }
+import utils
 
 const sep = '\r\n'
 
@@ -15,11 +16,8 @@ struct Server {
 fn callback(mut server_ Server, req picohttpparser.Request, mut res picohttpparser.Response) {
 	mut req_headers := []string{}
 	for i in 0 .. req.num_headers {
-		unsafe {
-			name := req.headers[i].name.vstring_with_len(req.headers[i].name_len)
-			value := req.headers[i].value.vstring_with_len(req.headers[i].value_len)
-			req_headers << '${name}: ${value}'
-		}
+		header := req.headers[i]
+		req_headers << '${header.name}: ${header.value}'
 	}
 	status_code, headers, body := server_.router.receive(req.method, req.path, req_headers,
 		req.body.bytes())
@@ -33,17 +31,16 @@ fn callback(mut server_ Server, req picohttpparser.Request, mut res picohttppars
 	res.end()
 }
 
-// !!!Careful, this thing doesn't work with tcc,
-// be sure to specify a different compiler via `-cc gcc` before running.
 // Starts the server at the given port
 pub fn serve(router Router, port int) {
-	println('Starting webserver on http://localhost:${port}/ ...')
-
-	picoev.new(
+	println(utils.green_log('[PICO] HTTP Server has started.'))
+	println(utils.green_log('Running On http://localhost:${port}'))
+	mut picoserv := picoev.new(
 		port: port
 		cb: &callback
 		user_data: &Server{
 			router: router
 		}
-	).serve()
+	)
+	picoserv.serve()
 }

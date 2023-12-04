@@ -37,7 +37,7 @@ pub fn (mut s Session) set(key string, val string) {
 }
 
 // set_many sets multiple keys and values in the session data
-pub fn (mut s Session) set_many(keyval ...string) ? {
+pub fn (mut s Session) set_many(keyval ...string) ! {
 	if keyval.len % 2 != 0 {
 		return error('Mismatched key-value pairs.')
 	}
@@ -116,8 +116,8 @@ pub fn (mut s Session) write() bool {
 
 // restore fetches the data from the Store of the session using the ID of the session
 @[inline]
-pub fn (mut s Session) restore() ? {
-	s.data = s.store.read(s.id)?
+pub fn (mut s Session) restore() ! {
+	s.data = s.store.read(s.id)!
 }
 
 // delete deletes the session data from Store.
@@ -173,12 +173,12 @@ pub fn new_session_id() string {
 }
 
 // new_session_from_id genereates a new Session from the provided ID and storage medium.
-pub fn new_session_from_id(id string, mut store Store) ?Session {
+pub fn new_session_from_id(id string, mut store Store) !Session {
 	mut s := Session{
 		id: id
 		store: store
 	}
-	s.restore()?
+	s.restore()!
 	return s
 }
 
