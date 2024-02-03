@@ -1,5 +1,7 @@
 module main
 
+import maps
+
 import nedpals.vex.router
 import nedpals.vex.server
 import nedpals.vex.ctx
@@ -17,9 +19,17 @@ fn do_stuff(mut req ctx.Req, mut res ctx.Resp) {
 	println('incoming request!')
 }
 
+fn simple_cors(mut req ctx.Req, mut res ctx.Resp) {
+	res.headers = maps.merge(res.headers, {"Access-Control-Allow-Origin": ["*"]})
+	res.headers = maps.merge(res.headers, {"Access-Control-Allow-Methods": ["GET", "PUT", "PATCH", "POST", "DELETE"]})
+	res.headers = maps.merge(res.headers, {"Access-Control-Allow-Headers": ["Host", "Origin", "Content-Length", "Content-Type", "Authorization", "User-Agent", "X-Forwarded-For", "Accept-Encoding", "Connection"]})
+	res.headers = maps.merge(res.headers, {"Access-Control-Allow-Credentials": ["true"]})
+	res.headers = maps.merge(res.headers, {"Access-Control-Max-Age": ["86400"]})
+}
+
 fn main() {
 	mut app := router.new()
-	app.use(do_stuff, print_req_info)
+	app.use(do_stuff, print_req_info, simple_cors)
 	app.route(.get, '/', fn (req &ctx.Req, mut res ctx.Resp) {
 		q := req.parse_query() or {
 			map[string]string{}
@@ -32,5 +42,5 @@ fn main() {
 	app.route(.get, '/hello', fn (req &ctx.Req, mut res ctx.Resp) {
 		res.send('Hello World!', 200)
 	})
-	server.serve(app, 8080)
+	server.serve(app, 6789)
 }

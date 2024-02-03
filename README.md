@@ -9,6 +9,8 @@
 ```v
 module main
 
+import maps
+
 import nedpals.vex.router
 import nedpals.vex.server
 import nedpals.vex.ctx
@@ -21,9 +23,17 @@ fn do_stuff(mut req ctx.Req, mut res ctx.Resp) {
 	println('incoming request!')
 }
 
+fn simple_cors(mut req ctx.Req, mut res ctx.Resp) {
+	res.headers = maps.merge(res.headers, {"Access-Control-Allow-Origin": ["*"]})
+	res.headers = maps.merge(res.headers, {"Access-Control-Allow-Methods": ["GET", "PUT", "PATCH", "POST", "DELETE"]})
+	res.headers = maps.merge(res.headers, {"Access-Control-Allow-Headers": ["Host", "Origin", "Content-Length", "Content-Type", "Authorization", "User-Agent", "X-Forwarded-For", "Accept-Encoding", "Connection"]})
+	res.headers = maps.merge(res.headers, {"Access-Control-Allow-Credentials": ["true"]})
+	res.headers = maps.merge(res.headers, {"Access-Control-Max-Age": ["86400"]})
+}
+
 fn main() {
     mut app := router.new()
-    app.use(do_stuff, print_req_info)
+    app.use(do_stuff, print_req_info, simple_cors)
 
     app.route(.get, '/', fn (req &ctx.Req, mut res ctx.Resp) {
         res.send_file('index.html', 200)
@@ -48,7 +58,7 @@ fn main() {
 ```
 
 ## Installation & Getting Started
-Learn how to setup and use VEX by reading the [Wiki](https://github.com/nedpals/vex/wiki/Installation).
+Learn how to setup and use VEX by reading the [wiki](https://github.com/nedpals/vex/wiki/Installation).
 
 ## Roadmap
 - [X] Support for `GET`, `POST`, `PUT`, `PATCH`, `DELETE`, and `OPTION` HTTP methods.
