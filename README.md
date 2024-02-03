@@ -25,8 +25,8 @@ fn do_stuff(mut req ctx.Req, mut res ctx.Resp) {
 
 fn simple_cors(mut req ctx.Req, mut res ctx.Resp) {
 	res.headers = maps.merge(res.headers, {"Access-Control-Allow-Origin": ["*"]})
-	res.headers = maps.merge(res.headers, {"Access-Control-Allow-Headers": ["*"]})
-	res.headers = maps.merge(res.headers, {"Access-Control-Allow-Methods": ["GET", "HEAD", "PUT", "PATCH", "POST", "DELETE"]})
+	res.headers = maps.merge(res.headers, {"Access-Control-Allow-Methods": ["GET", "PUT", "PATCH", "POST", "DELETE"]})
+	res.headers = maps.merge(res.headers, {"Access-Control-Allow-Headers": ["Host", "Origin", "Content-Length", "Content-Type", "Authorization", "User-Agent", "X-Forwarded-For", "Accept-Encoding", "Connection"]})
 	res.headers = maps.merge(res.headers, {"Access-Control-Allow-Credentials": ["true"]})
 	res.headers = maps.merge(res.headers, {"Access-Control-Max-Age": ["86400"]})
 }
