@@ -9,5 +9,5 @@ fn main() {
 	app.route(.get, '/', fn (req &ctx.Req, mut res ctx.Resp) {
 		res.send('Hello world!', 200)
 	})
-	picoserver.serve(app, 8080)
+	picoserver.serve(app, 6789)
 }

@@ -187,5 +187,5 @@ fn main() {
 		db2.exec('insert into users (name) values ("${name}");') or { panic(err) }
 		res.permanent_redirect('/users')
 	})
-	server.serve(app, 8080)
+	server.serve(app, 6789)
 }
