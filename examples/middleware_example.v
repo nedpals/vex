@@ -32,5 +32,5 @@ fn main() {
 	app.route(.get, '/hello', fn (req &ctx.Req, mut res ctx.Resp) {
 		res.send('Hello World!', 200)
 	})
-	server.serve(app, 8080)
+	server.serve(app, 6789)
 }
